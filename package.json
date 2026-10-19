@@ -1,0 +1,21 @@
+{
+  "name": "web-performance",
+  "version": "1.0.0",
+  "description": "Proyecto sobre rendimiento web.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rubsa15/web-performance.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rubsa15/web-performance/issues"
+  },
+  "homepage": "https://github.com/rubsa15/web-performance#readme"
+}
