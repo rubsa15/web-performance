@@ -18,6 +18,7 @@ CLI `wperf` (Node + TypeScript) que audita el rendimiento de una web con Lightho
 Módulos previstos (ver SPEC §3): `runner` → `normalizer` → `store` → `compare` / `budget`, más `render` y `cli`. Cada módulo vive en `src/` y se puede probar por separado.
 
 - Implementados (fase 1): `runner.ts` (Chrome + Lighthouse ×N, con costuras para tests), `normalizer.ts` (LHR → `Report`), `schema.ts` (zod, fuente de verdad del `Report`), `rules.ts` (rating, impacto, mediana), `store.ts`, `git.ts`, `render.ts` y `commands/audit.ts`. Errores: `UsageError` (salida 2) y `RuntimeError` (salida 3) en `errors.ts`.
+- `demo/` (fase 2): `site/` es la web con 7 problemas intencionados y `ISSUES.md` como ground truth; `site-fixed/` es la versión corregida; `serve.ts` las sirve (`npm run demo`, `npm run demo:fixed`). Si cambias la demo, mídela con `wperf audit` y actualiza `ISSUES.md`; `tests/demo.slow.test.ts` comprueba los ids esperados.
 - `src/program.ts` — define el programa de `commander` y los códigos de salida; `src/cli.ts` es solo el punto de entrada.
 - Códigos de salida: `0` correcto, `1` presupuesto/regresión superada, `2` error de uso, `3` error de ejecución (Chrome, red, timeout).
 - Los reportes se guardan en `.perf/reports/<sitio>/<timestamp>-<device>.json`; los LHR crudos en `.perf/raw/` (ignorado por git).

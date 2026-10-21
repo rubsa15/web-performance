@@ -18,6 +18,8 @@
     "test": "vitest run",
     "test:slow": "WPERF_SLOW=1 vitest run slow",
     "test:watch": "vitest",
+    "demo": "node demo/serve.ts site",
+    "demo:fixed": "node demo/serve.ts site-fixed",
     "verify": "npm run typecheck && npm run lint && npm test",
     "prepare": "npm run build"
   },

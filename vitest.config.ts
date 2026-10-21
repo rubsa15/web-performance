@@ -7,5 +7,6 @@ export default defineConfig({
   test: {
     exclude: runSlow ? configDefaults.exclude : [...configDefaults.exclude, '**/*.slow.test.ts'],
     testTimeout: runSlow ? 180_000 : 5_000,
+    hookTimeout: runSlow ? 300_000 : 10_000,
   },
 });

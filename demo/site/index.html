@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tostadero Atlas — café de especialidad</title>
+    <meta
+      name="description"
+      content="Café de especialidad tostado en pequeños lotes y enviado en 48 horas."
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="vendor/three.min.js"></script>
+    <script src="js/app.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="logo" href="/">Tostadero Atlas</a>
+      <nav aria-label="Principal">
+        <a href="#cafes">Cafés</a>
+        <a href="#origen">Origen</a>
+        <a href="#suscripcion">Suscripción</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <img class="hero-img" src="img/hero.jpg" alt="Tonos cálidos de café recién tostado" />
+        <div class="hero-copy">
+          <h1>Café de especialidad, tostado esta semana</h1>
+          <p>
+            Trabajamos con pequeños productores y tostamos en lotes de 12 kg para que cada taza
+            llegue en su mejor punto.
+          </p>
+          <a class="button" href="#cafes">Ver los cafés</a>
+        </div>
+      </section>
+
+      <section class="features" id="origen">
+        <article>
+          <h2>Origen trazable</h2>
+          <p>Cada lote indica finca, altura y proceso de lavado, secado o natural.</p>
+        </article>
+        <article>
+          <h2>Tueste a demanda</h2>
+          <p>Tostamos cuando haces el pedido, no antes. Sin stock envejecido en el almacén.</p>
+        </article>
+        <article>
+          <h2>Envío en 48 horas</h2>
+          <p>Embalaje compostable y válvula de desgasificado para conservar el aroma.</p>
+        </article>
+      </section>
+
+      <section class="catalog" id="cafes">
+        <h2>Nuestros cafés</h2>
+        <div class="grid">
+          <figure>
+            <img src="img/cafe-1.jpg" alt="Ilustración abstracta: tueste claro" />
+            <figcaption>Etiopía Guji · tueste claro</figcaption>
+          </figure>
+          <figure>
+            <img src="img/cafe-2.jpg" alt="Ilustración abstracta: tueste oscuro" />
+            <figcaption>Brasil Cerrado · tueste oscuro</figcaption>
+          </figure>
+          <figure>
+            <img src="img/cafe-3.jpg" alt="Ilustración abstracta: lote verde" />
+            <figcaption>Colombia Huila · tueste medio</figcaption>
+          </figure>
+          <figure>
+            <img src="img/cafe-4.jpg" alt="Ilustración abstracta: tonos rojizos" />
+            <figcaption>Kenia Nyeri · tueste medio</figcaption>
+          </figure>
+          <figure>
+            <img src="img/cafe-5.jpg" alt="Ilustración abstracta: tonos azulados" />
+            <figcaption>Guatemala Antigua · tueste medio</figcaption>
+          </figure>
+          <figure>
+            <img src="img/cafe-6.jpg" alt="Ilustración abstracta: tonos dorados" />
+            <figcaption>Costa Rica Tarrazú · tueste claro</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="subscribe" id="suscripcion">
+        <h2>Suscripción mensual</h2>
+        <p>Recibe cada mes un café distinto elegido por nuestro equipo de catadores.</p>
+        <a class="button" href="#cafes">Empezar</a>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 Tostadero Atlas · Web de demostración para wperf, no es una tienda real.</p>
+    </footer>
+  </body>
+</html>
