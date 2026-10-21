@@ -247,3 +247,72 @@ describe('normalize — perfil de red', () => {
     expect(report.warnings).toContainEqual(expect.stringContaining('"3g" no se aplicó'));
   });
 });
+
+describe('normalize — elemento LCP', () => {
+  it('extrae elemento, desglose y descubrimiento del LHR real de BBC', () => {
+    const { lcp } = normalize([loadLhr('lhr-bbc-mobile')], meta);
+    expect(lcp?.element.selector).toContain('img.Image-styles__ImageStyled');
+    expect(lcp?.element.snippet).toMatch(/^<img /);
+    expect(lcp?.element.nodeLabel).toContain('Witkoff');
+    // el src del snippet está truncado con "…": no se inventa una URL
+    expect(lcp?.element).not.toHaveProperty('url');
+    expect(lcp?.breakdown).toEqual({
+      ttfb: 134,
+      loadDelay: 19,
+      loadDuration: 128,
+      renderDelay: 224,
+    });
+    expect(lcp?.discovery).toEqual({
+      priorityHinted: false,
+      requestDiscoverable: true,
+      eagerlyLoaded: true,
+    });
+  });
+
+  it('funciona también con el LHR de escritorio de Wikipedia', () => {
+    const { lcp } = normalize([loadLhr('lhr-wikipedia-desktop')], {
+      ...meta,
+      device: 'desktop',
+      url: 'https://www.wikipedia.org/',
+    });
+    expect(lcp?.element.selector).toBe(
+      'body#www-wikipedia-org > main > div.central-textlogo > img.central-featured-logo',
+    );
+    expect(lcp?.breakdown?.renderDelay).toBe(523);
+  });
+
+  it('rellena url cuando el src del snippet está completo, relativo a la página', () => {
+    const lhr = structuredClone(loadLhr('lhr-bbc-mobile')) as unknown as {
+      audits: Record<string, { details: { items: Record<string, unknown>[] } }>;
+    };
+    for (const id of ['lcp-breakdown-insight', 'lcp-discovery-insight']) {
+      for (const item of lhr.audits[id]!.details.items) {
+        if (item['type'] === 'node') item['snippet'] = '<img src="img/hero.jpg" alt="">';
+      }
+    }
+    const { lcp } = normalize([lhr as never], meta);
+    expect(lcp?.element.url).toBe('https://www.bbc.com/img/hero.jpg');
+  });
+
+  it('sin insights de LCP no hay bloque lcp', () => {
+    const lhr = structuredClone(loadLhr('lhr-bbc-mobile'));
+    delete lhr.audits['lcp-breakdown-insight'];
+    delete lhr.audits['lcp-discovery-insight'];
+    const report = normalize([lhr], meta);
+    expect(report).not.toHaveProperty('lcp');
+    expect(ReportSchema.safeParse(report).success).toBe(true);
+  });
+
+  it('avisa si el elemento LCP cambia entre ejecuciones', () => {
+    const other = structuredClone(loadLhr('lhr-bbc-mobile')) as unknown as {
+      audits: Record<string, { details: { items: Record<string, unknown>[] } }>;
+    };
+    for (const id of ['lcp-breakdown-insight', 'lcp-discovery-insight']) {
+      for (const item of other.audits[id]!.details.items) {
+        if (item['type'] === 'node') item['selector'] = 'h1.titulo';
+      }
+    }
+    const report = normalize([loadLhr('lhr-bbc-mobile'), other as never], meta);
+    expect(report.warnings).toContainEqual(expect.stringContaining('elemento LCP no es el mismo'));
+  });
+});

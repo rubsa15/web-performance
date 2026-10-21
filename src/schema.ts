@@ -34,6 +34,8 @@ const MetricSchema = z.object({
 
 const OpportunityItemSchema = z.object({
   url: z.string(),
+  /** Selector CSS del elemento, cuando Lighthouse lo da (útil si `url` viene vacía). */
+  selector: z.string().optional(),
   wastedMs: z.number().optional(),
   wastedBytes: z.number().optional(),
   totalBytes: z.number().optional(),
@@ -49,6 +51,37 @@ const OpportunitySchema = z.object({
   impact: ImpactSchema,
   affectedMetrics: z.array(MetricIdSchema),
   items: z.array(OpportunityItemSchema),
+});
+
+/** Elemento LCP de la ejecución representativa y por qué tarda (insights `lcp-*` de Lighthouse). */
+const LcpSchema = z.object({
+  element: z.object({
+    selector: z.string(),
+    /** Etiqueta HTML del elemento; Lighthouse la trunca (`…`) si es larga. */
+    snippet: z.string(),
+    nodeLabel: z.string().optional(),
+    /** Recurso (imagen o vídeo) si el `src` de `snippet` está completo; ausente si no. */
+    url: z.string().optional(),
+  }),
+  /**
+   * Subpartes del LCP en ms, medidas en la carga real de Chrome. Con `throttling: simulate` el
+   * valor de la métrica es una simulación y no coincide con su suma: úsalas por proporción.
+   */
+  breakdown: z
+    .object({
+      ttfb: z.number(),
+      loadDelay: z.number(),
+      loadDuration: z.number(),
+      renderDelay: z.number(),
+    })
+    .optional(),
+  discovery: z
+    .object({
+      priorityHinted: z.boolean(),
+      requestDiscoverable: z.boolean(),
+      eagerlyLoaded: z.boolean(),
+    })
+    .optional(),
 });
 
 const DiagnosticSchema = z.object({
@@ -85,6 +118,8 @@ export const ReportSchema = z.object({
     si: MetricSchema,
     ttfb: MetricSchema,
   }),
+  /** Ausente si el LCP no es un elemento (o en reportes anteriores a este campo). */
+  lcp: LcpSchema.optional(),
   opportunities: z.array(OpportunitySchema),
   diagnostics: z.array(DiagnosticSchema),
   resources: z.object({
@@ -102,6 +137,7 @@ export type Metric = z.infer<typeof MetricSchema>;
 export type Rating = z.infer<typeof RatingSchema>;
 export type Impact = z.infer<typeof ImpactSchema>;
 export type Category = z.infer<typeof CategorySchema>;
+export type Lcp = z.infer<typeof LcpSchema>;
 export type Opportunity = z.infer<typeof OpportunitySchema>;
 
 /** Perfil de red de un reporte; los anteriores a `--network` no lo guardan y cuentan como `default`. */

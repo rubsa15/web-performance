@@ -155,6 +155,13 @@ export function renderComparisonText(comparison: Comparison, options: RenderOpti
   if (resourceRows.length === 0) lines.push('  Sin cambios.');
   lines.push(...textTable(resourceRows, { right: [2] }).map((line) => `  ${line}`));
 
+  if (comparison.lcpElement?.changed) {
+    lines.push(
+      '',
+      `Elemento LCP: cambió (${comparison.lcpElement.before} → ${comparison.lcpElement.after})`,
+    );
+  }
+
   for (const warning of comparison.warnings) lines.push('', `Aviso: ${warning}`);
   return lines.join('\n');
 }
@@ -214,6 +221,13 @@ export function renderComparisonMarkdown(comparison: Comparison): string {
         `| ${r.type} | ${formatBytes(r.before)} | ${formatBytes(r.after)} | ${formatBytesDelta(r.delta)} |`,
       );
     }
+  }
+
+  if (comparison.lcpElement?.changed) {
+    lines.push(
+      '',
+      `**Elemento LCP:** cambió (\`${comparison.lcpElement.before}\` → \`${comparison.lcpElement.after}\`)`,
+    );
   }
 
   if (comparison.warnings.length > 0) {

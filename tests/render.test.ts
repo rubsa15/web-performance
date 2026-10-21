@@ -82,3 +82,28 @@ describe('render', () => {
     expect(render(report, 'text')).toContain('Puntuación');
   });
 });
+
+describe('elemento LCP en los renders', () => {
+  it('texto: selector, snippet, desglose y descubrimiento', () => {
+    const text = renderText(report);
+    expect(text).toContain('Elemento LCP');
+    expect(text).toContain('img.Image-styles__ImageStyled');
+    expect(text).toContain(
+      'Desglose: TTFB 134 ms · retraso de carga 19 ms · carga 128 ms · retraso de render 224 ms',
+    );
+    expect(text).toContain('fetchpriority=high no · en el HTML inicial sí · sin lazy sí');
+  });
+
+  it('Markdown: sección propia', () => {
+    const md = renderMarkdown(report);
+    expect(md).toContain('## Elemento LCP');
+    expect(md).toContain('- **Selector:** `div > a.London-styles');
+  });
+
+  it('sin lcp no hay sección', () => {
+    const withoutLcp = { ...report };
+    delete withoutLcp.lcp;
+    expect(renderText(withoutLcp)).not.toContain('Elemento LCP');
+    expect(renderMarkdown(withoutLcp)).not.toContain('Elemento LCP');
+  });
+});

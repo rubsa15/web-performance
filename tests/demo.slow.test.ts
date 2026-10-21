@@ -53,6 +53,12 @@ describe('wperf audit sobre la demo', () => {
     expect(broken.opportunities.map((o) => o.id)).toContain(id);
   });
 
+  it('identifica el elemento LCP de la demo rota: la imagen hero', () => {
+    expect(broken.lcp?.element.selector).toContain('img.hero-img');
+    expect(broken.lcp?.element.url).toMatch(/\/img\/hero\.jpg$/);
+    expect(broken.lcp?.discovery?.priorityHinted).toBe(false);
+  });
+
   it('la demo rota tiene CLS y LCP en poor', () => {
     expect(broken.metrics.cls.rating).toBe('poor');
     expect(broken.metrics.lcp.rating).toBe('poor');

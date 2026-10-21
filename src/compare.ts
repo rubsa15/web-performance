@@ -78,6 +78,8 @@ export interface Comparison {
   metrics: Record<MetricId, MetricDiff>;
   opportunities: OpportunityDiff[];
   resources: ResourceDiff[];
+  /** Selector del elemento LCP en cada reporte; solo si ambos lo tienen. */
+  lcpElement?: { before: string; after: string; changed: boolean };
 }
 
 function refOf(report: Report): ReportRef {
@@ -272,5 +274,13 @@ export function compareReports(
     metrics,
     opportunities: diffOpportunities(before, after, thresholds),
     resources: diffResources(before, after),
+    ...(before.lcp &&
+      after.lcp && {
+        lcpElement: {
+          before: before.lcp.element.selector,
+          after: after.lcp.element.selector,
+          changed: before.lcp.element.selector !== after.lcp.element.selector,
+        },
+      }),
   };
 }

@@ -2,7 +2,16 @@ import { z } from 'zod';
 import { RuntimeError } from './errors.js';
 import { compareOpportunities, impactOf, median, rate } from './rules.js';
 import { NETWORK_PRESETS } from './network.js';
-import type { Category, Device, MetricId, Metric, Network, Opportunity, Report } from './schema.js';
+import type {
+  Category,
+  Device,
+  Lcp,
+  MetricId,
+  Metric,
+  Network,
+  Opportunity,
+  Report,
+} from './schema.js';
 import { METRIC_IDS } from './schema.js';
 
 /*
@@ -207,6 +216,8 @@ function isFailing(audit: Audit): boolean {
   );
 }
 
+const EMPTY_AUDIT: Audit = { title: '', score: null, scoreDisplayMode: 'notApplicable' };
+
 function auditItems(audit: Audit): Record<string, unknown>[] {
   const items = audit.details?.items;
   if (!Array.isArray(items)) return [];
@@ -242,12 +253,98 @@ function affectedMetricsOf(audit: Audit): MetricId[] {
   return (withSavings.length > 0 ? withSavings : entries).map((e) => e.id);
 }
 
+const asRecord = (value: unknown): Record<string, unknown> | undefined =>
+  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : undefined;
+
+/** `src` del snippet, si está completo (Lighthouse trunca con `…`); relativo a la página. */
+function resourceUrlOf(snippet: string, base: string): string | undefined {
+  const src = /\ssrc="([^"]+)"/.exec(snippet)?.[1];
+  if (!src || src.includes('…') || src.startsWith('data:')) return undefined;
+  try {
+    return new URL(src, base).href;
+  } catch {
+    return undefined;
+  }
+}
+
+const BREAKDOWN_KEYS = {
+  timeToFirstByte: 'ttfb',
+  resourceLoadDelay: 'loadDelay',
+  resourceLoadDuration: 'loadDuration',
+  elementRenderDelay: 'renderDelay',
+} as const;
+
+/** Elemento LCP, desglose y descubrimiento de `lcp-breakdown-insight` y `lcp-discovery-insight`. */
+function extractLcp(lhr: Lhr): Lcp | undefined {
+  const breakdownEntries = auditItems(lhr.audits['lcp-breakdown-insight'] ?? EMPTY_AUDIT);
+  const discoveryEntries = auditItems(lhr.audits['lcp-discovery-insight'] ?? EMPTY_AUDIT);
+  const node = [...breakdownEntries, ...discoveryEntries].find((e) => e['type'] === 'node');
+  const selector = node?.['selector'];
+  const snippet = node?.['snippet'];
+  if (!node || typeof selector !== 'string' || typeof snippet !== 'string') return undefined;
+
+  const nodeLabel = node['nodeLabel'];
+  const url = resourceUrlOf(snippet, lhr.finalDisplayedUrl ?? lhr.finalUrl ?? '');
+
+  const subparts = Object.fromEntries(
+    breakdownEntries
+      .filter((e) => e['type'] === 'table')
+      .flatMap((e) => (Array.isArray(e['items']) ? e['items'] : []))
+      .flatMap((row) => {
+        const r = asRecord(row);
+        const key = BREAKDOWN_KEYS[r?.['subpart'] as keyof typeof BREAKDOWN_KEYS];
+        const duration = r?.['duration'];
+        return key && typeof duration === 'number' ? [[key, roundMs(duration)]] : [];
+      }),
+  ) as Partial<NonNullable<Lcp['breakdown']>>;
+  const breakdown =
+    subparts.ttfb !== undefined &&
+    subparts.loadDelay !== undefined &&
+    subparts.loadDuration !== undefined &&
+    subparts.renderDelay !== undefined
+      ? {
+          ttfb: subparts.ttfb,
+          loadDelay: subparts.loadDelay,
+          loadDuration: subparts.loadDuration,
+          renderDelay: subparts.renderDelay,
+        }
+      : undefined;
+
+  const checklist = asRecord(discoveryEntries.find((e) => e['type'] === 'checklist')?.['items']);
+  const flag = (key: string): boolean | undefined => {
+    const value = asRecord(checklist?.[key])?.['value'];
+    return typeof value === 'boolean' ? value : undefined;
+  };
+  const [priorityHinted, requestDiscoverable, eagerlyLoaded] = [
+    flag('priorityHinted'),
+    flag('requestDiscoverable'),
+    flag('eagerlyLoaded'),
+  ];
+  const discovery =
+    priorityHinted !== undefined && requestDiscoverable !== undefined && eagerlyLoaded !== undefined
+      ? { priorityHinted, requestDiscoverable, eagerlyLoaded }
+      : undefined;
+
+  return {
+    element: {
+      selector,
+      snippet,
+      ...(typeof nodeLabel === 'string' && { nodeLabel }),
+      ...(url !== undefined && { url }),
+    },
+    ...(breakdown && { breakdown }),
+    ...(discovery && { discovery }),
+  };
+}
+
 function itemsOf(id: string, audit: Audit): Opportunity['items'] {
   return auditItems(audit)
     .flatMap((it) => {
       const url = it['url'];
       if (typeof url !== 'string') return [];
       const item: Opportunity['items'][number] = { url };
+      const selector = asRecord(it['node'])?.['selector'];
+      if (typeof selector === 'string') item.selector = selector;
       const wastedMs = numberField(it, 'wastedMs');
       const wastedBytes = numberField(it, 'wastedBytes');
       const totalBytes = numberField(it, 'totalBytes');
@@ -372,6 +469,13 @@ export function normalize(rawLhrs: unknown[], meta: NormalizeMeta): Report {
     );
   }
   const resources = extractResources(representative, warnings);
+  const lcp = extractLcp(representative);
+  const selectors = new Set(lhrs.map((lhr) => extractLcp(lhr)?.element.selector ?? '(ninguno)'));
+  if (selectors.size > 1) {
+    warnings.push(
+      `El elemento LCP no es el mismo en todas las ejecuciones (${[...selectors].join(' | ')}): se muestra el de la ejecución representativa.`,
+    );
+  }
 
   return {
     schemaVersion: 1,
@@ -392,6 +496,7 @@ export function normalize(rawLhrs: unknown[], meta: NormalizeMeta): Report {
     ...(meta.git && { git: meta.git }),
     score: Math.round(median(scores)),
     metrics,
+    ...(lcp && { lcp }),
     opportunities: extractOpportunities(representative),
     diagnostics: extractDiagnostics(representative),
     resources,

@@ -124,6 +124,31 @@ describe('compareReports — comparabilidad', () => {
     );
   });
 
+  it('avisa en lcpElement de que el elemento LCP cambió (solo si ambos reportes lo tienen)', () => {
+    const lcp = (selector: string) => ({
+      element: { selector, snippet: `<img class="${selector}">` },
+    });
+    const a = makeReport();
+    const b = makeReport();
+    delete a.lcp; // makeReport parte del LHR de BBC, que ya trae elemento LCP
+    delete b.lcp;
+    expect(compareReports(a, b)).not.toHaveProperty('lcpElement');
+    a.lcp = lcp('img.hero');
+    expect(compareReports(a, b)).not.toHaveProperty('lcpElement');
+    b.lcp = lcp('img.hero');
+    expect(compareReports(a, b).lcpElement).toEqual({
+      before: 'img.hero',
+      after: 'img.hero',
+      changed: false,
+    });
+    b.lcp = lcp('h1.titulo');
+    expect(compareReports(a, b).lcpElement).toEqual({
+      before: 'img.hero',
+      after: 'h1.titulo',
+      changed: true,
+    });
+  });
+
   it('rechaza perfiles de red distintos', () => {
     expect(() => compareReports(makeReport(), makeReport({ network: '3g' }))).toThrow(
       /perfil de red \(default vs 3g\)/,

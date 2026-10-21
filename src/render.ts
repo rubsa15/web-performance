@@ -80,6 +80,16 @@ export function painter(color: boolean | undefined): Paint {
   return (format, text) => (color ? styleText(format, text, { validateStream: false }) : text);
 }
 
+const yesNo = (value: boolean): string => (value ? 'sí' : 'no');
+
+function breakdownLine(b: NonNullable<Report['lcp']>['breakdown'] & object): string {
+  return `TTFB ${formatNumber(b.ttfb)} ms · retraso de carga ${formatNumber(b.loadDelay)} ms · carga ${formatNumber(b.loadDuration)} ms · retraso de render ${formatNumber(b.renderDelay)} ms`;
+}
+
+function discoveryLine(d: NonNullable<Report['lcp']>['discovery'] & object): string {
+  return `fetchpriority=high ${yesNo(d.priorityHinted)} · en el HTML inicial ${yesNo(d.requestDiscoverable)} · sin lazy ${yesNo(d.eagerlyLoaded)}`;
+}
+
 export function renderText(report: Report, options: RenderOptions = {}): string {
   const paint = painter(options.color);
   const ratingColor: Record<Rating, 'green' | 'yellow' | 'red'> = {
@@ -117,6 +127,14 @@ export function renderText(report: Report, options: RenderOptions = {}): string 
     lines.push(
       `  ${METRIC_LABELS[id].padEnd(labelWidth)}  ${formatValue(metric, metric.value).padStart(valueWidth)}  ${paint(ratingColor[metric.rating], rating)}  ${formatRange(metric)}`,
     );
+  }
+
+  if (report.lcp) {
+    const { element, breakdown, discovery } = report.lcp;
+    lines.push('', paint('bold', 'Elemento LCP'), `  ${element.selector}`, `  ${element.snippet}`);
+    if (element.url) lines.push(`  Recurso: ${element.url}`);
+    if (breakdown) lines.push(`  Desglose: ${breakdownLine(breakdown)}`);
+    if (discovery) lines.push(`  Descubrimiento: ${discoveryLine(discovery)}`);
   }
 
   const top = options.top ?? DEFAULT_TOP;
@@ -164,6 +182,20 @@ export function renderMarkdown(report: Report): string {
     lines.push(
       `| ${METRIC_LABELS[id]} | ${formatValue(metric, metric.value)} | ${metric.rating} | ${formatRange(metric)} |`,
     );
+  }
+
+  if (report.lcp) {
+    const { element, breakdown, discovery } = report.lcp;
+    lines.push(
+      '',
+      '## Elemento LCP',
+      '',
+      `- **Selector:** \`${element.selector}\``,
+      `- **HTML:** \`${mdCell(element.snippet)}\``,
+    );
+    if (element.url) lines.push(`- **Recurso:** ${element.url}`);
+    if (breakdown) lines.push(`- **Desglose:** ${breakdownLine(breakdown)}`);
+    if (discovery) lines.push(`- **Descubrimiento:** ${discoveryLine(discovery)}`);
   }
 
   lines.push('', '## Mejoras', '');

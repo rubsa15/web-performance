@@ -163,3 +163,21 @@ describe('renderHistory', () => {
     expect(JSON.parse(renderHistory(history, 'json')).entries).toHaveLength(3);
   });
 });
+
+describe('elemento LCP en la comparación', () => {
+  const withLcp = (selector: string) => {
+    const r = makeReport();
+    r.lcp = { element: { selector, snippet: '<img>' } };
+    return r;
+  };
+
+  it('avisa solo si el elemento cambió', () => {
+    const changed = compareReports(withLcp('img.hero'), withLcp('h1.titulo'));
+    expect(renderComparisonText(changed)).toContain('Elemento LCP: cambió (img.hero → h1.titulo)');
+    expect(renderComparisonMarkdown(changed)).toContain(
+      '**Elemento LCP:** cambió (`img.hero` → `h1.titulo`)',
+    );
+    const same = compareReports(withLcp('img.hero'), withLcp('img.hero'));
+    expect(renderComparisonText(same)).not.toContain('Elemento LCP');
+  });
+});
