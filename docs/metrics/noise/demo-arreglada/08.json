@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-21T20-01-07Z-mobile",
+  "url": "http://127.0.0.1:4174/",
+  "finalUrl": "http://127.0.0.1:4174/",
+  "device": "mobile",
+  "label": "ruido 8/10",
+  "createdAt": "2026-10-21T20:01:07Z",
+  "environment": {
+    "lighthouseVersion": "13.5.0",
+    "chromeVersion": "155.0.0.0",
+    "throttling": "simulate",
+    "runs": 3,
+    "representativeRun": 1
+  },
+  "score": 99,
+  "metrics": {
+    "lcp": {
+      "value": 2103,
+      "unit": "ms",
+      "min": 2102,
+      "max": 2104,
+      "rating": "good"
+    },
+    "fcp": {
+      "value": 1408,
+      "unit": "ms",
+      "min": 1407,
+      "max": 1412,
+      "rating": "good"
+    },
+    "tbt": {
+      "value": 10,
+      "unit": "ms",
+      "min": 10,
+      "max": 17,
+      "rating": "good"
+    },
+    "cls": {
+      "value": 0,
+      "unit": "",
+      "min": 0,
+      "max": 0,
+      "rating": "good"
+    },
+    "si": {
+      "value": 1408,
+      "unit": "ms",
+      "min": 1407,
+      "max": 1412,
+      "rating": "good"
+    },
+    "ttfb": {
+      "value": 752,
+      "unit": "ms",
+      "min": 751,
+      "max": 752,
+      "rating": "good"
+    }
+  },
+  "opportunities": [
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "category": "images",
+      "savingsMs": 150,
+      "savingsBytes": 546774,
+      "impact": "high",
+      "affectedMetrics": ["lcp"],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4174/img/cafe-6-960.jpg",
+          "wastedBytes": 87269,
+          "totalBytes": 134358
+        },
+        {
+          "url": "http://127.0.0.1:4174/img/cafe-2-960.jpg",
+          "wastedBytes": 86980,
+          "totalBytes": 134069
+        },
+        {
+          "url": "http://127.0.0.1:4174/img/cafe-4-960.jpg",
+          "wastedBytes": 86703,
+          "totalBytes": 133792
+        },
+        {
+          "url": "http://127.0.0.1:4174/img/cafe-1-960.jpg",
+          "wastedBytes": 86020,
+          "totalBytes": 133109
+        },
+        {
+          "url": "http://127.0.0.1:4174/img/cafe-3-960.jpg",
+          "wastedBytes": 85651,
+          "totalBytes": 132740
+        },
+        {
+          "url": "http://127.0.0.1:4174/img/cafe-5-960.jpg",
+          "wastedBytes": 85595,
+          "totalBytes": 132684
+        },
+        {
+          "url": "http://127.0.0.1:4174/img/hero-960.jpg",
+          "wastedBytes": 28556,
+          "totalBytes": 65506
+        }
+      ]
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "category": "javascript",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["tbt"],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4174/js/app.js",
+          "cpuMs": 2241
+        },
+        {
+          "url": "Unattributable",
+          "cpuMs": 189
+        },
+        {
+          "url": "http://127.0.0.1:4174/",
+          "cpuMs": 137
+        }
+      ]
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "category": "javascript",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["tbt"],
+      "items": []
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["lcp"],
+      "items": []
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "total-byte-weight",
+      "title": "Avoids enormous network payloads",
+      "displayValue": "Total size was 885 KiB"
+    },
+    {
+      "id": "long-tasks",
+      "title": "Avoid long main-thread tasks",
+      "displayValue": "7 long tasks found"
+    },
+    {
+      "id": "server-response-time",
+      "title": "Initial server response time was short",
+      "displayValue": "Root document took 0 ms"
+    }
+  ],
+  "resources": {
+    "totalBytes": 906437,
+    "byType": {
+      "image": 867692,
+      "font": 34900,
+      "document": 2338,
+      "script": 1507,
+      "stylesheet": 0,
+      "media": 0,
+      "other": 0
+    }
+  },
+  "warnings": []
+}

@@ -1,8 +1,15 @@
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { CommanderError } from 'commander';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { AuditDeps } from '../src/commands/audit.js';
+import type { ReadDeps } from '../src/commands/read-deps.js';
+import { UsageError } from '../src/errors.js';
 import { buildProgram } from '../src/program.js';
 import type { RunOptions } from '../src/runner.js';
+import { saveReport } from '../src/store.js';
+import { makeReport } from './helpers.js';
 
 describe('buildProgram', () => {
   it('se llama wperf y describe su propósito en la ayuda', () => {
@@ -66,5 +73,72 @@ describe('wperf audit', () => {
 
   it('exige la URL', async () => {
     await usageError([]);
+  });
+});
+
+describe('wperf compare / history', () => {
+  let dir: string;
+  let out: string[];
+
+  beforeEach(async () => {
+    dir = await mkdtemp(join(tmpdir(), 'wperf-program-'));
+    out = [];
+    await saveReport(dir, makeReport({ createdAt: '2026-10-21T10:00:00Z', score: 40 }));
+    await saveReport(dir, makeReport({ createdAt: '2026-10-21T11:00:00Z', score: 90 }));
+  });
+  afterEach(() => rm(dir, { recursive: true, force: true }));
+
+  const readDeps: ReadDeps = {
+    get baseDir() {
+      return dir;
+    },
+    out: (t) => out.push(t),
+    log: () => {},
+    color: false,
+  };
+
+  function program() {
+    const p = buildProgram(undefined, readDeps);
+    p.commands.forEach((c) => c.configureOutput({ writeErr: () => {}, outputError: () => {} }));
+    return p;
+  }
+  const run = (...args: string[]) => program().parseAsync(['node', 'wperf', ...args]);
+
+  it('compare sin argumentos compara los dos últimos; el formato por defecto es text', async () => {
+    await run('compare');
+    expect(out[0]).toContain('Comparación de rendimiento — improved');
+    expect(out[0]).toContain('Puntuación: 40 → 90');
+  });
+
+  it('compare acepta --url y --format', async () => {
+    await run('compare', '--url', 'https://example.com/', '--format', 'json');
+    expect(JSON.parse(out[0]!).score.after).toBe(90);
+  });
+
+  it('history acepta --device, --metric y --format', async () => {
+    await run(
+      'history',
+      'https://example.com/',
+      '--device',
+      'mobile',
+      '--metric',
+      'lcp',
+      '--format',
+      'md',
+    );
+    expect(out[0]).toContain('| ID | LCP |');
+  });
+
+  it('compare con una sola referencia es un error de uso', async () => {
+    await expect(run('compare', 'solo-una')).rejects.toBeInstanceOf(UsageError);
+  });
+
+  it.each([
+    ['history sin URL', ['history']],
+    ['history con --metric desconocida', ['history', 'https://example.com/', '--metric', 'fid']],
+    ['history con --device desconocido', ['history', 'https://example.com/', '--device', 'tablet']],
+    ['compare con --format desconocido', ['compare', '--format', 'html']],
+  ])('%s: error de uso', async (_name, args) => {
+    await expect(run(...args)).rejects.toBeInstanceOf(CommanderError);
   });
 });

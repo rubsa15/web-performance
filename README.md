@@ -24,6 +24,17 @@ npx wperf audit https://example.com --format json --no-save # solo el Report por
 
 Cada auditoría guarda un reporte en `.perf/reports/<sitio>/<timestamp>-<device>.json` (con `--keep-raw`, también los LHR crudos en `.perf/raw/`). El progreso y la ruta guardada van por stderr, así que `--format json` deja stdout limpio.
 
+### Comparar y ver el histórico
+
+```sh
+npx wperf compare                                   # los dos últimos reportes (del sitio más reciente)
+npx wperf compare --url https://example.com         # los dos últimos de esa URL
+npx wperf compare <antes> <después> --format md     # ids o rutas a reportes concretos
+npx wperf history https://example.com --metric lcp  # evolución de una métrica
+```
+
+`compare` clasifica cada métrica como `improved`, `regressed` o `unchanged` (ruido) y cada oportunidad como `new`, `resolved`, `better`, `worse` o `same`. Una métrica solo cambia si el salto supera su umbral **y** los rangos min–max de ambos reportes no se solapan; los umbrales salen de [docs/metrics/noise.md](docs/metrics/noise.md). No compara reportes de distinto `device` o `throttling` (error de uso, código 2) y avisa si cambia la versión de Lighthouse o de Chrome, o si las URLs difieren.
+
 Los tests que lanzan Chrome real son lentos y van aparte: `npm run test:slow`.
 
 ## Web demo

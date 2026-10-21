@@ -5,7 +5,10 @@ import {
   type AuditDeps,
   type AuditOptions,
 } from './commands/audit.js';
-import { DEVICES } from './schema.js';
+import { compareCommand, type CompareOptions } from './commands/compare.js';
+import { historyCommand, type HistoryOptions } from './commands/history.js';
+import type { ReadDeps } from './commands/read-deps.js';
+import { DEVICES, METRIC_IDS } from './schema.js';
 
 export const EXIT_CODES = {
   ok: 0,
@@ -21,7 +24,12 @@ function parsePositiveInt(value: string): number {
   return Number(value);
 }
 
-export function buildProgram(auditDeps?: AuditDeps): Command {
+const FORMATS = ['text', 'json', 'md'] as const;
+
+const formatOption = (): Option =>
+  new Option('--format <format>', 'formato de salida').choices(FORMATS).default('text');
+
+export function buildProgram(auditDeps?: AuditDeps, readDeps?: ReadDeps): Command {
   const program = new Command()
     .name('wperf')
     .description('Audita el rendimiento de una web, prioriza mejoras y compara auditorías.')
@@ -42,14 +50,34 @@ export function buildProgram(auditDeps?: AuditDeps): Command {
     .addOption(
       new Option('--keep-raw', 'guardar también los LHR crudos en .perf/raw/').conflicts('save'),
     )
-    .addOption(
-      new Option('--format <format>', 'formato de salida')
-        .choices(['text', 'json', 'md'])
-        .default('text'),
-    )
+    .addOption(formatOption())
     .action((url: string, options: AuditOptions) =>
       auditCommand(url, options, auditDeps ?? defaultAuditDeps()),
     );
+
+  program
+    .command('compare')
+    .description(
+      'Compara dos reportes y clasifica cada cambio como improved, regressed o unchanged (ruido).',
+    )
+    .argument('[a]', 'reporte "antes" (ruta o id)')
+    .argument('[b]', 'reporte "después" (ruta o id)')
+    .option('--url <url>', 'sin reportes explícitos: compara los dos últimos de esta URL')
+    .addOption(formatOption())
+    .action((a: string | undefined, b: string | undefined, options: CompareOptions) =>
+      compareCommand(a, b, options, readDeps),
+    );
+
+  program
+    .command('history')
+    .description('Lista las auditorías guardadas de una URL y la evolución de sus métricas.')
+    .argument('<url>', 'URL cuyas auditorías se listan')
+    .addOption(new Option('--device <device>', 'solo este perfil').choices(DEVICES))
+    .addOption(
+      new Option('--metric <metric>', 'centra la salida en una métrica').choices(METRIC_IDS),
+    )
+    .addOption(formatOption())
+    .action((url: string, options: HistoryOptions) => historyCommand(url, options, readDeps));
 
   return program;
 }

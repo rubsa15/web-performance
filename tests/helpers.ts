@@ -1,5 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { normalize } from '../src/normalizer.js';
+import { impactOf, rate } from '../src/rules.js';
+import {
+  METRIC_IDS,
+  type Device,
+  type Metric,
+  type MetricId,
+  type Opportunity,
+  type Report,
+} from '../src/schema.js';
 
 /** Solo los campos del LHR que los tests modifican; el resto pasa tal cual. */
 export interface LhrFixture {
@@ -29,4 +39,67 @@ export function variant(
   set('total-blocking-time', changes.tbt);
   set('cumulative-layout-shift', changes.cls);
   return copy;
+}
+
+export interface ReportChanges {
+  url?: string;
+  device?: Device;
+  createdAt?: string;
+  label?: string;
+  throttling?: string;
+  lighthouseVersion?: string;
+  chromeVersion?: string;
+  runs?: number;
+  score?: number;
+  /** `value` sin `min`/`max` los iguala a `value` (sin dispersión); la valoración se recalcula. */
+  metrics?: Partial<Record<MetricId, Partial<Metric>>>;
+  opportunities?: Opportunity[];
+  resources?: Report['resources'];
+}
+
+/** Reporte sintético a partir del fixture de BBC, con solo lo que el test necesita cambiar. */
+export function makeReport(changes: ReportChanges = {}): Report {
+  const base = normalize([loadLhr('lhr-bbc-mobile')], {
+    url: changes.url ?? 'https://example.com/',
+    device: 'mobile',
+    createdAt: new Date(changes.createdAt ?? '2026-10-21T10:00:00Z'),
+    ...(changes.label !== undefined && { label: changes.label }),
+  });
+  const report = structuredClone(base);
+  report.device = changes.device ?? report.device;
+  report.id = `${report.createdAt.replaceAll(':', '-')}-${report.device}`;
+  if (changes.throttling) report.environment.throttling = changes.throttling;
+  if (changes.lighthouseVersion) report.environment.lighthouseVersion = changes.lighthouseVersion;
+  if (changes.chromeVersion) report.environment.chromeVersion = changes.chromeVersion;
+  report.environment.runs = changes.runs ?? 3;
+  if (changes.score !== undefined) report.score = changes.score;
+  if (changes.opportunities) report.opportunities = changes.opportunities;
+  if (changes.resources) report.resources = changes.resources;
+  for (const id of METRIC_IDS) {
+    const patch = changes.metrics?.[id];
+    if (!patch) continue;
+    const metric = report.metrics[id];
+    const value = patch.value ?? metric.value;
+    report.metrics[id] = {
+      ...metric,
+      value,
+      min: patch.min ?? (patch.value !== undefined ? value : metric.min),
+      max: patch.max ?? (patch.value !== undefined ? value : metric.max),
+      rating: patch.rating ?? rate(id, value),
+    };
+  }
+  return report;
+}
+
+export function makeOpportunity(id: string, savingsMs: number, savingsBytes = 0): Opportunity {
+  return {
+    id,
+    title: `Título de ${id}`,
+    category: 'other',
+    savingsMs,
+    savingsBytes,
+    impact: impactOf(savingsMs, savingsBytes),
+    affectedMetrics: [],
+    items: [],
+  };
 }

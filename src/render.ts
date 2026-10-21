@@ -19,7 +19,7 @@ export interface RenderOptions {
   top?: number;
 }
 
-const METRIC_LABELS: Record<MetricId, string> = {
+export const METRIC_LABELS: Record<MetricId, string> = {
   lcp: 'LCP',
   fcp: 'FCP',
   tbt: 'TBT',
@@ -31,18 +31,18 @@ const METRIC_LABELS: Record<MetricId, string> = {
 const DEFAULT_TOP = 10;
 const MAX_MD_ITEMS = 3;
 
-const formatNumber = (value: number): string => new Intl.NumberFormat('en-US').format(value);
+export const formatNumber = (value: number): string => new Intl.NumberFormat('en-US').format(value);
 
-function formatValue(metric: Metric, value: number): string {
+export function formatValue(metric: Pick<Metric, 'unit'>, value: number): string {
   return metric.unit === 'ms' ? `${formatNumber(value)} ms` : String(value);
 }
 
-function formatBytes(bytes: number): string {
+export function formatBytes(bytes: number): string {
   const kib = bytes / 1024;
   return kib >= 1024 ? `${(kib / 1024).toFixed(1)} MiB` : `${Math.round(kib)} KiB`;
 }
 
-function formatSavings(op: Opportunity): string {
+export function formatSavings(op: Pick<Opportunity, 'savingsMs' | 'savingsBytes'>): string {
   const parts: string[] = [];
   if (op.savingsMs > 0) parts.push(`${formatNumber(op.savingsMs)} ms`);
   if (op.savingsBytes > 0) parts.push(formatBytes(op.savingsBytes));
@@ -69,9 +69,15 @@ export function renderJson(report: Report): string {
   return JSON.stringify(report, null, 2);
 }
 
+export type Paint = (format: Parameters<typeof styleText>[0], text: string) => string;
+
+/** Aplica estilos ANSI solo si `color` está activo. */
+export function painter(color: boolean | undefined): Paint {
+  return (format, text) => (color ? styleText(format, text, { validateStream: false }) : text);
+}
+
 export function renderText(report: Report, options: RenderOptions = {}): string {
-  const paint = (format: Parameters<typeof styleText>[0], text: string): string =>
-    options.color ? styleText(format, text, { validateStream: false }) : text;
+  const paint = painter(options.color);
   const ratingColor: Record<Rating, 'green' | 'yellow' | 'red'> = {
     good: 'green',
     'needs-improvement': 'yellow',
@@ -125,7 +131,7 @@ export function renderText(report: Report, options: RenderOptions = {}): string 
   return lines.join('\n');
 }
 
-function mdCell(text: string): string {
+export function mdCell(text: string): string {
   return text.replaceAll('|', '\\|');
 }
 

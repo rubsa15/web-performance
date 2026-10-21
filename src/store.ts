@@ -1,8 +1,8 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
-import { RuntimeError } from './errors.js';
-import { ReportSchema, type Report } from './schema.js';
+import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
 import { z } from 'zod';
+import { RuntimeError, UsageError } from './errors.js';
+import { ReportSchema, type Device, type Report } from './schema.js';
 
 export const PERF_DIR = '.perf';
 
@@ -59,4 +59,92 @@ export async function saveRawLhrs(
       return path;
     }),
   );
+}
+
+export interface StoredReport {
+  path: string;
+  report: Report;
+}
+
+const reportsDir = (baseDir: string): string => join(baseDir, PERF_DIR, 'reports');
+
+async function readdirOrEmpty(dir: string): Promise<string[]> {
+  try {
+    return await readdir(dir);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return [];
+    throw error;
+  }
+}
+
+/**
+ * Reportes guardados en `<baseDir>/.perf/reports/`, de más antiguo a más reciente.
+ * `url` filtra por URL exacta y `device` por perfil.
+ */
+export async function listReports(
+  baseDir: string,
+  filter: { url?: string; device?: Device } = {},
+): Promise<StoredReport[]> {
+  const root = reportsDir(baseDir);
+  const sites = filter.url ? [siteSlug(filter.url)] : await readdirOrEmpty(root);
+  const paths = (
+    await Promise.all(
+      sites.map(async (site) =>
+        (await readdirOrEmpty(join(root, site)))
+          .filter((name) => name.endsWith('.json'))
+          .map((name) => join(root, site, name)),
+      ),
+    )
+  ).flat();
+
+  const stored = await Promise.all(
+    paths.map(async (path) => ({ path, report: await readReport(path) })),
+  );
+  return stored
+    .filter(
+      ({ report }) =>
+        (filter.url === undefined || report.url === filter.url) &&
+        (filter.device === undefined || report.device === filter.device),
+    )
+    .sort(
+      (a, b) =>
+        a.report.createdAt.localeCompare(b.report.createdAt) ||
+        a.report.id.localeCompare(b.report.id),
+    );
+}
+
+async function isFile(path: string): Promise<boolean> {
+  try {
+    return (await stat(path)).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Resuelve una referencia a un reporte: ruta a un `.json` (relativa a `baseDir`) o id
+ * (`2026-10-19T10-32-00Z-mobile`), que se busca en todos los sitios guardados.
+ */
+export async function resolveReport(baseDir: string, ref: string): Promise<StoredReport> {
+  const asPath = resolve(baseDir, ref);
+  if (await isFile(asPath)) return { path: asPath, report: await readReport(asPath) };
+  if (ref.endsWith('.json') || ref.includes('/')) {
+    throw new UsageError(`No existe el fichero ${asPath}.`);
+  }
+
+  const root = reportsDir(baseDir);
+  const matches: string[] = [];
+  for (const site of await readdirOrEmpty(root)) {
+    const candidate = join(root, site, `${ref}.json`);
+    if (await isFile(candidate)) matches.push(candidate);
+  }
+  if (matches.length === 0) {
+    throw new UsageError(`No hay ningún reporte con id "${ref}" en ${root}.`);
+  }
+  if (matches.length > 1) {
+    throw new UsageError(
+      `El id "${ref}" existe en varios sitios; indica la ruta:\n${matches.map((m) => `  ${m}`).join('\n')}`,
+    );
+  }
+  return { path: matches[0] as string, report: await readReport(matches[0] as string) };
 }
