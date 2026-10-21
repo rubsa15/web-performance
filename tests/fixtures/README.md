@@ -24,3 +24,12 @@ Los tests dependen de estos valores concretos; si se recapturan hay que actualiz
 | `demo-arreglada-2.json`    | `demo/site-fixed`, auditoría 2 de 10                                                        |
 
 Los tests dependen de estos valores concretos; si se recapturan hay que actualizar las aserciones.
+
+Los dos siguientes son los reportes de los que salen las cifras de los ejemplos de `.claude/skills/perf-audit/references/ejemplo-salida.md` y `.claude/skills/perf-compare/references/ejemplo-salida.md`; `tests/skill-eval.test.ts` comprueba que esas cifras salen de ellos.
+
+| Fichero                                                  | Origen                                                                                                                                                                                 |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ejemplo-skill-rota.json`                                | `demo/site`, `wperf audit --runs 3` (id `2026-10-21T19-42-38Z-mobile`)                                                                                                                 |
+| `ejemplo-skill-regresion-antes.json`                     | `demo/site`, `wperf audit --runs 3` (id `2026-10-21T19-41-55Z-mobile`): "antes" del ejemplo de regresión de `perf-compare` (contra `ejemplo-skill-rota`)                               |
+| `ejemplo-skill-red-default.json`, `-3g.json`, `-4g.json` | `demo/site`, `wperf audit --network default\|3g\|4g --runs 3` (ids `2026-10-21T21-03-50Z-mobile`, `…21-04-16Z-mobile-3g`, `…21-04-42Z-mobile-4g`): ejemplo multiperfil de `perf-audit` |
+| `ejemplo-skill-arreglada.json`                           | `demo/site-fixed`, igual (id `2026-10-21T19-43-21Z-mobile`)                                                                                                                            |

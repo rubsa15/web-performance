@@ -1,0 +1,100 @@
+---
+name: perf-audit
+description: Audita el rendimiento de una web con el CLI `wperf` (Lighthouse) en varios perfiles de red (y de dispositivo si se pide) y explica los resultados - agrupa las oportunidades por causa raíz, distingue las que dependen de la red de las que no, estima esfuerzo S/M/L y entrega una tabla priorizada impacto/esfuerzo con la evidencia medida. Úsala siempre que el usuario pida auditar, medir, analizar o diagnosticar el rendimiento o la velocidad de una URL o de la web del repo (LCP, CLS, TBT, Lighthouse, "va lenta", "qué mejoro primero"), aunque no mencione wperf, y también para interpretar un reporte ya guardado en `.perf/reports/`.
+---
+
+# perf-audit
+
+Convierte una auditoría de `wperf` en un plan de mejora priorizado. El CLI mide; tú interpretas. Esa frontera es lo que hace útil el resultado: el usuario tiene que poder fiarse de cada cifra.
+
+## Reglas que no se negocian
+
+1. **Toda cifra medida sale del JSON del CLI.** Tiempos, bytes, puntuaciones, número de recursos: cópialos del `Report`, nunca los estimes ni los recuerdes. Si una mejora no tiene dato de ahorro (`savingsMs` y `savingsBytes` a 0), escribe "sin ahorro medido" en lugar de inventar uno.
+   - Cuando verifiques un hallazgo fuera del reporte (dimensiones de una imagen, tamaño de un bucle en el código, bytes de un HTML descargado con `curl`) o calcules algo (suma de dos recursos, porcentaje sobre el total), la cifra es válida pero **no es del CLI**: ponla en una línea que diga `(fuente: código)`, `(fuente: fichero)`, `(fuente: curl)` o `(fuente: cálculo)` con los operandos. Es lo que permite revisar de un vistazo qué viene del CLI y qué no, y lo que `skill-eval figures` entiende.
+2. **Separa medición de hipótesis.** Lo que está en el JSON es *medición*; la causa probable, el esfuerzo y cualquier cosa que deduzcas leyendo el código es *hipótesis*. Márcalo en la salida (columna o etiqueta), porque el usuario decide con esa distinción.
+3. **No sumes ahorros.** Los ahorros de Lighthouse se solapan (p. ej. imagen y LCP). Presenta cada uno por separado y no calcules "total ahorrable".
+4. **El usuario elige.** Termina proponiendo qué abordar primero, pero no edites código: eso es `perf-fix`.
+
+## Flujo
+
+### 1. Obtener los reportes
+
+Una sola medición engaña: la misma web puede estar bien con buena red y fatal con una mala, y los problemas que dependen de los bytes no son los mismos que los que dependen de la CPU. Por eso, salvo que el usuario pida otra cosa, **audita tres perfiles de red para un mismo dispositivo** (por defecto `mobile`):
+
+| `--network` | Qué simula                                                                    |
+| ----------- | ----------------------------------------------------------------------------- |
+| `default`   | La red del dispositivo (mobile: 150 ms de RTT y 1,6 Mbps; desktop: 40 ms y 10 Mbps). Es la que puntúa Lighthouse: el perfil de referencia del informe. |
+| `3g`        | 300 ms de RTT y 700 Kbps. Red lenta.                                          |
+| `4g`        | 40 ms de RTT y 10 Mbps. Red rápida.                                           |
+
+La CPU conserva la ralentización del dispositivo en los tres, así que lo que cambia entre perfiles es solo la red.
+
+Si el usuario pide **varios dispositivos**, repite los tres perfiles con `--device desktop` (o el que pida). En desktop `default` ya es una red rápida, y `4g` se le parece mucho: dilo si los resultados apenas difieren. Si solo quiere una medición rápida, usa `default` y dile que no habrá comparación entre redes.
+
+Los perfiles se lanzan **uno detrás de otro, nunca en paralelo**: dos Chrome a la vez compiten por la CPU y falsean las métricas.
+
+- Si el usuario da una URL: ejecuta la auditoría. El CLI debe estar compilado: ejecuta `npm run build` antes (es rápido y evita auditar con un `dist/` viejo).
+  ```sh
+  for n in default 3g 4g; do
+    npx wperf audit <url> --device <mobile|desktop> --network $n --runs 3 --format json > /tmp/audit-$n.json
+  done
+  ```
+  Usa `mobile` por defecto (es lo que mide Core Web Vitals en Lighthouse). Cada perfil tarda de uno a varios minutos: ponle un `timeout` alto o lánzalos en segundo plano y espera a que acaben. El JSON va por stdout y el progreso por stderr; la ruta del reporte guardado sale en stderr.
+- Redirige stdout a un fichero y léelo de ahí o de `.perf/reports/`: el JSON es largo y no hace falta volcarlo entero al contexto.
+- Si un perfil falla, cuéntalo y continúa con los demás; no rellenes el hueco. `warnings` puede avisar de que Lighthouse no aplicó el perfil pedido: en ese caso descarta ese reporte.
+- Si la URL es la demo (`127.0.0.1:4173`) y no responde, arranca `npm run demo` en segundo plano antes de auditar.
+- Si el usuario indica un reporte ya guardado, léelo de `.perf/reports/` (o con `npx wperf history <url>` para localizarlo) en vez de auditar de nuevo. Si solo hay uno, trabaja con ese perfil (mira `environment.network`; ausente = `default`) y dilo.
+- Errores: código 2 = uso (corrige la invocación), código 3 = ejecución (Chrome, red, timeout; cuéntalo tal cual y sugiere `CHROME_PATH` o reintentar). No sigas con datos parciales.
+- Revisa `warnings` y `environment.runs`: si hay avisos o solo una ejecución, dilo, porque afecta a la fiabilidad. Mira también la dispersión: si en una métrica `max` es más del doble de `min` (p. ej. LCP de 2 429 a 7 230 ms), la mediana es válida pero inestable; avísalo junto a esa métrica. Si `git.dirty` es `true`, menciónalo como nota (el reporte incluye cambios sin commitear).
+
+### 2. Leer los reportes
+
+Campos útiles del `Report` (esquema en `src/schema.ts`): `score`, `metrics.{lcp,fcp,tbt,cls,si,ttfb}` (`value`, `min`, `max`, `rating`), `opportunities[]` (`id`, `category`, `savingsMs`, `savingsBytes`, `impact`, `affectedMetrics`, `items[]`), `diagnostics[]`, `resources.byType`.
+
+Trampas frecuentes, verificadas en la demo y en webs reales:
+
+- **`impact` no basta para ordenar.** Es una regla sobre ahorro en ms/KiB. `unsized-images` y `cls-culprits-insight` salen con ahorro 0 e `impact: low` aunque el CLS esté en `poor` y sea el problema más visible. Cruza siempre con `affectedMetrics` y el `rating` de esas métricas: una oportunidad "low" que apunta a una métrica `poor` merece subir.
+- **`impact: high` tampoco garantiza urgencia.** Una oportunidad con ahorro grande pero cuya `affectedMetrics` está solo en `good` o `needs-improvement` es mejora real pero va después de las que mueven una métrica `poor`.
+- **`cache-insight` mide visitas repetidas, no la primera carga.** Su ahorro (a veces enorme) no mejora LCP/TBT del primer acceso: preséntalo aparte, nunca como causa de una métrica de primera carga.
+- **`cpuMs` no es TBT.** El `cpuMs` de un script (`bootup-time`) es CPU total; el TBT solo cuenta el bloqueo de tareas largas. No los compares ni los restes.
+- **Diagnósticos vs. métricas.** `diagnostics[]` es informativo y puede contradecir una métrica (`server-response-time` dice "0 ms" con `ttfb` de 752 ms). Cita siempre `metrics.*` y usa el diagnóstico solo como pista. Del mismo modo, para el peso de la página usa `resources.totalBytes`; `total-byte-weight` e `image-delivery-insight` miden por su cuenta y difieren en unos bytes: di de qué id sale cada cifra.
+- **No todo problema es una oportunidad.** Lighthouse 13 no tiene `offscreen-images`: las imágenes sin `loading="lazy"` solo se ven de forma indirecta, en `resources.byType.image` (o `total-byte-weight`) muy alto en relación con lo que se ve en pantalla. Lo mismo pasa con vídeo y otros `media` (`resources.byType.media`), que solo asoman en `total-byte-weight` y `cache-insight`. Si los datos lo sugieren, comprueba el HTML (en el repo, o con un único `curl` si es una web ajena) y preséntalo como **hallazgo indirecto**, citando la cifra de bytes medida y marcando la causa como hipótesis hasta verificarla. El `Report` no dice qué elemento es el LCP: si `lcp-discovery-insight` viene vacío, di que el elemento LCP no está identificado y no lo afirmes.
+
+### 3. Cruzar los perfiles de red
+
+No uses `wperf compare` entre perfiles: el CLI lo rechaza a propósito (error de uso) porque no son medidas comparables como "antes/después". La comparación entre redes la haces tú leyendo los tres `Report`, y solo con cifras que salen de ellos.
+
+Para cada causa raíz anota en qué perfiles aparece y con qué ahorro (`savingsMs`, `savingsBytes` de cada reporte). Con eso la clasificas en una de estas tres, que es lo que más le sirve al usuario para decidir:
+
+- **Independiente de la red**: aparece con ahorro parecido en los tres perfiles (en la demo, `font-display-insight` con 300 ms, y los problemas de CLS, sin ahorro medido pero con la métrica igual en los tres). Prioridad estable.
+- **Sensible a la red**: su ahorro en ms cambia mucho con la red. En la demo `image-delivery-insight` va de 5 050 ms (`4g`) a 81 500 ms (`3g`) con los mismos bytes: la red decide cuánto duele. Mira primero los `savingsBytes`: si son iguales y el tiempo no, la causa son los bytes, no la lógica.
+- **Solo visible en un perfil, o que se mueve sin lógica aparente**: cuéntalo tal cual y trata la causa como hipótesis. No des por hecho que el hilo principal (`bootup-time`, `mainthread-work-breakdown`, TBT) sea indiferente a la red: en la demo el TBT es 43 ms en `3g`, 518 ms en `default` y 1 406 ms en `4g`, y el ahorro de `bootup-time` va de 50 a 1 350 ms, aunque la CPU es la misma. Hipótesis a mencionar: el TBT solo cuenta las tareas largas entre FCP y TTI, y con red lenta el FCP se retrasa tanto que esa tarea cae antes de la ventana. El problema de CPU sigue ahí; lo que cambia es que la métrica lo ve o no. Por eso el perfil donde el TBT parece bueno no es una absolución: un TBT bajo en `3g` junto a uno alto en `4g` significa que la tarea larga existe.
+
+Reglas para esa lectura:
+
+- El perfil de referencia del informe es `default`; los demás son contexto. Si un `rating` cambia entre perfiles (p. ej. LCP `good` en `4g` y `poor` en `3g`), eso es un hallazgo: dilo con las tres cifras.
+- Compara cada métrica con el rango `min`–`max` de su perfil. Si dos perfiles se solapan en rango, no afirmes que uno es peor que el otro.
+- "Aparece en N de 3 perfiles" es un recuento tuyo sobre los reportes: está bien, y las cifras de ahorro de cada perfil las citas tal cual.
+- No extrapoles: tres redes simuladas no son todas las redes. Habla de "estos perfiles", no de "los usuarios reales".
+
+### 4. Agrupar por causa raíz
+
+Varias oportunidades suelen ser el mismo problema. Agrúpalas antes de priorizar; el usuario necesita 4–7 acciones, no 11 filas de Lighthouse. Los terceros (analítica, consentimiento, tag managers) no tienen oportunidad propia: si pesan, agrúpalos tú por origen a partir de los `items[]` y marca la suma como `(fuente: cálculo)`. Usa [references/causas-raiz.md](references/causas-raiz.md) para el mapa de ids → causa y para estimar esfuerzo. Cada grupo debe citar los ids que lo componen.
+
+### 5. Priorizar y presentar
+
+Orden: (1) causas cuya `affectedMetrics` incluye una métrica `poor` en el perfil de referencia, y a continuación las que solo son `poor` en otro perfil (indica en cuál); (2) las de una métrica `needs-improvement`; (3) el resto. Dentro de cada grupo, por `impact`, `savingsMs` y `savingsBytes` (el orden del CLI). Toma las métricas afectadas del `affectedMetrics` del JSON, no del mapa de causas: el mapa es una guía, el reporte manda. El `rating` cambia de una auditoría a otra (el mismo problema puede ser `poor` hoy y `needs-improvement` mañana), así que el orden del ejemplo no es una plantilla. Formato de cifras: ms enteros con espacio de millares (`40 728 ms`), MiB con 2 decimales si el valor supera 1 MiB, KiB enteros por debajo, coma decimal; redondea, no trunques. Esfuerzo (S/M/L) es hipótesis tuya, justificada en una frase: S = cambio de atributo o configuración; M = tocar varios ficheros o regenerar assets; L = rediseño o refactor de lógica.
+
+Estructura de la respuesta (ejemplo completo en [references/ejemplo-salida.md](references/ejemplo-salida.md)):
+
+1. **Resumen**: URL, dispositivo, fecha/ids de los reportes, nº de ejecuciones y una tabla con una columna por perfil de red: `score` y las seis métricas (valor y `rating`). Una frase de diagnóstico general que diga cuánto depende la web de la red.
+2. **Tabla priorizada** — una fila por causa raíz: prioridad, problema, evidencia medida (recurso + ahorro, con ids de auditoría), **comportamiento ante la red** (independiente / sensible / solo en un perfil, con el ahorro en cada perfil), métricas afectadas, esfuerzo (S/M/L, hipótesis).
+3. **Detalle por problema** (unas 4–6 líneas cada uno): qué pasa en lenguaje claro, evidencia (`items[]`: URL del recurso y su ahorro), causa probable marcada como *hipótesis*, y cómo comprobarla. Sin código fuente (web ajena), la comprobación es "inspecciona el HTML/DevTools"; no finjas haber leído el código.
+4. **Qué no está medido**: hallazgos indirectos, oportunidades sin ahorro y diagnósticos sin `impact` (`bf-cache`, `non-composited-animations`…) que no mereció la pena priorizar.
+5. **Siguiente paso**: pregunta qué problemas quiere abordar; ofrece `perf-fix` para aplicarlos y volver a auditar con `perf-compare`.
+
+Con un solo perfil, omite las columnas por red y la clasificación. Guarda el informe como Markdown junto al reporte si el usuario lo pide (`.perf/reports/<sitio>/<id>.md`); no lo hagas por defecto.
+
+## Antes de responder: comprobación de cifras
+
+Repasa tu borrador y verifica que cada número aparece en el JSON (o es una conversión directa: ms→s, bytes→KiB/MiB). Si has redondeado, redondea igual en todo el informe y di la unidad. Si no localizas el origen de una cifra, quítala.
