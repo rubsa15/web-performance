@@ -17,7 +17,7 @@ Ids de Lighthouse 13 tal y como salen en `opportunities[].id`. La columna "esfue
 
 ## Notas
 
-- `image-delivery-insight` puede cubrir a la vez la imagen hero (LCP) y las de la galería: los `items[]` dicen cuáles. Si hay un recurso dominante, sepáralo en dos acciones (hero / resto) porque el arreglo y el esfuerzo difieren.
+- `image-delivery-insight` puede cubrir a la vez la imagen hero (LCP) y las de la galería: los `items[]` dicen cuáles. Separa la fila (hero / resto) cuando el arreglo difiere, no por el tamaño: el hero se arregla con `srcset`/`sizes`/`fetchpriority`; la galería, con compresión y `loading="lazy"`.
 - `bootup-time` y `mainthread-work-breakdown` suelen repetir el mismo ahorro de TBT: es un único problema, no dos. `items[]` de `bootup-time` indica qué script gasta CPU (`cpuMs`).
 - `cache-insight` y `uses-long-cache-ttl` hablan de visitas repetidas: no son causa de métricas de primera carga.
 - Un id que no esté aquí: agrúpalo por su `category` y trátalo como causa propia, diciendo que no está en el mapa.

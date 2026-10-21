@@ -1,0 +1,450 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-21T21-31-42Z-mobile-3g",
+  "url": "https://www.bancosantander.es/particulares/",
+  "finalUrl": "https://www.bancosantander.es/particulares/",
+  "device": "mobile",
+  "createdAt": "2026-10-21T21:31:42Z",
+  "environment": {
+    "lighthouseVersion": "13.5.0",
+    "chromeVersion": "155.0.0.0",
+    "throttling": "simulate",
+    "network": "3g",
+    "runs": 3,
+    "representativeRun": 2
+  },
+  "git": {
+    "commit": "1028e0d",
+    "dirty": true
+  },
+  "score": 26,
+  "metrics": {
+    "lcp": {
+      "value": 28258,
+      "unit": "ms",
+      "min": 28144,
+      "max": 31010,
+      "rating": "poor"
+    },
+    "fcp": {
+      "value": 5896,
+      "unit": "ms",
+      "min": 5895,
+      "max": 6570,
+      "rating": "poor"
+    },
+    "tbt": {
+      "value": 4826,
+      "unit": "ms",
+      "min": 4776,
+      "max": 4830,
+      "rating": "poor"
+    },
+    "cls": {
+      "value": 0.028,
+      "unit": "",
+      "min": 0.028,
+      "max": 0.028,
+      "rating": "good"
+    },
+    "si": {
+      "value": 13184,
+      "unit": "ms",
+      "min": 13145,
+      "max": 14163,
+      "rating": "poor"
+    },
+    "ttfb": {
+      "value": 919,
+      "unit": "ms",
+      "min": 900,
+      "max": 919,
+      "rating": "needs-improvement"
+    }
+  },
+  "opportunities": [
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "category": "javascript",
+      "savingsMs": 4850,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["tbt"],
+      "items": []
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "category": "javascript",
+      "savingsMs": 4600,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["tbt"],
+      "items": [
+        {
+          "url": "https://www.bancosantander.es/_next/static/chunks/framework-6d5b2f87b9dff77b.js",
+          "cpuMs": 5174
+        },
+        {
+          "url": "https://www.bancosantander.es/_next/static/chunks/pages/_app-cdd1e1b62aa221df.js",
+          "cpuMs": 1643
+        },
+        {
+          "url": "https://www.bancosantander.es/particulares/",
+          "cpuMs": 1286
+        },
+        {
+          "url": "Unattributable",
+          "cpuMs": 1184
+        },
+        {
+          "url": "https://js-cdn.dynatrace.com/jstag/18ef095e1d6/bf32259dnj/e2bf7054a7871f7a_complete.js",
+          "cpuMs": 1024
+        },
+        {
+          "url": "https://www.bancosantander.es/_next/static/chunks/main-1044bcc1e3083a37.js",
+          "cpuMs": 118
+        },
+        {
+          "url": "https://cdn.cookielaw.org/scripttemplates/202604.2.0/otBannerSdk.js",
+          "cpuMs": 95
+        },
+        {
+          "url": "https://cdn1.adoberesources.net/alloy/2.25.0/alloy.min.js",
+          "cpuMs": 95
+        },
+        {
+          "url": "https://tags.tiqcdn.com/utag/sanes/es-web-commercial/prod/utag.js",
+          "cpuMs": 89
+        },
+        {
+          "url": "https://www.bancosantander.es/_next/static/chunks/pages/%5B%5B...slug%5D%5D-884985961b6aeba3.js",
+          "cpuMs": 86
+        }
+      ]
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "category": "javascript",
+      "savingsMs": 1800,
+      "savingsBytes": 247399,
+      "impact": "high",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "https://www.bancosantander.es/_next/static/chunks/pages/_app-cdd1e1b62aa221df.js",
+          "wastedBytes": 119398,
+          "totalBytes": 437364
+        },
+        {
+          "url": "https://cdn.cookielaw.org/scripttemplates/202604.2.0/otBannerSdk.js",
+          "wastedBytes": 75041,
+          "totalBytes": 138607
+        },
+        {
+          "url": "https://js-cdn.dynatrace.com/jstag/18ef095e1d6/bf32259dnj/e2bf7054a7871f7a_complete.js",
+          "wastedBytes": 28921,
+          "totalBytes": 87465
+        },
+        {
+          "url": "https://www.bancosantander.es/_next/static/chunks/709-c67cccbf256331c0.js",
+          "wastedBytes": 24039,
+          "totalBytes": 47927
+        }
+      ]
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "category": "network",
+      "savingsMs": 1450,
+      "savingsBytes": 8242367,
+      "impact": "high",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:f87a3932-1165-46eb-bf9b-fca176ac16c7/renditions/original/as/UUID",
+          "wastedBytes": 4411745,
+          "totalBytes": 4812813
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:fb084690-e92f-4541-900f-0e96ecdf69a6/renditions/original/as/UUID",
+          "wastedBytes": 3197151,
+          "totalBytes": 3487801
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:8b24b83c-01a5-448d-af70-675315888cfd/as/UUID.webp",
+          "wastedBytes": 77772,
+          "totalBytes": 84842
+        },
+        {
+          "url": "https://js-cdn.dynatrace.com/jstag/18ef095e1d6/bf32259dnj/e2bf7054a7871f7a_complete.js",
+          "wastedBytes": 70378,
+          "totalBytes": 87973
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:01924ce9-784e-4fd4-a1d5-5ceb0a02efa7/as/UUID.webp?width=768",
+          "wastedBytes": 64555,
+          "totalBytes": 70424
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:384d8eeb-649b-4212-aeda-d81be0ab78df/as/UUID.webp?width=768",
+          "wastedBytes": 55615,
+          "totalBytes": 60671
+        },
+        {
+          "url": "https://cdn.cookielaw.org/scripttemplates/202604.2.0/otBannerSdk.js",
+          "wastedBytes": 55474,
+          "totalBytes": 138686
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:5f1b586d-b050-4a94-bf88-85931cd7f1c2/as/UUID.webp?width=768",
+          "wastedBytes": 53973,
+          "totalBytes": 58880
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:62084fa6-8d14-4766-9d56-9e2ab2df1019/as/UUID.webp?width=768",
+          "wastedBytes": 45522,
+          "totalBytes": 49660
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:22ee7c09-19a8-4126-98c9-0f23d5055aed/as/UUID.webp?width=768",
+          "wastedBytes": 40739,
+          "totalBytes": 44442
+        }
+      ]
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "category": "rendering",
+      "savingsMs": 1250,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["fcp"],
+      "items": [
+        {
+          "url": "https://js-cdn.dynatrace.com/jstag/18ef095e1d6/bf32259dnj/e2bf7054a7871f7a_complete.js",
+          "wastedMs": 3014,
+          "totalBytes": 87973
+        },
+        {
+          "url": "https://www.bancosantander.es/_next/static/css/684c2731583a8976.css",
+          "wastedMs": 319,
+          "totalBytes": 1193
+        }
+      ]
+    },
+    {
+      "id": "legacy-javascript-insight",
+      "title": "Legacy JavaScript",
+      "category": "javascript",
+      "savingsMs": 250,
+      "savingsBytes": 25607,
+      "impact": "medium",
+      "affectedMetrics": ["lcp"],
+      "items": [
+        {
+          "url": "https://www.bancosantander.es/_next/static/chunks/main-1044bcc1e3083a37.js",
+          "wastedBytes": 12259
+        },
+        {
+          "url": "https://cdn.cookielaw.org/scripttemplates/202604.2.0/otBannerSdk.js",
+          "wastedBytes": 8879
+        },
+        {
+          "url": "https://www.bancosantander.es/_next/static/chunks/pages/_app-cdd1e1b62aa221df.js",
+          "wastedBytes": 4469
+        }
+      ]
+    },
+    {
+      "id": "unused-css-rules",
+      "title": "Reduce unused CSS",
+      "category": "css",
+      "savingsMs": 0,
+      "savingsBytes": 33815,
+      "impact": "low",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "#onetrust-banner-sdk .onetrust-vendors-list-handler{cursor:pointer;color:#1f96db;font-size:inherit; … } …",
+          "wastedBytes": 19428,
+          "totalBytes": 22552
+        },
+        {
+          "url": ".dyTYID { display: contents; } …",
+          "wastedBytes": 14387,
+          "totalBytes": 24637
+        }
+      ]
+    },
+    {
+      "id": "unminified-css",
+      "title": "Minify CSS",
+      "category": "css",
+      "savingsMs": 0,
+      "savingsBytes": 2908,
+      "impact": "low",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": ".dyTYID { display: contents; } …",
+          "wastedBytes": 2908,
+          "totalBytes": 24637
+        }
+      ]
+    },
+    {
+      "id": "bf-cache",
+      "title": "Page prevented back/forward cache restoration",
+      "category": "other",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": [],
+      "items": []
+    },
+    {
+      "id": "forced-reflow-insight",
+      "title": "Forced reflow",
+      "category": "javascript",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": [],
+      "items": []
+    },
+    {
+      "id": "lcp-discovery-insight",
+      "title": "LCP request discovery",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["lcp"],
+      "items": []
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["lcp"],
+      "items": []
+    },
+    {
+      "id": "total-byte-weight",
+      "title": "Avoid enormous network payloads",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": [],
+      "items": [
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:f87a3932-1165-46eb-bf9b-fca176ac16c7/renditions/original/as/UUID",
+          "totalBytes": 4812813
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:fb084690-e92f-4541-900f-0e96ecdf69a6/renditions/original/as/UUID",
+          "totalBytes": 3487801
+        },
+        {
+          "url": "https://www.bancosantander.es/_next/static/chunks/pages/_app-cdd1e1b62aa221df.js",
+          "totalBytes": 437996
+        },
+        {
+          "url": "https://cdn.cookielaw.org/scripttemplates/202604.2.0/otBannerSdk.js",
+          "totalBytes": 138686
+        },
+        {
+          "url": "https://www.bancosantander.es/particulares/",
+          "totalBytes": 102213
+        },
+        {
+          "url": "https://js-cdn.dynatrace.com/jstag/18ef095e1d6/bf32259dnj/e2bf7054a7871f7a_complete.js",
+          "totalBytes": 87973
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:8b24b83c-01a5-448d-af70-675315888cfd/as/UUID.webp",
+          "totalBytes": 84842
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:01924ce9-784e-4fd4-a1d5-5ceb0a02efa7/as/UUID.webp?width=768",
+          "totalBytes": 70424
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:384d8eeb-649b-4212-aeda-d81be0ab78df/as/UUID.webp?width=768",
+          "totalBytes": 60671
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:5f1b586d-b050-4a94-bf88-85931cd7f1c2/as/UUID.webp?width=768",
+          "totalBytes": 58880
+        }
+      ]
+    },
+    {
+      "id": "unsized-images",
+      "title": "Image elements do not have explicit `width` and `height`",
+      "category": "images",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["cls"],
+      "items": [
+        {
+          "url": ""
+        },
+        {
+          "url": ""
+        },
+        {
+          "url": ""
+        },
+        {
+          "url": "https://assets.santandermedia.com/adobe/assets/urn:aaid:aem:8b24b83c-01a5-448d-af70-675315888cfd/as/UUID.webp"
+        }
+      ]
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "user-timings",
+      "title": "User Timing marks and measures",
+      "displayValue": "4 user timings"
+    },
+    {
+      "id": "long-tasks",
+      "title": "Avoid long main-thread tasks",
+      "displayValue": "20 long tasks found"
+    },
+    {
+      "id": "non-composited-animations",
+      "title": "Avoid non-composited animations",
+      "displayValue": "3 animated elements found"
+    },
+    {
+      "id": "server-response-time",
+      "title": "Initial server response time was short",
+      "displayValue": "Root document took 30 ms"
+    }
+  ],
+  "resources": {
+    "totalBytes": 10359296,
+    "byType": {
+      "media": 8300614,
+      "script": 928770,
+      "image": 505630,
+      "other": 295455,
+      "font": 225421,
+      "document": 102213,
+      "stylesheet": 1193
+    }
+  },
+  "warnings": []
+}

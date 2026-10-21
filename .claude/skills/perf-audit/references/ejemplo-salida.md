@@ -25,13 +25,13 @@ La página transfiere 8,30 MiB (`resources.totalBytes`), de los que 8,10 MiB son
 | --- | --------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------- | -------------------- |
 | 1   | Imágenes sin optimizar (hero y galería)       | `image-delivery-insight`: 32 900 ms y 7,78 MiB de ahorro; `hero.jpg` solo, 2,81 MiB              | LCP           | M                    |
 | 2   | Imágenes sin `width`/`height`                 | `unsized-images`: 7 imágenes; `cls-culprits-insight`; CLS 0,291 (poor). Sin ahorro medido        | CLS           | S                    |
-| 3   | CSS y JS que bloquean el render               | `render-blocking-insight`: 1 550 ms; `three.min.js` 1 502 ms, `app.js` 602 ms, `styles.css` 452 ms | FCP, LCP   | S                    |
-| 4   | Librería JS sin usar                          | `unused-javascript`: 1 050 ms y 118 KiB sin usar en `three.min.js`                               | FCP, LCP      | S                    |
-| 5   | Tarea larga en el hilo principal              | `bootup-time` / `mainthread-work-breakdown`: 650 ms; `app.js` 1 650 ms de CPU; TBT 641 ms (poor) | TBT           | M                    |
-| 6   | Fuentes sin `font-display`                    | `font-display-insight`: 300 ms; `inter-latin-400.woff2` e `inter-latin-700.woff2`                | FCP           | S                    |
-| 7   | Galería bajo el pliegue sin `loading="lazy"` *(indirecto)* | `resources.byType.image` = 8,10 MiB; 6 imágenes `cafe-*.jpg` de ~0,87 MiB cada una | LCP (carga) | S           |
+| 3   | Librería JS sin usar                          | `unused-javascript`: 1 050 ms y 118 KiB sin usar en `three.min.js`                               | FCP, LCP      | S                    |
+| 4   | Tarea larga en el hilo principal              | `bootup-time` / `mainthread-work-breakdown`: 650 ms; `app.js` 1 650 ms de CPU; TBT 641 ms (poor) | TBT           | M                    |
+| 5   | Galería bajo el pliegue sin `loading="lazy"` *(indirecto)* | `resources.byType.image` = 8,10 MiB; 6 imágenes `cafe-*.jpg` de ~0,87 MiB cada una | LCP (carga) | S           |
+| 6   | CSS y JS que bloquean el render               | `render-blocking-insight`: 1 550 ms; `three.min.js` 1 502 ms, `app.js` 602 ms, `styles.css` 452 ms | FCP, LCP   | S                    |
+| 7   | Fuentes sin `font-display`                    | `font-display-insight`: 300 ms; `inter-latin-400.woff2` e `inter-latin-700.woff2`                | FCP           | S                    |
 
-Los ahorros se solapan; no se suman. El orden sube la fila 2 sobre otras con más ahorro porque su métrica (CLS) está en `poor` aunque Lighthouse no le asigne ahorro.
+Los ahorros se solapan; no se suman. Las filas 1–5 explican métricas en `poor` (LCP, CLS, TBT); la 2 no tiene ahorro medido pero es la explicación del CLS, así que sube al segundo puesto de su grupo, y la 5 (indirecta) va al final de él. Las filas 6–7 afectan a FCP, que está en `needs-improvement`.
 
 ## Detalle
 
@@ -50,9 +50,9 @@ Los ahorros se solapan; no se suman. El orden sube la fila 2 sobre otras con má
 
 ## Qué no está medido
 
-- El problema 7 (galería sin `loading="lazy"`) no tiene oportunidad propia en Lighthouse 13: se deduce de `resources.byType.image` y debe confirmarse leyendo `index.html`.
+- El problema de la galería sin `loading="lazy"` (fila 5) no tiene oportunidad propia en Lighthouse 13: se deduce de `resources.byType.image` y debe confirmarse leyendo `index.html`.
 - No hay ahorro asociado a `unsized-images` ni a `cls-culprits-insight`.
 
 ## Siguiente paso
 
-¿Cuáles de estos 7 quieres abordar? Recomiendo empezar por 1–3, que atacan las tres métricas en `poor`. Para aplicarlos, `perf-fix`; para medir el efecto después, `perf-compare`.
+¿Cuáles de estos 7 quieres abordar? Recomiendo empezar por 1–4, que atacan las tres métricas en `poor` (LCP, CLS y TBT). Para aplicarlos, `perf-fix`; para medir el efecto después, `perf-compare`.

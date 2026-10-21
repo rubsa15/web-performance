@@ -1,6 +1,6 @@
 # Evaluación de las skills `perf-audit` y `perf-compare`
 
-SPEC §9, PLAN fase 4. **Iteraciones 1 y 2**, 2026-10-21 (macOS, Lighthouse 13.5.0, Chrome 155, mobile, 3 ejecuciones por auditoría).
+SPEC §9, PLAN fase 4. **Iteraciones 1 a 3**, 2026-10-21 (macOS, Lighthouse 13.5.0, Chrome 155, mobile, 3 ejecuciones por auditoría).
 
 ## Método
 
@@ -74,6 +74,28 @@ Fricciones de esta ronda y qué se cambió:
 - **CLI:** `wperf compare --network` (los dos últimos reportes de ese perfil), que la comparación 3g/4g mostró que faltaba.
 
 Los cambios de esta última ronda **no se han vuelto a medir**: harían falta una iteración 3 y una revisión humana de las recomendaciones (más abajo).
+
+## Iteración 3
+
+Misma metodología, subagentes nuevos y casos de `perf-compare` distintos (ninguno repite los reportes de las rondas anteriores: dos mediciones idénticas de la misma demo, `compare --url … --network 3g` sin dar rutas, y demo rota → arreglada con otro "antes"). Respuestas en [skills/iteracion-3/](skills/iteracion-3/).
+
+| Respuesta                                  | Recall (demo) | Cifras sin origen en el JSON | Clasificación                                                                                                    |
+| ------------------------------------------ | ------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `perf-audit` · demo, 3 redes               | **7/7**       | 2                            | 0 inventadas. Dos cocientes bien calculados (767/402 = 1,9; 81 500/5 050 = 16,1), no marcados como cálculo.      |
+| `perf-audit` · ametllerorigen.com, 3 redes | n/a           | 2                            | 0 inventadas. Dos cocientes de dispersión (1,88 y 1,30) sin marcar.                                              |
+| `perf-audit` · bancosantander.es, 3 redes  | n/a           | 1                            | 0 inventadas. Suma de dos ahorros del JSON (75 050 + 28 921 = 103 971 B) sin marcar.                             |
+| `perf-compare` · mismo sitio sin cambios   | n/a           | 0                            | Veredicto `unchanged`, TBT +55 ms tratado como ruido (umbral efectivo 259 ms, rangos solapados).                 |
+| `perf-compare` · `--url … --network 3g`    | n/a           | 0                            | El CLI eligió bien el par de reportes 3g sin que el agente diera rutas. `unchanged`.                             |
+| `perf-compare` · demo rota → arreglada     | n/a           | 7                            | Puertos (artefacto del comprobador) y dos valores (39 754, 40 730) de otros reportes leídos con `wperf history`. |
+
+Lo que cambia respecto a las iteraciones anteriores: ya **no hay cifras sin origen que sean errores** (la de la iteración 2, un `641 KiB` mal redondeado, no se repite); lo que queda son cálculos correctos que el agente no marcó como `(fuente: cálculo)`. La skill ahora pide marcar también cocientes y sumas.
+
+Correcciones tras esta ronda:
+
+- **`perf-audit`:** la regla de orden queda sin ambigüedad (una sola causa sin ahorro por métrica `poor` sube al segundo puesto de su grupo; las demás, al final) y el ejemplo se reordenó para cumplirla; la inestabilidad de una métrica se define con los mismos umbrales de ruido que usa `compare` (antes "max > 2×min", que dejaba pasar un TBT de 402 a 767 ms); caso de ahorro 0 ms en los tres perfiles; conjunto de `items[]` distinto entre perfiles; `wastedMs` de un item frente al ahorro de la oportunidad; `cache-insight` trae ahorro en ms aunque mida visitas repetidas; hero y galería se separan por tipo de arreglo, no por tamaño; enlace al ejemplo multiperfil.
+- **`perf-compare`:** el filtro de `git diff --no-index` va en un `grep` (con `--no-index` un pathspec hace fallar a git: lo había escrito mal en la iteración anterior); qué hacer cuando el CLI avisa de que "antes" es posterior a "después" en una comparación legítima; árbol de `demo/` de entonces que no está en git.
+
+En las 6 respuestas de esta ronda no hay ninguna cifra inventada, y las comparaciones respetan la clasificación del CLI. No hay una iteración 4 planificada: los hallazgos restantes de esta ronda son de estilo (formato de cifras, nivel de detalle) o límites del CLI (el `Report` no identifica el elemento LCP).
 
 ## Limitaciones
 

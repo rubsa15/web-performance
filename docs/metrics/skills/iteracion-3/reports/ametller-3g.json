@@ -1,0 +1,315 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-21T21-29-06Z-mobile-3g",
+  "url": "https://www.ametllerorigen.com/es/online",
+  "finalUrl": "https://www.ametllerorigen.com/es/online",
+  "device": "mobile",
+  "createdAt": "2026-10-21T21:29:06Z",
+  "environment": {
+    "lighthouseVersion": "13.5.0",
+    "chromeVersion": "155.0.0.0",
+    "throttling": "simulate",
+    "network": "3g",
+    "runs": 3,
+    "representativeRun": 2
+  },
+  "git": {
+    "commit": "1028e0d",
+    "dirty": true
+  },
+  "score": 39,
+  "metrics": {
+    "lcp": {
+      "value": 6028,
+      "unit": "ms",
+      "min": 5723,
+      "max": 8232,
+      "rating": "poor"
+    },
+    "fcp": {
+      "value": 2609,
+      "unit": "ms",
+      "min": 2575,
+      "max": 3890,
+      "rating": "needs-improvement"
+    },
+    "tbt": {
+      "value": 2045,
+      "unit": "ms",
+      "min": 1405,
+      "max": 2638,
+      "rating": "poor"
+    },
+    "cls": {
+      "value": 0,
+      "unit": "",
+      "min": 0,
+      "max": 0.011,
+      "rating": "good"
+    },
+    "si": {
+      "value": 6403,
+      "unit": "ms",
+      "min": 5702,
+      "max": 6702,
+      "rating": "poor"
+    },
+    "ttfb": {
+      "value": 1223,
+      "unit": "ms",
+      "min": 1216,
+      "max": 1228,
+      "rating": "needs-improvement"
+    }
+  },
+  "opportunities": [
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "category": "javascript",
+      "savingsMs": 3650,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["tbt"],
+      "items": [
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/framework.js",
+          "cpuMs": 6582
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/vendor.js",
+          "cpuMs": 1205
+        },
+        {
+          "url": "https://www.ametllerorigen.com/es/online",
+          "cpuMs": 969
+        },
+        {
+          "url": "Unattributable",
+          "cpuMs": 714
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/main.js",
+          "cpuMs": 179
+        },
+        {
+          "url": "https://www.ametllerorigen.com/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js",
+          "cpuMs": 139
+        }
+      ]
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "category": "javascript",
+      "savingsMs": 2650,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["tbt"],
+      "items": []
+    },
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "category": "images",
+      "savingsMs": 600,
+      "savingsBytes": 115135,
+      "impact": "high",
+      "affectedMetrics": ["lcp"],
+      "items": [
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-ametller-Library/default/dw5011d835/homepage/mainbanner/EGEN/B_MB_EGEN_MBL_ES_tardor.jpg?sw=800&fmt=webp&q=90",
+          "wastedBytes": 52257,
+          "totalBytes": 88152
+        },
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-ametller-Library/default/dw0952ea89/homepage/mainbanner/Promo%20Bomba/ECOMM_MB_PromoFormatges_Tardor_2026_Mobile_ES_formatges_online.jpg?sw=1000&fmt=webp&q=90",
+          "wastedBytes": 49486,
+          "totalBytes": 85378
+        },
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-ametller-Library/default/dwb588f6c3/homepage/mainbanner/B_MB_BANGER_MBL_ES2.jpg?sw=800&fmt=webp&q=90",
+          "wastedBytes": 13392,
+          "totalBytes": 43490
+        }
+      ]
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "category": "javascript",
+      "savingsMs": 0,
+      "savingsBytes": 810107,
+      "impact": "high",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-XGKYZ5XVGM&cx=c&gtm=4e6ak1h1",
+          "wastedBytes": 131609,
+          "totalBytes": 198688
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/vendor.js",
+          "wastedBytes": 130588,
+          "totalBytes": 201747
+        },
+        {
+          "url": "https://sdk.privacy-center.org/sdk/3ae0cb7ceb1c0686f2cae1031331a4869953a2a4/modern/sdk.3ae0cb7ceb1c0686f2cae1031331a4869953a2a4.js",
+          "wastedBytes": 90806,
+          "totalBytes": 155534
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtm.js?id=GTM-NB3CH3PD",
+          "wastedBytes": 86708,
+          "totalBytes": 212934
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-XGKYZ5XVGM",
+          "wastedBytes": 76065,
+          "totalBytes": 198684
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=AW-729617200&cx=c&gtm=4e6ak1h1",
+          "wastedBytes": 68095,
+          "totalBytes": 162916
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX-FAKE&cx=c&gtm=4e6ak1h1",
+          "wastedBytes": 65908,
+          "totalBytes": 146430
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=DC-16729776&cx=c&gtm=4e6ak1h1",
+          "wastedBytes": 59555,
+          "totalBytes": 138510
+        },
+        {
+          "url": "https://sdk.privacy-center.org/sdk/3ae0cb7ceb1c0686f2cae1031331a4869953a2a4/modern/ui-web-es-web.3ae0cb7ceb1c0686f2cae1031331a4869953a2a4.js",
+          "wastedBytes": 31897,
+          "totalBytes": 87796
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/ui.js",
+          "wastedBytes": 24220,
+          "totalBytes": 68019
+        }
+      ]
+    },
+    {
+      "id": "legacy-javascript-insight",
+      "title": "Legacy JavaScript",
+      "category": "javascript",
+      "savingsMs": 0,
+      "savingsBytes": 23792,
+      "impact": "low",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/vendor.js",
+          "wastedBytes": 13436
+        },
+        {
+          "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+          "wastedBytes": 10356
+        }
+      ]
+    },
+    {
+      "id": "unused-css-rules",
+      "title": "Reduce unused CSS",
+      "category": "css",
+      "savingsMs": 0,
+      "savingsBytes": 14066,
+      "impact": "low",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "#didomi-host .didomi-components-button{background-color:#eee;border:1px solid rgba(34,34,34,.2); … } …",
+          "wastedBytes": 14066,
+          "totalBytes": 16558
+        }
+      ]
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 8456,
+      "impact": "low",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+          "wastedBytes": 4140,
+          "totalBytes": 10351
+        },
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-mastercatalog_AMETLLER/default/dwdef529a2/images/products/56902/56902_1.jpg?sw=480&fmt=webp&q=75",
+          "wastedBytes": 2729,
+          "totalBytes": 29163
+        },
+        {
+          "url": "https://www.ametllerorigen.com/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js",
+          "wastedBytes": 1284,
+          "totalBytes": 4279
+        },
+        {
+          "url": "https://www.ametllerorigen.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+          "wastedBytes": 303,
+          "totalBytes": 1009
+        }
+      ]
+    },
+    {
+      "id": "forced-reflow-insight",
+      "title": "Forced reflow",
+      "category": "javascript",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": [],
+      "items": []
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["lcp"],
+      "items": []
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "total-byte-weight",
+      "title": "Avoids enormous network payloads",
+      "displayValue": "Total size was 1,524 KiB"
+    },
+    {
+      "id": "long-tasks",
+      "title": "Avoid long main-thread tasks",
+      "displayValue": "20 long tasks found"
+    },
+    {
+      "id": "server-response-time",
+      "title": "Initial server response time was short",
+      "displayValue": "Root document took 90 ms"
+    }
+  ],
+  "resources": {
+    "totalBytes": 1495648,
+    "byType": {
+      "image": 655711,
+      "script": 577294,
+      "font": 133246,
+      "document": 72033,
+      "other": 57364,
+      "stylesheet": 0,
+      "media": 0
+    }
+  },
+  "warnings": []
+}

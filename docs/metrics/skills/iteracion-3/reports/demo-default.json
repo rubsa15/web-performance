@@ -1,0 +1,349 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-21T21-24-14Z-mobile",
+  "url": "http://127.0.0.1:4173/",
+  "finalUrl": "http://127.0.0.1:4173/",
+  "device": "mobile",
+  "createdAt": "2026-10-21T21:24:14Z",
+  "environment": {
+    "lighthouseVersion": "13.5.0",
+    "chromeVersion": "155.0.0.0",
+    "throttling": "simulate",
+    "network": "default",
+    "runs": 3,
+    "representativeRun": 3
+  },
+  "git": {
+    "commit": "1028e0d",
+    "dirty": false
+  },
+  "score": 43,
+  "metrics": {
+    "lcp": {
+      "value": 40729,
+      "unit": "ms",
+      "min": 40728,
+      "max": 40806,
+      "rating": "poor"
+    },
+    "fcp": {
+      "value": 2495,
+      "unit": "ms",
+      "min": 2494,
+      "max": 2498,
+      "rating": "needs-improvement"
+    },
+    "tbt": {
+      "value": 542,
+      "unit": "ms",
+      "min": 402,
+      "max": 767,
+      "rating": "needs-improvement"
+    },
+    "cls": {
+      "value": 0.291,
+      "unit": "",
+      "min": 0.291,
+      "max": 0.291,
+      "rating": "poor"
+    },
+    "si": {
+      "value": 2495,
+      "unit": "ms",
+      "min": 2494,
+      "max": 2498,
+      "rating": "good"
+    },
+    "ttfb": {
+      "value": 752,
+      "unit": "ms",
+      "min": 752,
+      "max": 753,
+      "rating": "good"
+    }
+  },
+  "opportunities": [
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "category": "images",
+      "savingsMs": 32900,
+      "savingsBytes": 8154587,
+      "impact": "high",
+      "affectedMetrics": ["lcp"],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/img/hero.jpg",
+          "wastedBytes": 2949349,
+          "totalBytes": 3003499
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-2.jpg",
+          "wastedBytes": 872837,
+          "totalBytes": 919938
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-4.jpg",
+          "wastedBytes": 870336,
+          "totalBytes": 917437
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-6.jpg",
+          "wastedBytes": 869472,
+          "totalBytes": 916573
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-1.jpg",
+          "wastedBytes": 865644,
+          "totalBytes": 912745
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-5.jpg",
+          "wastedBytes": 864410,
+          "totalBytes": 911511
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-3.jpg",
+          "wastedBytes": 862539,
+          "totalBytes": 909640
+        }
+      ]
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "category": "rendering",
+      "savingsMs": 1550,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["fcp"],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/vendor/three.min.js",
+          "wastedMs": 1502,
+          "totalBytes": 168137
+        },
+        {
+          "url": "http://127.0.0.1:4173/js/app.js",
+          "wastedMs": 602,
+          "totalBytes": 1122
+        },
+        {
+          "url": "http://127.0.0.1:4173/css/styles.css",
+          "wastedMs": 452,
+          "totalBytes": 955
+        }
+      ]
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "category": "javascript",
+      "savingsMs": 1050,
+      "savingsBytes": 120895,
+      "impact": "high",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/vendor/three.min.js",
+          "wastedBytes": 120895,
+          "totalBytes": 167861
+        }
+      ]
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "category": "javascript",
+      "savingsMs": 550,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["tbt"],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/js/app.js",
+          "cpuMs": 1550
+        },
+        {
+          "url": "Unattributable",
+          "cpuMs": 234
+        },
+        {
+          "url": "http://127.0.0.1:4173/",
+          "cpuMs": 143
+        },
+        {
+          "url": "http://127.0.0.1:4173/vendor/three.min.js",
+          "cpuMs": 91
+        }
+      ]
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "category": "javascript",
+      "savingsMs": 550,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["tbt"],
+      "items": []
+    },
+    {
+      "id": "font-display-insight",
+      "title": "Font display",
+      "category": "fonts",
+      "savingsMs": 300,
+      "savingsBytes": 0,
+      "impact": "medium",
+      "affectedMetrics": ["fcp"],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/fonts/inter-latin-700.woff2",
+          "wastedMs": 300
+        },
+        {
+          "url": "http://127.0.0.1:4173/fonts/inter-latin-400.woff2",
+          "wastedMs": 300
+        }
+      ]
+    },
+    {
+      "id": "cls-culprits-insight",
+      "title": "Layout shift culprits",
+      "category": "rendering",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["cls"],
+      "items": []
+    },
+    {
+      "id": "lcp-discovery-insight",
+      "title": "LCP request discovery",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["lcp"],
+      "items": []
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["lcp"],
+      "items": []
+    },
+    {
+      "id": "total-byte-weight",
+      "title": "Avoid enormous network payloads",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": [],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/img/hero.jpg",
+          "totalBytes": 3003705
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-2.jpg",
+          "totalBytes": 920143
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-4.jpg",
+          "totalBytes": 917642
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-6.jpg",
+          "totalBytes": 916778
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-1.jpg",
+          "totalBytes": 912950
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-5.jpg",
+          "totalBytes": 911716
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-3.jpg",
+          "totalBytes": 909845
+        },
+        {
+          "url": "http://127.0.0.1:4173/vendor/three.min.js",
+          "totalBytes": 168137
+        },
+        {
+          "url": "http://127.0.0.1:4173/fonts/inter-latin-700.woff2",
+          "totalBytes": 17988
+        },
+        {
+          "url": "http://127.0.0.1:4173/fonts/inter-latin-400.woff2",
+          "totalBytes": 16912
+        }
+      ]
+    },
+    {
+      "id": "unsized-images",
+      "title": "Image elements do not have explicit `width` and `height`",
+      "category": "images",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["cls"],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/img/hero.jpg"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-1.jpg"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-2.jpg"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-3.jpg"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-4.jpg"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-5.jpg"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-6.jpg"
+        }
+      ]
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "long-tasks",
+      "title": "Avoid long main-thread tasks",
+      "displayValue": "3 long tasks found"
+    },
+    {
+      "id": "server-response-time",
+      "title": "Initial server response time was short",
+      "displayValue": "Root document took 0 ms"
+    }
+  ],
+  "resources": {
+    "totalBytes": 8699348,
+    "byType": {
+      "image": 8492779,
+      "script": 169259,
+      "font": 34900,
+      "document": 1455,
+      "stylesheet": 955,
+      "media": 0,
+      "other": 0
+    }
+  },
+  "warnings": []
+}
