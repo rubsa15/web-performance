@@ -1,21 +1,51 @@
 {
   "name": "web-performance",
   "version": "1.0.0",
-  "description": "Proyecto sobre rendimiento web.",
-  "main": "index.js",
+  "description": "CLI para auditar el rendimiento de una web, priorizar mejoras y comparar auditorías.",
+  "type": "module",
+  "bin": {
+    "wperf": "bin/wperf"
+  },
+  "engines": {
+    "node": ">=22.19"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify": "npm run typecheck && npm run lint && npm test",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rubsa15/web-performance.git"
   },
-  "keywords": [],
+  "keywords": [
+    "performance",
+    "lighthouse",
+    "cli"
+  ],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/rubsa15/web-performance/issues"
   },
-  "homepage": "https://github.com/rubsa15/web-performance#readme"
+  "homepage": "https://github.com/rubsa15/web-performance#readme",
+  "dependencies": {
+    "commander": "^15.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.5",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.0",
+    "vitest": "^5.0.5"
+  }
 }
