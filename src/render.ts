@@ -1,6 +1,7 @@
 import { styleText } from 'node:util';
 import {
   METRIC_IDS,
+  networkOf,
   RATINGS,
   type Impact,
   type Metric,
@@ -60,9 +61,12 @@ function subtitle(report: Report): string {
   return [
     report.finalUrl,
     report.device,
+    networkOf(report) === 'default' ? undefined : `red ${networkOf(report)}`,
     `${runs} ${runs === 1 ? 'ejecución' : 'ejecuciones'}`,
     `Lighthouse ${report.environment.lighthouseVersion}`,
-  ].join(' · ');
+  ]
+    .filter(Boolean)
+    .join(' · ');
 }
 
 export function renderJson(report: Report): string {

@@ -2,6 +2,7 @@ import { compareReports } from '../compare.js';
 import { UsageError } from '../errors.js';
 import type { Format } from '../render.js';
 import { renderComparison } from '../render-compare.js';
+import { networkOf } from '../schema.js';
 import { listReports, resolveReport, type StoredReport } from '../store.js';
 import { parseUrl } from './audit.js';
 import { defaultReadDeps, type ReadDeps } from './read-deps.js';
@@ -31,16 +32,18 @@ async function latestPair(
   }
 
   const { url: latestUrl, device, environment } = latest.report;
+  const network = networkOf(latest.report);
   const sameProfile = all.filter(
     (s) =>
       s.report.url === latestUrl &&
       s.report.device === device &&
+      networkOf(s.report) === network &&
       s.report.environment.throttling === environment.throttling,
   );
   const previous = sameProfile.at(-2);
   if (!previous) {
     throw new UsageError(
-      `Solo hay una auditoría de ${latestUrl} (${device}): haz otra con "wperf audit" o pasa dos reportes a "wperf compare".`,
+      `Solo hay una auditoría de ${latestUrl} (${device}${network === 'default' ? '' : `, red ${network}`}): haz otra con "wperf audit" o pasa dos reportes a "wperf compare".`,
     );
   }
   return [previous, latest];

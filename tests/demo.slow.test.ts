@@ -20,7 +20,7 @@ async function audit(site: 'site' | 'site-fixed'): Promise<Report> {
   const out: string[] = [];
   await auditCommand(
     url,
-    { device: 'mobile', runs: 1, save: false, keepRaw: false, format: 'json' },
+    { device: 'mobile', network: 'default', runs: 1, save: false, keepRaw: false, format: 'json' },
     { ...defaultAuditDeps(), baseDir: dir, out: (t) => out.push(t), log: () => {} },
   );
   return ReportSchema.parse(JSON.parse(out[0]!));

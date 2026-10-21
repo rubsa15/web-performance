@@ -5,6 +5,7 @@ import { impactOf, rate } from '../src/rules.js';
 import {
   METRIC_IDS,
   type Device,
+  type Network,
   type Metric,
   type MetricId,
   type Opportunity,
@@ -44,6 +45,7 @@ export function variant(
 export interface ReportChanges {
   url?: string;
   device?: Device;
+  network?: Network;
   createdAt?: string;
   label?: string;
   throttling?: string;
@@ -67,7 +69,9 @@ export function makeReport(changes: ReportChanges = {}): Report {
   });
   const report = structuredClone(base);
   report.device = changes.device ?? report.device;
-  report.id = `${report.createdAt.replaceAll(':', '-')}-${report.device}`;
+  const network = changes.network ?? 'default';
+  report.environment.network = network;
+  report.id = `${report.createdAt.replaceAll(':', '-')}-${report.device}${network === 'default' ? '' : `-${network}`}`;
   if (changes.throttling) report.environment.throttling = changes.throttling;
   if (changes.lighthouseVersion) report.environment.lighthouseVersion = changes.lighthouseVersion;
   if (changes.chromeVersion) report.environment.chromeVersion = changes.chromeVersion;

@@ -26,6 +26,7 @@ afterEach(() => rm(dir, { recursive: true, force: true }));
 
 const options: AuditOptions = {
   device: 'mobile',
+  network: 'default',
   runs: 2,
   save: true,
   keepRaw: false,

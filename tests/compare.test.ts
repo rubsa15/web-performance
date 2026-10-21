@@ -124,6 +124,19 @@ describe('compareReports — comparabilidad', () => {
     );
   });
 
+  it('rechaza perfiles de red distintos', () => {
+    expect(() => compareReports(makeReport(), makeReport({ network: '3g' }))).toThrow(
+      /perfil de red \(default vs 3g\)/,
+    );
+  });
+
+  it('trata un reporte sin `network` (anterior a --network) como default', () => {
+    const old = makeReport();
+    delete old.environment.network;
+    expect(() => compareReports(old, makeReport())).not.toThrow();
+    expect(() => compareReports(old, makeReport({ network: '4g' }))).toThrow(/default vs 4g/);
+  });
+
   it('rechaza throttling distinto', () => {
     expect(() => compareReports(makeReport(), makeReport({ throttling: 'devtools' }))).toThrow(
       /throttling/,
@@ -272,6 +285,7 @@ describe('compareReports — referencias', () => {
       id: a.id,
       url: 'https://example.com/',
       device: 'mobile',
+      network: 'default',
       createdAt: a.createdAt,
       runs: 3,
       label: 'antes',

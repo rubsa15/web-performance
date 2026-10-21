@@ -8,7 +8,7 @@ import {
 import { compareCommand, type CompareOptions } from './commands/compare.js';
 import { historyCommand, type HistoryOptions } from './commands/history.js';
 import type { ReadDeps } from './commands/read-deps.js';
-import { DEVICES, METRIC_IDS } from './schema.js';
+import { DEVICES, METRIC_IDS, NETWORKS } from './schema.js';
 
 export const EXIT_CODES = {
   ok: 0,
@@ -44,6 +44,14 @@ export function buildProgram(auditDeps?: AuditDeps, readDeps?: ReadDeps): Comman
     .addOption(
       new Option('--device <device>', 'perfil de emulación').choices(DEVICES).default('mobile'),
     )
+    .addOption(
+      new Option(
+        '--network <network>',
+        'perfil de red: default (el del dispositivo), 3g (300 ms, 700 Kbps) o 4g (40 ms, 10 Mbps)',
+      )
+        .choices(NETWORKS)
+        .default('default'),
+    )
     .option('--runs <n>', 'ejecuciones de Lighthouse; se usa la mediana', parsePositiveInt, 3)
     .option('--label <txt>', 'etiqueta libre para identificar la auditoría')
     .option('--no-save', 'no guardar el reporte en .perf/reports/')
@@ -72,7 +80,8 @@ export function buildProgram(auditDeps?: AuditDeps, readDeps?: ReadDeps): Comman
     .command('history')
     .description('Lista las auditorías guardadas de una URL y la evolución de sus métricas.')
     .argument('<url>', 'URL cuyas auditorías se listan')
-    .addOption(new Option('--device <device>', 'solo este perfil').choices(DEVICES))
+    .addOption(new Option('--device <device>', 'solo este dispositivo').choices(DEVICES))
+    .addOption(new Option('--network <network>', 'solo este perfil de red').choices(NETWORKS))
     .addOption(
       new Option('--metric <metric>', 'centra la salida en una métrica').choices(METRIC_IDS),
     )

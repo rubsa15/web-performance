@@ -12,6 +12,13 @@ function fakeDeps(runLighthouse: RunnerDeps['runLighthouse']) {
 }
 
 describe('runAudit', () => {
+  it('pasa el perfil de red a Lighthouse', async () => {
+    const run = vi.fn<RunnerDeps['runLighthouse']>(async () => ({ lhr: 1 }));
+    const { deps } = fakeDeps(run);
+    await runAudit({ url: 'https://example.com/', device: 'mobile', network: '3g', runs: 1 }, deps);
+    expect(run).toHaveBeenCalledWith('https://example.com/', 'mobile', 9222, '3g');
+  });
+
   it('ejecuta Lighthouse N veces con el perfil y el puerto y cierra Chrome', async () => {
     const run = vi.fn<RunnerDeps['runLighthouse']>(async () => ({ lhr: 1 }));
     const { deps, kill } = fakeDeps(run);
@@ -24,7 +31,7 @@ describe('runAudit', () => {
 
     expect(lhrs).toHaveLength(3);
     expect(run).toHaveBeenCalledTimes(3);
-    expect(run).toHaveBeenCalledWith('https://example.com/', 'desktop', 9222);
+    expect(run).toHaveBeenCalledWith('https://example.com/', 'desktop', 9222, 'default');
     expect(progress.mock.calls).toEqual([
       [1, 3],
       [2, 3],

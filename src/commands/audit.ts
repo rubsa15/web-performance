@@ -3,11 +3,12 @@ import { getGitInfo, type GitInfo } from '../git.js';
 import { normalize } from '../normalizer.js';
 import { render, type Format } from '../render.js';
 import { runAudit } from '../runner.js';
-import type { Device } from '../schema.js';
+import type { Device, Network } from '../schema.js';
 import { saveRawLhrs, saveReport } from '../store.js';
 
 export interface AuditOptions {
   device: Device;
+  network: Network;
   runs: number;
   label?: string;
   save: boolean;
@@ -60,12 +61,13 @@ export async function auditCommand(
 ): Promise<void> {
   const url = parseUrl(urlArg);
   deps.log(
-    `Auditando ${url} (${options.device}, ${options.runs} ${options.runs === 1 ? 'ejecución' : 'ejecuciones'})…`,
+    `Auditando ${url} (${options.device}${options.network === 'default' ? '' : `, red ${options.network}`}, ${options.runs} ${options.runs === 1 ? 'ejecución' : 'ejecuciones'})…`,
   );
 
   const lhrs = await deps.run({
     url,
     device: options.device,
+    network: options.network,
     runs: options.runs,
     onProgress: (run, total) => deps.log(`  ejecución ${run}/${total}`),
   });
@@ -74,6 +76,7 @@ export async function auditCommand(
   const report = normalize(lhrs, {
     url,
     device: options.device,
+    network: options.network,
     label: options.label,
     createdAt: deps.now(),
     git,

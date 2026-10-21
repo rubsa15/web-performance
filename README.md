@@ -19,6 +19,7 @@ Requiere Chrome instalado (o `CHROME_PATH` apuntando a su binario). Compila ante
 ```sh
 npx wperf audit https://example.com --runs 3                # resumen en terminal
 npx wperf audit https://example.com --device desktop --format md
+npx wperf audit https://example.com --network 3g           # red lenta: default (la del dispositivo), 3g o 4g
 npx wperf audit https://example.com --format json --no-save # solo el Report por stdout
 ```
 
@@ -33,7 +34,7 @@ npx wperf compare <antes> <después> --format md     # ids o rutas a reportes co
 npx wperf history https://example.com --metric lcp  # evolución de una métrica
 ```
 
-`compare` clasifica cada métrica como `improved`, `regressed` o `unchanged` (ruido) y cada oportunidad como `new`, `resolved`, `better`, `worse` o `same`. Una métrica solo cambia si el salto supera su umbral **y** los rangos min–max de ambos reportes no se solapan; los umbrales salen de [docs/metrics/noise.md](docs/metrics/noise.md). No compara reportes de distinto `device` o `throttling` (error de uso, código 2) y avisa si cambia la versión de Lighthouse o de Chrome, o si las URLs difieren.
+`compare` clasifica cada métrica como `improved`, `regressed` o `unchanged` (ruido) y cada oportunidad como `new`, `resolved`, `better`, `worse` o `same`. Una métrica solo cambia si el salto supera su umbral **y** los rangos min–max de ambos reportes no se solapan; los umbrales salen de [docs/metrics/noise.md](docs/metrics/noise.md). No compara reportes de distinto `device`, perfil de red (`--network`) o `throttling` (error de uso, código 2) y avisa si cambia la versión de Lighthouse o de Chrome, o si las URLs difieren.
 
 Los tests que lanzan Chrome real son lentos y van aparte: `npm run test:slow`.
 

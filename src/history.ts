@@ -5,18 +5,19 @@ import {
   type Change,
   type Thresholds,
 } from './rules.js';
-import { METRIC_IDS, type Metric, type MetricId, type Report } from './schema.js';
+import { METRIC_IDS, networkOf, type Metric, type MetricId, type Report } from './schema.js';
 
 export interface HistoryEntry {
   id: string;
   createdAt: string;
   device: Report['device'];
+  network: Report['environment']['network'] & string;
   label?: string;
   git?: Report['git'];
   runs: number;
   score: number;
   metrics: Record<MetricId, Metric>;
-  /** Cambio respecto al reporte comparable anterior (mismo device y throttling); ausente en el primero. */
+  /** Cambio respecto al reporte comparable anterior (mismo device, red y throttling); ausente en el primero. */
   vsPrevious?: {
     id: string;
     score: Delta;
@@ -46,13 +47,14 @@ export function buildHistory(
   const lastByProfile = new Map<string, Report>();
 
   const entries = sorted.map((report): HistoryEntry => {
-    const profile = `${report.device}|${report.environment.throttling}`;
+    const profile = `${report.device}|${networkOf(report)}|${report.environment.throttling}`;
     const previous = lastByProfile.get(profile);
     lastByProfile.set(profile, report);
     return {
       id: report.id,
       createdAt: report.createdAt,
       device: report.device,
+      network: networkOf(report),
       ...(report.label !== undefined && { label: report.label }),
       ...(report.git && { git: report.git }),
       runs: report.environment.runs,

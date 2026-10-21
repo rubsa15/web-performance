@@ -55,12 +55,20 @@ describe('wperf audit', () => {
     expect(options).toMatchObject({ url: 'https://example.com/', device: 'mobile', runs: 3 });
   });
 
+  it('usa la red del dispositivo por defecto y lee --network', async () => {
+    expect(await parse(['https://example.com'])).toMatchObject({ network: 'default' });
+    expect(await parse(['https://example.com', '--network', '3g'])).toMatchObject({
+      network: '3g',
+    });
+  });
+
   it('lee --device y --runs', async () => {
     const options = await parse(['https://example.com', '--device', 'desktop', '--runs', '5']);
     expect(options).toMatchObject({ device: 'desktop', runs: 5 });
   });
 
   it.each([
+    ['--network desconocida', ['--network', 'edge']],
     ['--runs 0', ['--runs', '0']],
     ['--runs no numérico', ['--runs', 'abc']],
     ['--runs decimal', ['--runs', '2.5']],

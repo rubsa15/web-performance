@@ -2,7 +2,7 @@ import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { z } from 'zod';
 import { RuntimeError, UsageError } from './errors.js';
-import { ReportSchema, type Device, type Report } from './schema.js';
+import { networkOf, ReportSchema, type Device, type Network, type Report } from './schema.js';
 
 export const PERF_DIR = '.perf';
 
@@ -79,11 +79,11 @@ async function readdirOrEmpty(dir: string): Promise<string[]> {
 
 /**
  * Reportes guardados en `<baseDir>/.perf/reports/`, de más antiguo a más reciente.
- * `url` filtra por URL exacta y `device` por perfil.
+ * `url` filtra por URL exacta, `device` por dispositivo y `network` por perfil de red.
  */
 export async function listReports(
   baseDir: string,
-  filter: { url?: string; device?: Device } = {},
+  filter: { url?: string; device?: Device; network?: Network } = {},
 ): Promise<StoredReport[]> {
   const root = reportsDir(baseDir);
   const sites = filter.url ? [siteSlug(filter.url)] : await readdirOrEmpty(root);
@@ -104,7 +104,8 @@ export async function listReports(
     .filter(
       ({ report }) =>
         (filter.url === undefined || report.url === filter.url) &&
-        (filter.device === undefined || report.device === filter.device),
+        (filter.device === undefined || report.device === filter.device) &&
+        (filter.network === undefined || networkOf(report) === filter.network),
     )
     .sort(
       (a, b) =>

@@ -221,3 +221,29 @@ describe('normalize ante entradas inválidas', () => {
     expect(report.warnings.join()).toMatch(/resource-summary/);
   });
 });
+
+describe('normalize — perfil de red', () => {
+  it('sin --network, el reporte es default y el id no cambia', () => {
+    const report = normalize([loadLhr('lhr-bbc-mobile')], meta);
+    expect(report.environment.network).toBe('default');
+    expect(report.id).toBe('2026-10-21T10-32-00Z-mobile');
+    expect(report.warnings.some((w) => w.includes('perfil de red'))).toBe(false);
+  });
+
+  it('un perfil no default va en el id y en el entorno', () => {
+    const lhr = loadLhr('lhr-bbc-mobile');
+    (lhr.configSettings as { throttling?: unknown }).throttling = {
+      rttMs: 300,
+      throughputKbps: 700,
+    };
+    const report = normalize([lhr], { ...meta, network: '3g' });
+    expect(report.id).toBe('2026-10-21T10-32-00Z-mobile-3g');
+    expect(report.environment.network).toBe('3g');
+    expect(report.warnings.some((w) => w.includes('perfil de red'))).toBe(false);
+  });
+
+  it('avisa si Lighthouse no aplicó el perfil pedido', () => {
+    const report = normalize([loadLhr('lhr-bbc-mobile')], { ...meta, network: '3g' });
+    expect(report.warnings).toContainEqual(expect.stringContaining('"3g" no se aplicó'));
+  });
+});

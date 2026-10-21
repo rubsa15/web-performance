@@ -68,6 +68,7 @@ function describeRef(ref: Comparison['before']): string {
   return [
     ref.id,
     ref.url,
+    ref.network === 'default' ? undefined : `red ${ref.network}`,
     `${ref.runs} ${ref.runs === 1 ? 'ejecución' : 'ejecuciones'}`,
     ref.git && `commit ${ref.git.commit}${ref.git.dirty ? '*' : ''}`,
     ref.label && `"${ref.label}"`,

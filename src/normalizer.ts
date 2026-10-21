@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { RuntimeError } from './errors.js';
 import { compareOpportunities, impactOf, median, rate } from './rules.js';
-import type { Category, Device, MetricId, Metric, Opportunity, Report } from './schema.js';
+import { NETWORK_PRESETS } from './network.js';
+import type { Category, Device, MetricId, Metric, Network, Opportunity, Report } from './schema.js';
 import { METRIC_IDS } from './schema.js';
 
 /*
@@ -34,7 +35,13 @@ const LhrSchema = z.looseObject({
   runtimeError: z.looseObject({ code: z.string(), message: z.string() }).optional(),
   runWarnings: z.array(z.string()).default([]),
   environment: z.looseObject({ hostUserAgent: z.string() }),
-  configSettings: z.looseObject({ throttlingMethod: z.string(), formFactor: z.string() }),
+  configSettings: z.looseObject({
+    throttlingMethod: z.string(),
+    formFactor: z.string(),
+    throttling: z
+      .looseObject({ rttMs: z.number().optional(), throughputKbps: z.number().optional() })
+      .optional(),
+  }),
   audits: z.record(z.string(), AuditSchema),
   categories: z.looseObject({
     performance: z.looseObject({
@@ -50,6 +57,8 @@ type Audit = z.infer<typeof AuditSchema>;
 export interface NormalizeMeta {
   url: string;
   device: Device;
+  /** Perfil de red con que se lanzó la auditoría; sin indicar, `default`. */
+  network?: Network | undefined;
   label?: string | undefined;
   createdAt: Date;
   git?: { commit: string; dirty: boolean } | undefined;
@@ -318,8 +327,9 @@ function chromeVersionOf(lhr: Lhr): string {
 
 const isoSeconds = (date: Date): string => date.toISOString().replace(/\.\d{3}Z$/, 'Z');
 
-function formatId(createdAt: Date, device: Device): string {
-  return `${isoSeconds(createdAt).replaceAll(':', '-')}-${device}`;
+function formatId(createdAt: Date, device: Device, network: Network): string {
+  const suffix = network === 'default' ? '' : `-${network}`;
+  return `${isoSeconds(createdAt).replaceAll(':', '-')}-${device}${suffix}`;
 }
 
 export function normalize(rawLhrs: unknown[], meta: NormalizeMeta): Report {
@@ -338,6 +348,7 @@ export function normalize(rawLhrs: unknown[], meta: NormalizeMeta): Report {
   const scores = lhrs.map(readScore);
   const representativeIndex = pickRepresentative(scores);
   const representative = lhrs[representativeIndex] as Lhr;
+  const network = meta.network ?? 'default';
 
   const metrics = Object.fromEntries(
     METRIC_IDS.map((id) => [
@@ -350,11 +361,21 @@ export function normalize(rawLhrs: unknown[], meta: NormalizeMeta): Report {
   ) as Report['metrics'];
 
   const warnings = [...new Set(lhrs.flatMap((lhr) => lhr.runWarnings))];
+  const preset = NETWORK_PRESETS[network];
+  const applied = representative.configSettings.throttling;
+  if (
+    preset &&
+    (applied?.rttMs !== preset.rttMs || applied?.throughputKbps !== preset.throughputKbps)
+  ) {
+    warnings.push(
+      `El perfil de red "${network}" no se aplicó tal cual (Lighthouse usó rtt ${applied?.rttMs} ms y ${applied?.throughputKbps} Kbps): las cifras no corresponden a ese perfil.`,
+    );
+  }
   const resources = extractResources(representative, warnings);
 
   return {
     schemaVersion: 1,
-    id: formatId(meta.createdAt, meta.device),
+    id: formatId(meta.createdAt, meta.device, network),
     url: meta.url,
     finalUrl: representative.finalDisplayedUrl ?? representative.finalUrl ?? meta.url,
     device: meta.device,
@@ -364,6 +385,7 @@ export function normalize(rawLhrs: unknown[], meta: NormalizeMeta): Report {
       lighthouseVersion: representative.lighthouseVersion,
       chromeVersion: chromeVersionOf(representative),
       throttling: representative.configSettings.throttlingMethod,
+      network,
       runs: lhrs.length,
       representativeRun: representativeIndex + 1,
     },

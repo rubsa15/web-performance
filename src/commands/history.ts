@@ -2,13 +2,14 @@ import { UsageError } from '../errors.js';
 import { buildHistory } from '../history.js';
 import type { Format } from '../render.js';
 import { renderHistory } from '../render-compare.js';
-import type { Device, MetricId } from '../schema.js';
+import type { Device, MetricId, Network } from '../schema.js';
 import { listReports } from '../store.js';
 import { parseUrl } from './audit.js';
 import { defaultReadDeps, type ReadDeps } from './read-deps.js';
 
 export interface HistoryOptions {
   device?: Device;
+  network?: Network;
   metric?: MetricId;
   format: Format;
 }
@@ -22,6 +23,7 @@ export async function historyCommand(
   const stored = await listReports(deps.baseDir, {
     url,
     ...(options.device && { device: options.device }),
+    ...(options.network && { network: options.network }),
   });
   if (stored.length === 0) {
     throw new UsageError(

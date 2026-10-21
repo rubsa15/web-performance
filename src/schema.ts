@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 export const DEVICES = ['mobile', 'desktop'] as const;
 export const METRIC_IDS = ['lcp', 'fcp', 'tbt', 'cls', 'si', 'ttfb'] as const;
+/** Perfiles de red: `default` es el del dispositivo (slow 4G en mobile, dense 4G en desktop). */
+export const NETWORKS = ['default', '3g', '4g'] as const;
 export const RATINGS = ['good', 'needs-improvement', 'poor'] as const;
 export const IMPACTS = ['high', 'medium', 'low'] as const;
 export const CATEGORIES = [
@@ -16,6 +18,7 @@ export const CATEGORIES = [
 ] as const;
 
 export const DeviceSchema = z.enum(DEVICES);
+export const NetworkSchema = z.enum(NETWORKS);
 export const MetricIdSchema = z.enum(METRIC_IDS);
 export const RatingSchema = z.enum(RATINGS);
 export const ImpactSchema = z.enum(IMPACTS);
@@ -66,6 +69,8 @@ export const ReportSchema = z.object({
     lighthouseVersion: z.string(),
     chromeVersion: z.string(),
     throttling: z.string(),
+    /** Perfil de red; ausente en reportes anteriores a `--network` (equivale a `default`). */
+    network: NetworkSchema.optional(),
     runs: z.number().int().positive(),
     /** Ejecución (1..runs) de la que salen oportunidades, diagnósticos y recursos. */
     representativeRun: z.number().int().positive(),
@@ -91,9 +96,14 @@ export const ReportSchema = z.object({
 
 export type Report = z.infer<typeof ReportSchema>;
 export type Device = z.infer<typeof DeviceSchema>;
+export type Network = z.infer<typeof NetworkSchema>;
 export type MetricId = z.infer<typeof MetricIdSchema>;
 export type Metric = z.infer<typeof MetricSchema>;
 export type Rating = z.infer<typeof RatingSchema>;
 export type Impact = z.infer<typeof ImpactSchema>;
 export type Category = z.infer<typeof CategorySchema>;
 export type Opportunity = z.infer<typeof OpportunitySchema>;
+
+/** Perfil de red de un reporte; los anteriores a `--network` no lo guardan y cuentan como `default`. */
+export const networkOf = (report: Pick<Report, 'environment'>): Network =>
+  report.environment.network ?? 'default';

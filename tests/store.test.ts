@@ -101,6 +101,17 @@ describe('listReports', () => {
     expect((await listReports(dir, { device: 'desktop' })).map((s) => s.report.id)).toEqual([c.id]);
   });
 
+  it('filtra por perfil de red', async () => {
+    const base = makeReport({ createdAt: '2026-10-21T10:00:00Z' });
+    const slow = makeReport({ createdAt: '2026-10-21T10:01:00Z', network: '3g' });
+    for (const r of [base, slow]) await saveReport(dir, r);
+    expect(slow.id).toMatch(/-mobile-3g$/);
+    expect((await listReports(dir, { network: '3g' })).map((s) => s.report.id)).toEqual([slow.id]);
+    expect((await listReports(dir, { network: 'default' })).map((s) => s.report.id)).toEqual([
+      base.id,
+    ]);
+  });
+
   it('distingue páginas distintas del mismo host', async () => {
     const home = makeReport({ url: 'https://a.test/', createdAt: '2026-10-21T10:00:00Z' });
     const blog = makeReport({ url: 'https://a.test/blog', createdAt: '2026-10-21T11:00:00Z' });

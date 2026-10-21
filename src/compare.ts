@@ -9,8 +9,10 @@ import {
 } from './rules.js';
 import {
   METRIC_IDS,
+  networkOf,
   type Impact,
   type MetricId,
+  type Network,
   type Opportunity,
   type Rating,
   type Report,
@@ -23,6 +25,7 @@ export interface ReportRef {
   id: string;
   url: string;
   device: Report['device'];
+  network: Network;
   createdAt: string;
   runs: number;
   label?: string;
@@ -82,6 +85,7 @@ function refOf(report: Report): ReportRef {
     id: report.id,
     url: report.url,
     device: report.device,
+    network: networkOf(report),
     createdAt: report.createdAt,
     runs: report.environment.runs,
     ...(report.label !== undefined && { label: report.label }),
@@ -89,11 +93,16 @@ function refOf(report: Report): ReportRef {
   };
 }
 
-/** SPEC §6: no se comparan reportes con distinto `device` o `throttling`. */
+/** SPEC §6: no se comparan reportes con distinto `device`, `throttling` o perfil de red. */
 function assertComparable(before: Report, after: Report): void {
   if (before.device !== after.device) {
     throw new UsageError(
       `No se pueden comparar reportes de dispositivos distintos (${before.device} vs ${after.device}).`,
+    );
+  }
+  if (networkOf(before) !== networkOf(after)) {
+    throw new UsageError(
+      `No se pueden comparar reportes con distinto perfil de red (${networkOf(before)} vs ${networkOf(after)}).`,
     );
   }
   if (before.environment.throttling !== after.environment.throttling) {

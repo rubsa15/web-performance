@@ -43,6 +43,17 @@ describe('buildHistory', () => {
     expect(mixed.entries[2]?.vsPrevious?.score).toEqual({ delta: 40, change: 'improved' });
   });
 
+  it('compara solo dentro del mismo perfil de red', () => {
+    const mixed = buildHistory('https://example.com/', [
+      makeReport({ createdAt: at(10), score: 40 }),
+      makeReport({ createdAt: at(11), network: '3g', score: 20 }),
+      makeReport({ createdAt: at(12), score: 80 }),
+    ]);
+    expect(mixed.entries[1]).not.toHaveProperty('vsPrevious');
+    expect(mixed.entries[1]?.network).toBe('3g');
+    expect(mixed.entries[2]?.vsPrevious?.id).toBe(mixed.entries[0]?.id);
+  });
+
   it('conserva etiqueta, commit y número de ejecuciones', () => {
     const r = makeReport({ createdAt: at(10), label: 'base', runs: 5 });
     r.git = { commit: 'abc1234', dirty: true };
