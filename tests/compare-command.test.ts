@@ -72,6 +72,25 @@ describe('compareCommand', () => {
     expect(JSON.parse(out[0]!)).toMatchObject({ before: { id: a.id }, after: { id: b.id } });
   });
 
+  it('--network compara los dos últimos de ese perfil aunque el último reporte sea de otro', async () => {
+    const first = await save({ url: URL_A, createdAt: '2026-10-21T10:00:00Z', network: '3g' });
+    const last = await save({ url: URL_A, createdAt: '2026-10-21T11:00:00Z', network: '3g' });
+    await save({ url: URL_A, createdAt: '2026-10-21T12:00:00Z' });
+    await compareCommand(
+      undefined,
+      undefined,
+      { url: URL_A, network: '3g', format: 'json' },
+      deps(),
+    );
+    expect(JSON.parse(out[0]!)).toMatchObject({
+      before: { id: first.id, network: '3g' },
+      after: { id: last.id },
+    });
+    await expect(
+      compareCommand(undefined, undefined, { url: URL_A, network: '4g', format: 'json' }, deps()),
+    ).rejects.toThrow(/No hay auditorías guardadas/);
+  });
+
   it('respeta el formato md y text', async () => {
     const a = await save({ createdAt: '2026-10-21T10:00:00Z', metrics: { lcp: m(4000) } });
     const b = await save({ createdAt: '2026-10-21T11:00:00Z', metrics: { lcp: m(2000) } });
@@ -84,6 +103,7 @@ describe('compareCommand', () => {
   it.each([
     ['solo una referencia', ['x', undefined], {}, /dos reportes/],
     ['--url con referencias', ['x', 'y'], { url: URL_A }, /--url solo se usa/],
+    ['--network con referencias', ['x', 'y'], { network: '3g' }, /--network solo se usa/],
   ] as const)('UsageError: %s', async (_name, [a, b], extra, message) => {
     await expect(compareCommand(a, b, { format: 'json', ...extra }, deps())).rejects.toThrow(
       message,

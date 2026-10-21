@@ -1,0 +1,270 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-21T21-13-29Z-mobile-4g",
+  "url": "https://www.ametllerorigen.com/es/online",
+  "finalUrl": "https://www.ametllerorigen.com/es/online",
+  "device": "mobile",
+  "createdAt": "2026-10-21T21:13:29Z",
+  "environment": {
+    "lighthouseVersion": "13.5.0",
+    "chromeVersion": "155.0.0.0",
+    "throttling": "simulate",
+    "network": "4g",
+    "runs": 3,
+    "representativeRun": 1
+  },
+  "git": {
+    "commit": "55b5fde",
+    "dirty": true
+  },
+  "score": 71,
+  "metrics": {
+    "lcp": {
+      "value": 579,
+      "unit": "ms",
+      "min": 539,
+      "max": 750,
+      "rating": "good"
+    },
+    "fcp": {
+      "value": 460,
+      "unit": "ms",
+      "min": 456,
+      "max": 587,
+      "rating": "good"
+    },
+    "tbt": {
+      "value": 2691,
+      "unit": "ms",
+      "min": 2449,
+      "max": 3195,
+      "rating": "poor"
+    },
+    "cls": {
+      "value": 0,
+      "unit": "",
+      "min": 0,
+      "max": 0,
+      "rating": "good"
+    },
+    "si": {
+      "value": 1793,
+      "unit": "ms",
+      "min": 1741,
+      "max": 1892,
+      "rating": "good"
+    },
+    "ttfb": {
+      "value": 184,
+      "unit": "ms",
+      "min": 173,
+      "max": 185,
+      "rating": "good"
+    }
+  },
+  "opportunities": [
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "category": "javascript",
+      "savingsMs": 3200,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["tbt"],
+      "items": [
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/framework.js",
+          "cpuMs": 5413
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/vendor.js",
+          "cpuMs": 1026
+        },
+        {
+          "url": "https://www.ametllerorigen.com/es/online",
+          "cpuMs": 958
+        },
+        {
+          "url": "Unattributable",
+          "cpuMs": 684
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/main.js",
+          "cpuMs": 247
+        },
+        {
+          "url": "https://www.ametllerorigen.com/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js",
+          "cpuMs": 239
+        }
+      ]
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "category": "javascript",
+      "savingsMs": 3200,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["tbt"],
+      "items": []
+    },
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "category": "images",
+      "savingsMs": 50,
+      "savingsBytes": 115135,
+      "impact": "medium",
+      "affectedMetrics": ["lcp"],
+      "items": [
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-ametller-Library/default/dw5011d835/homepage/mainbanner/EGEN/B_MB_EGEN_MBL_ES_tardor.jpg?sw=800&fmt=webp&q=90",
+          "wastedBytes": 52257,
+          "totalBytes": 88152
+        },
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-ametller-Library/default/dw0952ea89/homepage/mainbanner/Promo%20Bomba/ECOMM_MB_PromoFormatges_Tardor_2026_Mobile_ES_formatges_online.jpg?sw=1000&fmt=webp&q=90",
+          "wastedBytes": 49486,
+          "totalBytes": 85378
+        },
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-ametller-Library/default/dwb588f6c3/homepage/mainbanner/B_MB_BANGER_MBL_ES2.jpg?sw=800&fmt=webp&q=90",
+          "wastedBytes": 13392,
+          "totalBytes": 43490
+        }
+      ]
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "category": "javascript",
+      "savingsMs": 0,
+      "savingsBytes": 173793,
+      "impact": "medium",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/vendor.js",
+          "wastedBytes": 126937,
+          "totalBytes": 201756
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/ui.js",
+          "wastedBytes": 24220,
+          "totalBytes": 68019
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/main.js",
+          "wastedBytes": 22636,
+          "totalBytes": 110927
+        }
+      ]
+    },
+    {
+      "id": "legacy-javascript-insight",
+      "title": "Legacy JavaScript",
+      "category": "javascript",
+      "savingsMs": 0,
+      "savingsBytes": 23914,
+      "impact": "low",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/vendor.js",
+          "wastedBytes": 13431
+        },
+        {
+          "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+          "wastedBytes": 10483
+        }
+      ]
+    },
+    {
+      "id": "unused-css-rules",
+      "title": "Reduce unused CSS",
+      "category": "css",
+      "savingsMs": 0,
+      "savingsBytes": 14066,
+      "impact": "low",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "#didomi-host .didomi-components-button{background-color:#eee;border:1px solid rgba(34,34,34,.2); … } …",
+          "wastedBytes": 14066,
+          "totalBytes": 16558
+        }
+      ]
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 8516,
+      "impact": "low",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+          "wastedBytes": 4191,
+          "totalBytes": 10478
+        },
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-mastercatalog_AMETLLER/default/dwdef529a2/images/products/56902/56902_1.jpg?sw=480&fmt=webp&q=75",
+          "wastedBytes": 2728,
+          "totalBytes": 29152
+        },
+        {
+          "url": "https://www.ametllerorigen.com/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js",
+          "wastedBytes": 1297,
+          "totalBytes": 4322
+        },
+        {
+          "url": "https://www.ametllerorigen.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+          "wastedBytes": 300,
+          "totalBytes": 1000
+        }
+      ]
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["lcp"],
+      "items": []
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "total-byte-weight",
+      "title": "Avoids enormous network payloads",
+      "displayValue": "Total size was 1,536 KiB"
+    },
+    {
+      "id": "long-tasks",
+      "title": "Avoid long main-thread tasks",
+      "displayValue": "20 long tasks found"
+    },
+    {
+      "id": "server-response-time",
+      "title": "Initial server response time was short",
+      "displayValue": "Root document took 90 ms"
+    }
+  ],
+  "resources": {
+    "totalBytes": 1508880,
+    "byType": {
+      "image": 658121,
+      "script": 577764,
+      "font": 133654,
+      "document": 72075,
+      "other": 67266,
+      "stylesheet": 0,
+      "media": 0
+    }
+  },
+  "warnings": []
+}

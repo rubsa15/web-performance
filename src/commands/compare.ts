@@ -2,13 +2,14 @@ import { compareReports } from '../compare.js';
 import { UsageError } from '../errors.js';
 import type { Format } from '../render.js';
 import { renderComparison } from '../render-compare.js';
-import { networkOf } from '../schema.js';
+import { networkOf, type Network } from '../schema.js';
 import { listReports, resolveReport, type StoredReport } from '../store.js';
 import { parseUrl } from './audit.js';
 import { defaultReadDeps, type ReadDeps } from './read-deps.js';
 
 export interface CompareOptions {
   url?: string;
+  network?: Network;
   format: Format;
 }
 
@@ -19,9 +20,13 @@ export interface CompareOptions {
 async function latestPair(
   baseDir: string,
   urlArg: string | undefined,
+  networkArg: Network | undefined,
 ): Promise<[StoredReport, StoredReport]> {
   const url = urlArg === undefined ? undefined : parseUrl(urlArg);
-  const all = await listReports(baseDir, url === undefined ? {} : { url });
+  const all = await listReports(baseDir, {
+    ...(url !== undefined && { url }),
+    ...(networkArg !== undefined && { network: networkArg }),
+  });
   const latest = all.at(-1);
   if (!latest) {
     throw new UsageError(
@@ -63,11 +68,14 @@ export async function compareCommand(
   if (refA !== undefined && options.url !== undefined) {
     throw new UsageError('--url solo se usa sin reportes explícitos.');
   }
+  if (refA !== undefined && options.network !== undefined) {
+    throw new UsageError('--network solo se usa sin reportes explícitos.');
+  }
 
   const [before, after] =
     refA !== undefined && refB !== undefined
       ? await Promise.all([resolveReport(deps.baseDir, refA), resolveReport(deps.baseDir, refB)])
-      : await latestPair(deps.baseDir, options.url);
+      : await latestPair(deps.baseDir, options.url, options.network);
 
   deps.log(`Antes:   ${before.path}`);
   deps.log(`Después: ${after.path}`);

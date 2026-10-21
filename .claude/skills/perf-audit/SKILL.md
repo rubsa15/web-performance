@@ -35,17 +35,19 @@ Los perfiles se lanzan **uno detrás de otro, nunca en paralelo**: dos Chrome a 
 
 - Si el usuario da una URL: ejecuta la auditoría. El CLI debe estar compilado: ejecuta `npm run build` antes (es rápido y evita auditar con un `dist/` viejo).
   ```sh
+  OUT=<carpeta temporal propia de esta auditoría>   # un nombre por sitio, para no pisar resultados
   for n in default 3g 4g; do
-    npx wperf audit <url> --device <mobile|desktop> --network $n --runs 3 --format json > /tmp/audit-$n.json
+    npx wperf audit <url> --device <mobile|desktop> --network $n --runs 3 --format json > $OUT/$n.json 2> $OUT/$n.err
   done
+  grep -h "Reporte guardado" $OUT/*.err    # rutas de los reportes en .perf/reports/
   ```
-  Usa `mobile` por defecto (es lo que mide Core Web Vitals en Lighthouse). Cada perfil tarda de uno a varios minutos: ponle un `timeout` alto o lánzalos en segundo plano y espera a que acaben. El JSON va por stdout y el progreso por stderr; la ruta del reporte guardado sale en stderr.
+  Usa `mobile` por defecto (es lo que mide Core Web Vitals en Lighthouse). Cada perfil tarda de medio minuto a varios: ponle un `timeout` alto, o lanza el bucle entero en segundo plano y espera a que termine (no lo vigiles con esperas cortas). `.perf/reports/<sitio>/` acumula reportes de auditorías anteriores: usa los de este bucle, no el último que encuentres. El JSON va por stdout y el progreso por stderr; la ruta del reporte guardado sale en stderr.
 - Redirige stdout a un fichero y léelo de ahí o de `.perf/reports/`: el JSON es largo y no hace falta volcarlo entero al contexto.
 - Si un perfil falla, cuéntalo y continúa con los demás; no rellenes el hueco. `warnings` puede avisar de que Lighthouse no aplicó el perfil pedido: en ese caso descarta ese reporte.
 - Si la URL es la demo (`127.0.0.1:4173`) y no responde, arranca `npm run demo` en segundo plano antes de auditar.
 - Si el usuario indica un reporte ya guardado, léelo de `.perf/reports/` (o con `npx wperf history <url>` para localizarlo) en vez de auditar de nuevo. Si solo hay uno, trabaja con ese perfil (mira `environment.network`; ausente = `default`) y dilo.
 - Errores: código 2 = uso (corrige la invocación), código 3 = ejecución (Chrome, red, timeout; cuéntalo tal cual y sugiere `CHROME_PATH` o reintentar). No sigas con datos parciales.
-- Revisa `warnings` y `environment.runs`: si hay avisos o solo una ejecución, dilo, porque afecta a la fiabilidad. Mira también la dispersión: si en una métrica `max` es más del doble de `min` (p. ej. LCP de 2 429 a 7 230 ms), la mediana es válida pero inestable; avísalo junto a esa métrica. Si `git.dirty` es `true`, menciónalo como nota (el reporte incluye cambios sin commitear).
+- Revisa `warnings` y `environment.runs`: si hay avisos o solo una ejecución, dilo, porque afecta a la fiabilidad. Mira también la dispersión: si en una métrica `max` es más del doble de `min` (p. ej. LCP de 2 429 a 7 230 ms), la mediana es válida pero inestable; avísalo junto a esa métrica. `git` describe el repo desde el que se ejecutó `wperf`, no el sitio auditado: en una URL ajena ignóralo; en una web de este repo, si `git.dirty` es `true`, menciónalo como nota (el reporte incluye cambios sin commitear). Si `min` es 0 y `max` es mayor que 0, la métrica también es inestable (p. ej. CLS 0–0,291).
 
 ### 2. Leer los reportes
 
@@ -66,11 +68,16 @@ No uses `wperf compare` entre perfiles: el CLI lo rechaza a propósito (error de
 
 Para cada causa raíz anota en qué perfiles aparece y con qué ahorro (`savingsMs`, `savingsBytes` de cada reporte). Con eso la clasificas en una de estas tres, que es lo que más le sirve al usuario para decidir:
 
-- **Independiente de la red**: aparece con ahorro parecido en los tres perfiles (en la demo, `font-display-insight` con 300 ms, y los problemas de CLS, sin ahorro medido pero con la métrica igual en los tres). Prioridad estable.
-- **Sensible a la red**: su ahorro en ms cambia mucho con la red. En la demo `image-delivery-insight` va de 5 050 ms (`4g`) a 81 500 ms (`3g`) con los mismos bytes: la red decide cuánto duele. Mira primero los `savingsBytes`: si son iguales y el tiempo no, la causa son los bytes, no la lógica.
+- **Independiente de la red**: aparece en los tres con `savingsMs` máximo/mínimo ≤ 1,5 (y la métrica afectada no cambia de `rating`) (en la demo, `font-display-insight` con 300 ms, y los problemas de CLS, sin ahorro medido pero con la métrica igual en los tres). Prioridad estable.
+- **Sensible a la red**: el cociente `savingsMs` máximo/mínimo entre perfiles es > 1,5, o el ahorro llega a 0 en alguno. Esa regla es mecánica a propósito; la lectura que haces encima no (el ahorro en ms cambia con la red). En la demo `image-delivery-insight` va de 5 050 ms (`4g`) a 81 500 ms (`3g`) con los mismos bytes: la red decide cuánto duele. Mira primero los `savingsBytes`: si son iguales y el tiempo no, la causa son los bytes, no la lógica.
 - **Solo visible en un perfil, o que se mueve sin lógica aparente**: cuéntalo tal cual y trata la causa como hipótesis. No des por hecho que el hilo principal (`bootup-time`, `mainthread-work-breakdown`, TBT) sea indiferente a la red: en la demo el TBT es 43 ms en `3g`, 518 ms en `default` y 1 406 ms en `4g`, y el ahorro de `bootup-time` va de 50 a 1 350 ms, aunque la CPU es la misma. Hipótesis a mencionar: el TBT solo cuenta las tareas largas entre FCP y TTI, y con red lenta el FCP se retrasa tanto que esa tarea cae antes de la ventana. El problema de CPU sigue ahí; lo que cambia es que la métrica lo ve o no. Por eso el perfil donde el TBT parece bueno no es una absolución: un TBT bajo en `3g` junto a uno alto en `4g` significa que la tarea larga existe.
 
 Reglas para esa lectura:
+
+- **El `impact` y los `affectedMetrics` pueden cambiar entre perfiles** (`render-blocking-insight` es `high`, `high`, `low`; `unused-javascript` apunta a FCP y LCP en unos y solo a FCP en otro). Usa los del perfil de referencia para ordenar, cita los de los demás en la fila y no los ocultes.
+- **TBT `poor` en los tres perfiles** (con CPU parecida) es un problema de hilo principal estable: la red no lo explica ni lo arregla. Diferéncialo del caso de la demo, donde el TBT se mueve con la red. Si los rangos `min`–`max` de dos perfiles se solapan, no digas que uno es peor.
+- **El `score` no ordena las redes.** Pesa distinto cada métrica (el TBT, sobre todo) y puede subir al empeorar la red; no lo uses para decir qué perfil "va mejor".
+- Las cifras de `references/` son de otra medición: no las reutilices, aunque el sitio sea el mismo.
 
 - El perfil de referencia del informe es `default`; los demás son contexto. Si un `rating` cambia entre perfiles (p. ej. LCP `good` en `4g` y `poor` en `3g`), eso es un hallazgo: dilo con las tres cifras.
 - Compara cada métrica con el rango `min`–`max` de su perfil. Si dos perfiles se solapan en rango, no afirmes que uno es peor que el otro.
@@ -79,11 +86,11 @@ Reglas para esa lectura:
 
 ### 4. Agrupar por causa raíz
 
-Varias oportunidades suelen ser el mismo problema. Agrúpalas antes de priorizar; el usuario necesita 4–7 acciones, no 11 filas de Lighthouse. Los terceros (analítica, consentimiento, tag managers) no tienen oportunidad propia: si pesan, agrúpalos tú por origen a partir de los `items[]` y marca la suma como `(fuente: cálculo)`. Usa [references/causas-raiz.md](references/causas-raiz.md) para el mapa de ids → causa y para estimar esfuerzo. Cada grupo debe citar los ids que lo componen.
+Varias oportunidades suelen ser el mismo problema. Agrúpalas antes de priorizar; el usuario necesita 4–7 acciones, no 11 filas de Lighthouse. Los terceros (analítica, consentimiento, tag managers) no tienen oportunidad propia: si pesan, agrúpalos tú por origen a partir de los `items[]` y marca la suma como `(fuente: cálculo)`. Los `items[]` son parciales (p. ej. `total-byte-weight` trae solo los 10 mayores): presenta esa suma como un mínimo. Usa [references/causas-raiz.md](references/causas-raiz.md) para el mapa de ids → causa y para estimar esfuerzo. Cada grupo debe citar los ids que lo componen.
 
 ### 5. Priorizar y presentar
 
-Orden: (1) causas cuya `affectedMetrics` incluye una métrica `poor` en el perfil de referencia, y a continuación las que solo son `poor` en otro perfil (indica en cuál); (2) las de una métrica `needs-improvement`; (3) el resto. Dentro de cada grupo, por `impact`, `savingsMs` y `savingsBytes` (el orden del CLI). Toma las métricas afectadas del `affectedMetrics` del JSON, no del mapa de causas: el mapa es una guía, el reporte manda. El `rating` cambia de una auditoría a otra (el mismo problema puede ser `poor` hoy y `needs-improvement` mañana), así que el orden del ejemplo no es una plantilla. Formato de cifras: ms enteros con espacio de millares (`40 728 ms`), MiB con 2 decimales si el valor supera 1 MiB, KiB enteros por debajo, coma decimal; redondea, no trunques. Esfuerzo (S/M/L) es hipótesis tuya, justificada en una frase: S = cambio de atributo o configuración; M = tocar varios ficheros o regenerar assets; L = rediseño o refactor de lógica.
+Orden: (1) causas cuya `affectedMetrics` incluye una métrica `poor` en el perfil de referencia, y a continuación las que solo son `poor` en otro perfil (indica en cuál); (2) las de una métrica `needs-improvement`; (3) el resto. Dentro de cada grupo, por `impact`, `savingsMs` y `savingsBytes` (el orden del CLI), con dos matices: una causa con ahorro 0 que apunta a una métrica `poor` (el caso típico es el CLS) se ordena como si fuese `high`; y en el segundo grupo (`poor` solo en otro perfil) va primero la que lo es en más perfiles y, a igualdad, la de mayor `savingsMs` entre perfiles. Toma las métricas afectadas del `affectedMetrics` del JSON, no del mapa de causas: el mapa es una guía, el reporte manda. Si dos causas comparten recurso en sus `items[]` (p. ej. el mismo script en `render-blocking-insight` y `unused-javascript`), déjalas en filas separadas si el arreglo difiere, di que se solapan y no sumes sus ahorros. El `rating` cambia de una auditoría a otra (el mismo problema puede ser `poor` hoy y `needs-improvement` mañana), así que el orden del ejemplo no es una plantilla. Formato de cifras: ms enteros con espacio de millares (`40 728 ms`), MiB con 2 decimales si el valor supera 1 MiB, KiB enteros por debajo, coma decimal; redondea, no trunques. Esfuerzo (S/M/L) es hipótesis tuya, justificada en una frase: S = cambio de atributo o configuración; M = tocar varios ficheros o regenerar assets; L = rediseño o refactor de lógica.
 
 Estructura de la respuesta (ejemplo completo en [references/ejemplo-salida.md](references/ejemplo-salida.md)):
 

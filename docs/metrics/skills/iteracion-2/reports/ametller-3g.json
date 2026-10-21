@@ -1,0 +1,285 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-21T21-12-44Z-mobile-3g",
+  "url": "https://www.ametllerorigen.com/es/online",
+  "finalUrl": "https://www.ametllerorigen.com/es/online",
+  "device": "mobile",
+  "createdAt": "2026-10-21T21:12:44Z",
+  "environment": {
+    "lighthouseVersion": "13.5.0",
+    "chromeVersion": "155.0.0.0",
+    "throttling": "simulate",
+    "network": "3g",
+    "runs": 3,
+    "representativeRun": 3
+  },
+  "git": {
+    "commit": "55b5fde",
+    "dirty": true
+  },
+  "score": 44,
+  "metrics": {
+    "lcp": {
+      "value": 5725,
+      "unit": "ms",
+      "min": 5725,
+      "max": 5792,
+      "rating": "poor"
+    },
+    "fcp": {
+      "value": 2578,
+      "unit": "ms",
+      "min": 2577,
+      "max": 2637,
+      "rating": "needs-improvement"
+    },
+    "tbt": {
+      "value": 1498,
+      "unit": "ms",
+      "min": 1374,
+      "max": 2218,
+      "rating": "poor"
+    },
+    "cls": {
+      "value": 0,
+      "unit": "",
+      "min": 0,
+      "max": 0,
+      "rating": "good"
+    },
+    "si": {
+      "value": 5899,
+      "unit": "ms",
+      "min": 5579,
+      "max": 6114,
+      "rating": "poor"
+    },
+    "ttfb": {
+      "value": 1225,
+      "unit": "ms",
+      "min": 1225,
+      "max": 1237,
+      "rating": "needs-improvement"
+    }
+  },
+  "opportunities": [
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "category": "javascript",
+      "savingsMs": 2800,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["tbt"],
+      "items": [
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/framework.js",
+          "cpuMs": 5051
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/vendor.js",
+          "cpuMs": 957
+        },
+        {
+          "url": "https://www.ametllerorigen.com/es/online",
+          "cpuMs": 819
+        },
+        {
+          "url": "Unattributable",
+          "cpuMs": 602
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/main.js",
+          "cpuMs": 205
+        },
+        {
+          "url": "https://www.ametllerorigen.com/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js",
+          "cpuMs": 115
+        }
+      ]
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "category": "javascript",
+      "savingsMs": 1500,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": ["tbt"],
+      "items": []
+    },
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "category": "images",
+      "savingsMs": 600,
+      "savingsBytes": 115135,
+      "impact": "high",
+      "affectedMetrics": ["lcp"],
+      "items": [
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-ametller-Library/default/dw5011d835/homepage/mainbanner/EGEN/B_MB_EGEN_MBL_ES_tardor.jpg?sw=800&fmt=webp&q=90",
+          "wastedBytes": 52257,
+          "totalBytes": 88152
+        },
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-ametller-Library/default/dw0952ea89/homepage/mainbanner/Promo%20Bomba/ECOMM_MB_PromoFormatges_Tardor_2026_Mobile_ES_formatges_online.jpg?sw=1000&fmt=webp&q=90",
+          "wastedBytes": 49486,
+          "totalBytes": 85378
+        },
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-ametller-Library/default/dwb588f6c3/homepage/mainbanner/B_MB_BANGER_MBL_ES2.jpg?sw=800&fmt=webp&q=90",
+          "wastedBytes": 13392,
+          "totalBytes": 43490
+        }
+      ]
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "category": "javascript",
+      "savingsMs": 0,
+      "savingsBytes": 199887,
+      "impact": "medium",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/vendor.js",
+          "wastedBytes": 130698,
+          "totalBytes": 201765
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/ui.js",
+          "wastedBytes": 24220,
+          "totalBytes": 68019
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/main.js",
+          "wastedBytes": 22961,
+          "totalBytes": 110936
+        },
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/sdk.js",
+          "wastedBytes": 22008,
+          "totalBytes": 46532
+        }
+      ]
+    },
+    {
+      "id": "legacy-javascript-insight",
+      "title": "Legacy JavaScript",
+      "category": "javascript",
+      "savingsMs": 0,
+      "savingsBytes": 23786,
+      "impact": "low",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "https://www.ametllerorigen.com/mobify/bundle/668/vendor.js",
+          "wastedBytes": 13430
+        },
+        {
+          "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+          "wastedBytes": 10356
+        }
+      ]
+    },
+    {
+      "id": "unused-css-rules",
+      "title": "Reduce unused CSS",
+      "category": "css",
+      "savingsMs": 0,
+      "savingsBytes": 16558,
+      "impact": "low",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "#didomi-host .didomi-components-button{background-color:#eee;border:1px solid rgba(34,34,34,.2); … } …",
+          "wastedBytes": 16558,
+          "totalBytes": 16558
+        }
+      ]
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 8457,
+      "impact": "low",
+      "affectedMetrics": ["fcp", "lcp"],
+      "items": [
+        {
+          "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+          "wastedBytes": 4140,
+          "totalBytes": 10351
+        },
+        {
+          "url": "https://www.ametllerorigen.com/dw/image/v2/BLZV_PRD/on/demandware.static/-/Sites-mastercatalog_AMETLLER/default/dwdef529a2/images/products/56902/56902_1.jpg?sw=480&fmt=webp&q=75",
+          "wastedBytes": 2730,
+          "totalBytes": 29178
+        },
+        {
+          "url": "https://www.ametllerorigen.com/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js",
+          "wastedBytes": 1301,
+          "totalBytes": 4337
+        },
+        {
+          "url": "https://www.ametllerorigen.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+          "wastedBytes": 286,
+          "totalBytes": 953
+        }
+      ]
+    },
+    {
+      "id": "forced-reflow-insight",
+      "title": "Forced reflow",
+      "category": "javascript",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": [],
+      "items": []
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": ["lcp"],
+      "items": []
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "total-byte-weight",
+      "title": "Avoids enormous network payloads",
+      "displayValue": "Total size was 1,525 KiB"
+    },
+    {
+      "id": "long-tasks",
+      "title": "Avoid long main-thread tasks",
+      "displayValue": "20 long tasks found"
+    },
+    {
+      "id": "server-response-time",
+      "title": "Initial server response time was short",
+      "displayValue": "Root document took 150 ms"
+    }
+  ],
+  "resources": {
+    "totalBytes": 1497555,
+    "byType": {
+      "image": 655572,
+      "script": 577345,
+      "font": 133258,
+      "document": 72075,
+      "other": 59305,
+      "stylesheet": 0,
+      "media": 0
+    }
+  },
+  "warnings": []
+}

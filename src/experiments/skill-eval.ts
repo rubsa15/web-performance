@@ -1,13 +1,14 @@
 // Evaluación de las skills (SPEC §9, PLAN fase 4). Comprueba, sin LLM, la respuesta de una skill:
 //
 //   node dist/experiments/skill-eval.js figures <respuesta.md> <reporte.json>...
-//       Cifras de la respuesta que no salen de los reportes (o de la comparación entre ellos si hay
-//       dos). Sale con código 1 si hay alguna.
+//       Cifras de la respuesta que no salen de los reportes (ni de su comparación, si son dos y
+//       comparables). Sale con código 1 si hay alguna.
 //   node dist/experiments/skill-eval.js recall <respuesta.md>
 //       Cuáles de los 7 problemas de demo/site/ISSUES.md menciona la respuesta.
 import { readFile } from 'node:fs/promises';
 import { parseArgs } from 'node:util';
 import { compareReports } from '../compare.js';
+import { UsageError } from '../errors.js';
 import { ReportSchema, type Report } from '../schema.js';
 
 const KIB = 1024;
@@ -96,7 +97,8 @@ function stripNonMeasures(markdown: string): string {
     .replace(/\]\([^)]*\)/g, ']') // destinos de enlaces
     .replace(/`[^`]*[a-z][^`]*-[^`]*`/gi, ' ') // ids como `lcp-discovery-insight`
     .replace(/\b[\w.-]*\d[\w.-]*\.(jpg|js|css|woff2|html|png|json|md)\b/gi, ' ') // nombres de fichero
-    .replace(/\blighthouse\s+\d+\b/gi, ' ')
+    .replace(/\b(?:lighthouse|chrome)\s+\d+\b/gi, ' ')
+    .replace(/\b[qw]=\d+\b/g, ' ') // parámetros que se proponen (`q=75`), no medidas
     .replace(/\bcore web vitals\b/gi, ' ')
     .replace(/^\s*\d+[.)]\s/gm, ' ') // listas numeradas
     .replace(/^\|\s*\d+\s*\|/gm, '| ') // columna "#" de tablas
@@ -180,6 +182,15 @@ export function unverifiedFigures(markdown: string, source: unknown): string[] {
     .map((n) => n.text);
 }
 
+function tryCompare(a: Report, b: Report): unknown {
+  try {
+    return compareReports(a, b);
+  } catch (error) {
+    if (error instanceof UsageError) return undefined; // distinto device, red o throttling
+    throw error;
+  }
+}
+
 async function loadReport(path: string): Promise<Report> {
   return ReportSchema.parse(JSON.parse(await readFile(path, 'utf8')));
 }
@@ -187,10 +198,12 @@ async function loadReport(path: string): Promise<Report> {
 if (import.meta.main) {
   const { positionals } = parseArgs({ allowPositionals: true });
   const [command, file, ...reports] = positionals;
-  if (command === 'figures' && file && (reports.length === 1 || reports.length === 2)) {
+  if (command === 'figures' && file && reports.length >= 1) {
     const loaded = await Promise.all(reports.map(loadReport));
     const [a, b] = loaded;
-    const source = b && a ? [a, b, compareReports(a, b)] : a;
+    // Con dos reportes comparables también valen las cifras de su comparación.
+    const comparison = loaded.length === 2 && a && b ? tryCompare(a, b) : undefined;
+    const source = comparison ? [...loaded, comparison] : loaded;
     const bad = unverifiedFigures(await readFile(file, 'utf8'), source);
     console.log(
       bad.length === 0 ? 'Todas las cifras salen del JSON.' : `Sin origen: ${bad.join(', ')}`,

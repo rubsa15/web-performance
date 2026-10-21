@@ -71,6 +71,12 @@ export function buildProgram(auditDeps?: AuditDeps, readDeps?: ReadDeps): Comman
     .argument('[a]', 'reporte "antes" (ruta o id)')
     .argument('[b]', 'reporte "después" (ruta o id)')
     .option('--url <url>', 'sin reportes explícitos: compara los dos últimos de esta URL')
+    .addOption(
+      new Option(
+        '--network <network>',
+        'sin reportes explícitos: solo reportes de este perfil de red',
+      ).choices(NETWORKS),
+    )
     .addOption(formatOption())
     .action((a: string | undefined, b: string | undefined, options: CompareOptions) =>
       compareCommand(a, b, options, readDeps),

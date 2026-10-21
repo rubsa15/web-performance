@@ -23,7 +23,8 @@ Explica la diferencia entre dos reportes de `wperf`. El CLI decide qué cambio e
 - Sin nada: `npx wperf compare --format json` usa los dos últimos reportes guardados.
 - Si el usuario cambió algo y quiere saber el efecto pero solo hay un reporte, audita con `perf-audit` (o `npx wperf audit`) y compara después. Para elegir ids, `npx wperf history <url>` los lista.
 - JSON por stdout; las rutas "Antes/Después" salen por stderr. Ejecuta `npm run build` antes y redirige stdout a un fichero para no volcar el JSON entero al contexto.
-- Si dos reportes distintos comparten etiqueta (`demo v0`), identifícalos por `id`, no por etiqueta.
+- Si dos reportes distintos comparten etiqueta (`demo v0`), identifícalos por `id`, no por etiqueta; el CLI no avisa de ello.
+- **Perfiles de red distintos no se comparan** (código 2). Si el usuario pregunta "¿en qué red es peor?", no restes valores a mano: explica el motivo, enséñale los valores de cada reporte lado a lado marcándolo como *no* comparación, y derívalo a `perf-audit`, que sí cruza perfiles. Para comparar un perfil concreto a lo largo del tiempo usa `npx wperf compare --url <url> --network 3g --format json` (los dos últimos de ese perfil) o `npx wperf history <url> --network 3g`.
 - Código 2 (distinto `device`, perfil de red `environment.network` o `throttling`, o solo hay un reporte): explica el motivo; no hay comparación válida y no debes forzar una a mano. Código 3: error de ejecución, cuéntalo.
 
 ### 2. Comprobar que la comparación es fiable
@@ -39,9 +40,9 @@ Antes de interpretar, lee `warnings` y `before`/`after`:
 Estructura (ejemplo de mejora en [references/ejemplo-salida.md](references/ejemplo-salida.md); de regresión en [references/ejemplo-regresion.md](references/ejemplo-regresion.md)):
 
 1. **Veredicto**: `verdict` (`improved` / `regressed` / `mixed` / `unchanged`), `score` antes→después y su `change`, ids y fechas de ambos reportes.
-2. **Métricas**: tabla con antes, después, delta, `change` y el cambio de `rating` (p. ej. poor → good). El JSON de `compare` no trae el rango min–max ni el umbral; si quieres explicar por qué algo es ruido, lee `metrics.<id>.min/max` de los reportes originales (con 3 ejecuciones por lado, la confianza es limitada: dilo) y los umbrales por defecto de la SPEC §6 (LCP/FCP/SI 150 ms o 10 %, TBT 50 ms o 50 %, TTFB 100 ms o 20 %, CLS 0,02, score 5 puntos). Separa en tres bloques lo que el CLI marca como `improved`, `regressed` y `unchanged` (ruido). Si todo es `unchanged`, la conclusión es "no hay cambio medible", y está bien decirlo.
+2. **Métricas**: tabla con antes, después, delta, `change` y el cambio de `rating` (p. ej. poor → good). El JSON de `compare` no trae el rango min–max ni el umbral; si quieres explicar por qué algo es ruido, lee `metrics.<id>.min/max` de los reportes originales (con 3 ejecuciones por lado, la confianza es limitada: dilo) y los umbrales por defecto de la SPEC §6 (el umbral efectivo es el **mayor** de los dos valores: LCP/FCP/SI 150 ms o 10 % del valor "antes", TBT 50 ms o 50 %, TTFB 100 ms o 20 %, CLS 0,02, score 5 puntos; y además los rangos min–max no deben solaparse. Por eso un LCP que sube 974 ms sobre 39 754 ms es `unchanged`: el 10 % son 3 975 ms). Separa en tres bloques lo que el CLI marca como `improved`, `regressed` y `unchanged` (ruido). Si todo es `unchanged`, la conclusión es "no hay cambio medible", y está bien decirlo.
 3. **Oportunidades**: agrupa por `status` (`resolved`, `better`, `new`, `worse`, `same`) con `deltaMs`/`deltaBytes`. Una oportunidad presente en ambos es `better`/`worse` solo si su ahorro cambia más de 100 ms o 50 % (o 10 KiB o 20 % en bytes); por debajo es `same` aunque el número se mueva (+200 ms sobre 32 700 ms es `same`). No lo reclasifiques. Interpreta en causa raíz, no id a id (ver [la guía de causas de perf-audit](../perf-audit/references/causas-raiz.md)): p. ej. `unsized-images` + `cls-culprits-insight` resueltas = problema de CLS resuelto.
-4. **Recursos**: cambios relevantes de `resources` (total y por tipo), que suelen explicar por qué cambió el resto. Formato: ms enteros, MiB con 2 decimales si superan 1 MiB, KiB enteros por debajo, coma decimal; redondea.
+4. **Recursos**: cambios relevantes de `resources` (total y por tipo), que suelen explicar por qué cambió el resto. Formato: ms enteros; en la prosa, MiB con 2 decimales si superan 1 MiB y KiB enteros por debajo (redondea, con coma decimal); en tablas de recursos puedes dar los bytes exactos del JSON.
 5. **Causas probables (hipótesis)** y **qué confirmar**.
 
 Una oportunidad `resolved` con ahorro 0 es un buen dato (el problema desapareció) pero no tiene cifra de mejora: no le inventes una. El efecto cuantificable está en las métricas.
@@ -55,13 +56,16 @@ git log --oneline <commit-antes>..<commit-después>
 git diff --stat <commit-antes> <commit-después>
 ```
 
+Antes de dar una mejora por buena, mira `npx wperf history <url>`: si el "antes" no es representativo (un reporte ya degradado, o un cambio de contenido entre medidas con la misma etiqueta) la mejora es frente a una base mala; dilo.
+
 Casos que cambian lo que puedes afirmar:
 
 - **Mismo commit en ambos** (típico con `dirty: true`): git no ayuda; no inventes un commit culpable. Pero la causa a veces se ve en los propios reportes: compara los `items[]` de las oportunidades que cambiaron (qué URLs aparecen en un reporte y no en el otro, con sus bytes). Es la evidencia más sólida que tienes en este caso; preséntala como *medición* (qué recurso cambió) y la explicación (qué se tocó y por qué) como *hipótesis*. Ejemplo completo: [references/ejemplo-regresion.md](references/ejemplo-regresion.md). `git diff` del árbol actual no sirve para esto: refleja el estado de ahora, no el de cada auditoría.
 - **Falta `git` en alguno**: no hay base para el cruce; dilo.
 - **`dirty: true`**: el reporte incluye cambios que ningún commit recoge; los commits listados son solo parte de la explicación.
 - **Commit inexistente en el repo actual** (otro clon, historial reescrito): `git log` fallará; no lo disimules.
-- **Distinta URL / otra versión del sitio**: git no explica la diferencia. Si el usuario pregunta por la causa, compara los directorios con `git diff --no-index --stat <dirA> <dirB>` (salida resumida, sin binarios); si no pregunta, no lo hagas.
+- **Distinta URL / otra versión del sitio**: git no explica la diferencia. Si el usuario pregunta por la causa, compara los directorios con `git diff --no-index --stat <dirA> <dirB>` (salida resumida, sin binarios); si no pregunta, no lo hagas. Limita el diff a lo que importa (`-- '*.html' '*.css' '*.js'`): sin filtro, `--stat` lista ficheros de documentación y binarios que solo meten ruido.
+- **`items[]` que parece contradecir la clasificación** (p. ej. `bootup-time` es `better` y el TBT baja, pero el `cpuMs` de un script sube): no reclasifiques. Preséntalo como dato medido y propón una hipótesis (aquí, que el trabajo se trocea en tareas cortas).
 
 Para cada candidato, relaciona *qué tocó el commit* (ficheros del `diff --stat`, mensaje) con *qué empeoró o mejoró* (métrica y oportunidad). Un candidato sin relación plausible con las métricas que se movieron no se menciona. Indica siempre cómo confirmarlo: revertir ese cambio y volver a auditar, o `git stash` + `wperf audit` + `wperf compare`.
 
