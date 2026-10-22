@@ -4,3 +4,5 @@ node_modules/
 dist/
 coverage/
 .perf/raw/
+docs/SPEC.md
+docs/PLAN.md
