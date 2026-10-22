@@ -1,0 +1,127 @@
+{
+ "a1": {
+  "esperada": "perf-audit",
+  "tipo": "claro",
+  "mensaje": "¿Puedes auditar https://www.example.com y decirme qué debería mejorar primero?"
+ },
+ "a2": {
+  "esperada": "perf-audit",
+  "tipo": "claro",
+  "mensaje": "Mi web va lenta en el móvil, ¿por dónde empiezo?"
+ },
+ "a3": {
+  "esperada": "perf-audit",
+  "tipo": "claro",
+  "mensaje": "Interpreta el reporte que me dejó wperf ayer en .perf/reports/"
+ },
+ "a4": {
+  "esperada": "perf-audit",
+  "tipo": "claro",
+  "mensaje": "Mide el LCP y el CLS de https://tienda.test en 3g y en 4g."
+ },
+ "a5": {
+  "esperada": "perf-audit",
+  "tipo": "claro",
+  "mensaje": "Run a Lighthouse audit on my site and tell me what to fix first."
+ },
+ "c1": {
+  "esperada": "perf-compare",
+  "tipo": "claro",
+  "mensaje": "Compara la auditoría de antes con la de después del cambio de ayer."
+ },
+ "c2": {
+  "esperada": "perf-compare",
+  "tipo": "claro",
+  "mensaje": "¿Ha empeorado el LCP desde el último deploy?"
+ },
+ "c3": {
+  "esperada": "perf-compare",
+  "tipo": "claro",
+  "mensaje": "¿Cómo ha evolucionado el rendimiento de esta URL durante la semana?"
+ },
+ "c4": {
+  "esperada": "perf-compare",
+  "tipo": "claro",
+  "mensaje": "Esta mejora que veo, ¿es real o es solo ruido de la medición?"
+ },
+ "c5": {
+  "esperada": "perf-compare",
+  "tipo": "claro",
+  "mensaje": "Enséñame el historial de auditorías de la web."
+ },
+ "c6": {
+  "esperada": "perf-compare",
+  "tipo": "claro",
+  "mensaje": "¿Por qué ha subido el TBT desde el último commit?"
+ },
+ "f1": {
+  "esperada": "perf-fix",
+  "tipo": "claro",
+  "mensaje": "Arregla las imágenes sin width y height de mi web."
+ },
+ "f2": {
+  "esperada": "perf-fix",
+  "tipo": "claro",
+  "mensaje": "Aplica la mejora 2 de la tabla que me diste."
+ },
+ "f3": {
+  "esperada": "perf-fix",
+  "tipo": "claro",
+  "mensaje": "Ponle defer a los scripts que bloquean el render y comprueba que mejora."
+ },
+ "f4": {
+  "esperada": "perf-fix",
+  "tipo": "claro",
+  "mensaje": "Implementa lazy loading en la galería de fotos."
+ },
+ "f5": {
+  "esperada": "perf-fix",
+  "tipo": "claro",
+  "mensaje": "Corrige el LCP de mi web."
+ },
+ "b1": {
+  "esperada": "perf-compare",
+  "tipo": "frontera",
+  "mensaje": "Ya apliqué el cambio de las imágenes. ¿Ha mejorado el rendimiento?"
+ },
+ "b2": {
+  "esperada": "perf-fix",
+  "tipo": "frontera",
+  "mensaje": "Quita el script de three.js que no se usa y mide si mejora."
+ },
+ "b3": {
+  "esperada": "perf-fix",
+  "tipo": "frontera",
+  "mensaje": "Arregla el CLS y dime cuánto ha mejorado."
+ },
+ "b4": {
+  "esperada": "perf-compare",
+  "tipo": "frontera",
+  "mensaje": "Acabo de aplicar tu arreglo del defer: valida que no ha empeorado nada."
+ },
+ "n1": {
+  "esperada": "NONE",
+  "tipo": "negativo",
+  "mensaje": "Añade un botón de login a la página de inicio."
+ },
+ "n2": {
+  "esperada": "NONE",
+  "tipo": "negativo",
+  "mensaje": "Esta consulta SQL va muy lenta, ¿cómo la optimizo?"
+ },
+ "n3": {
+  "esperada": "NONE",
+  "tipo": "negativo",
+  "mensaje": "Explícame qué es el LCP en Core Web Vitals."
+ },
+ "n4": {
+  "esperada": "NONE",
+  "tipo": "negativo",
+  "mensaje": "Mi componente de React se renderiza demasiadas veces, ¿uso useMemo?"
+ },
+ "n5": {
+  "esperada": "NONE",
+  "tipo": "negativo",
+  "mensaje": "Haz que el pipeline de CI sea más rápido."
+ }
+}

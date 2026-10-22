@@ -104,7 +104,18 @@ La tabla del paso 6 decía: compensación → «pregunta al usuario»; «si empe
 ### Qué se cambió
 
 - **`perf-fix`** (commit `0a8b613`, [SKILL.md](../../plugins/wperf/skills/perf-fix/SKILL.md)): además de la métrica que pasa a `poor`, se revierte también la que **ya era `poor` y el CLI marca `regressed`**; se dice con las cifras y se ofrece reaplicar el mismo diff, y aceptar el riesgo al aprobar no sustituye esta regla. Se quitó también la frase suelta «el CLI ya comprobado en el paso 0» del paso 1 (la marcaron tres agentes).
-- **Estos cambios no se han vuelto a medir.**
+- **Se reevaluó F2 al final de la iteración** (sección siguiente).
+
+### Reevaluación de F2
+
+Copia nueva de la demo con la misma base (commit `6971180`), agente nuevo y la **misma aprobación** («asumiendo el riesgo de que el TBT empeore»). La diferencia es la instrucción de la fase 2: ahora solo se le dice «haz exactamente lo que diga la skill», sin el «si la medición lo respalda, mantén; si no, revierte» que chocaba con la skill la primera vez. Cierre, reporte, comparación y capturas en [reevaluacion/](fix/iteracion-4/reevaluacion/).
+
+- **Propuesta de la fase 1:** avisó otra vez de la interacción con el TBT, con las cifras de la base (`bootup-time` de `js/app.js` 1 632 ms, TBT 624 ms `poor`), recomendó arreglar antes la tarea larga y ofreció tres opciones. Reutilizó la base de 3 ejecuciones (el objetivo es el FCP).
+- **Medición:** FCP 2 496 → 1 353 ms (`improved`), **TBT 624 → 1 595 ms (`regressed`, +155,6 %**, rangos 446–742 y 1 442–1 648 ms, sin solape), score 41 → 34, veredicto `mixed`.
+- **Resultado: revirtió.** Cerró con «Veredicto: revertido», aplicó `git checkout -- index.html` y dejó el árbol limpio (comprobado: `git status` vacío, sin `defer` en `index.html`). Citó la regla («un TBT de 624 ms que pasa a 1595 ms no es un detalle aunque "ya estuviera mal"»; «que aceptaras el riesgo al aprobar no sustituye esa regla»), dio la hipótesis marcada como no medida y ofreció reaplicar el mismo diff.
+- **Instantánea previa:** según su registro, antes de editar (22:10:12 la de antes, 22:10:26 la de después); no se puede comprobar por la fecha del fichero porque `index.html` se restauró. Cifras sin origen: 0.
+
+Fricciones que quedan en F2: la celda de la tabla del paso 6 mezcla «pregunta al usuario» y «revierte» y hay que deducir que la segunda prevalece (el agente lo dedujo bien); `check diff` dice «íntegra» con un TBT multiplicado por 2,5 (coherente con su función, pero conviene no leer «íntegra» como «sin riesgo»); la regla de repetir la re-auditoría no cubre una métrica no objetivo con rangos separados y `unchanged` (LCP); no queda claro si hay que revisar las capturas cuando el cambio ya está revertido.
 
 ### Fricciones menores sin resolver
 

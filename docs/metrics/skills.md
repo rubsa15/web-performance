@@ -133,14 +133,46 @@ Lo que sí hicieron los agentes, comportamiento nuevo de esta iteración:
 
 ### Fallos de las skills que salieron
 
-1. **El score puede dar `improved` sin que se mueva ninguna métrica.** `antes-1` → `antes-2` son la misma página sin tocar y el CLI dice `improved` porque el score sube de 41 a 47 (umbral 5), mientras el TBT sube de 608 a 1 133 ms (rangos solapados) y las otras cinco métricas son `unchanged`. Los tres agentes de `perf-compare` lo señalaron y la skill no decía qué hacer: citaron el veredicto del CLI y explicaron que ninguna métrica cambió. **Pendiente de decidir:** si `compare` debería dejar de dar `improved`/`regressed` cuando solo se mueve el score (hoy `verdictOf` incluye el score).
+1. **El score puede dar `improved` sin que se mueva ninguna métrica.** `antes-1` → `antes-2` son la misma página sin tocar y el CLI dice `improved` porque el score sube de 41 a 47 (umbral 5), mientras el TBT sube de 608 a 1 133 ms (rangos solapados) y las otras cinco métricas son `unchanged`. Los tres agentes de `perf-compare` lo señalaron y la skill no decía qué hacer: citaron el veredicto del CLI y explicaron que ninguna métrica cambió. **Decidido (2026-10-22): se deja como está.** `verdictOf` sigue incluyendo el score: es una señal útil, no rompe nada (`compare` sale siempre con 0) y cambiarlo alteraría lo calibrado en [noise.md](noise.md) (veredicto distinto de `unchanged` en 9 de 45 pares de la demo rota, 0 de 45 de la arreglada). El hueco lo cubre la skill `perf-compare`. Si algún día se quiere avisar en el CLI, lo de menor riesgo es una línea cuando el veredicto venga solo de la puntuación, sin cambiar el veredicto.
 2. **El atajo `compare --url <url> --network <n>` falla con varios reportes por lado.** La sección «Antes/después medido en varias redes», que se había añadido ese mismo día, lo recomendaba. Con dos «antes» y dos «después» en `default` toma los dos últimos y compara `despues-1` con `despues-2` (`unchanged`). El agente lo notó y usó ids explícitos.
 3. **Hueco por la ausencia de oportunidades en un reporte:** `mainthread-work-breakdown` pasa a `resolved` (600 ms → —) en el par con ruido, con el sitio idéntico. La skill solo cubre `resolved` con ahorro 0. Los agentes lo trataron como ruido (hipótesis), sin regla que lo respalde.
 
 ### Qué se cambió
 
 - **`perf-compare`** (commit `0a8b613`, [SKILL.md](../../plugins/wperf/skills/perf-compare/SKILL.md)): un veredicto disparado solo por el `score` se cita tal cual, se dice que ninguna métrica cambió y se trata como ruido probable (hipótesis); en una serie, una entrada en la que solo cambia el score no es un salto; el antes/después en varias redes usa ids explícitos y advierte del atajo, y con más de un reporte por lado se empareja el último de cada uno y se cita la diferencia entre ellos como línea de ruido.
-- **Estos cambios no se han vuelto a medir** con subagentes.
+- **Se reevaluaron al final de la iteración** (secciones siguientes).
+
+### Reevaluación de las correcciones
+
+Mismos casos, agentes nuevos y el mismo almacén de reportes ([reevaluacion/](skills/iteracion-4/reevaluacion/)). Cifras comprobadas igual que antes.
+
+| Caso                          | Qué se esperaba de la corrección                       | Resultado                                                                                                                                                                                                                                                                                                           | Cifras sin origen                                                                                                                            |
+| ----------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| C1 · par con ruido            | Veredicto disparado solo por el score = ruido probable | **Corregido.** Abre con «No hay cambio medible. El `verdict: improved` del CLI lo dispara solo el `score`», cita el veredicto del CLI tal cual, dice que ninguna métrica salió `improved` ni `regressed` y lo trata como ruido probable (hipótesis) porque el commit, los recursos y el elemento LCP son los mismos | 0                                                                                                                                            |
+| C3 · antes/después en 3 redes | Ids explícitos, no el atajo `--url --network`          | **Corregido.** Usó ids (`antes-2` contra `despues-2` en `default`), lo dijo («comparé el último de cada lado») y usó `antes-1` frente a `antes-2` como línea de ruido                                                                                                                                               | 2: `910 000` y `133 000`, aproximaciones con «unos» de bytes que sí están en los reportes (909 640–919 938 B y 132 684–134 358 B por imagen) |
+
+**C2 (serie) no se repitió:** su corrección (una entrada de `history` en la que solo cambia el score no es un salto) no se ha vuelto a comprobar; la regla del score en sí sí se verificó en C1.
+
+Fricciones que **se repiten** y siguen abiertas: una oportunidad `resolved` (`mainthread-work-breakdown`, 600 ms → —) en una comparación donde todo es ruido (la skill solo cubre `resolved` con ahorro 0); los pasos 4 y 5 están pensados para una comparación con cambio real (no dicen que con el mismo commit y sin `dirty` se salta el cruce con git); un delta enorme que el CLI llama ruido (TBT +86,3 %) hace sentir que se esconde una regresión; y, de nuevo, cómo pasar de una etiqueta a un id.
+
+### Disparo de las skills (proxy)
+
+**Qué se hizo.** Un subagente hace de Claude Code con las descripciones **exactas** de `perf-audit`, `perf-compare` y `perf-fix` y otras 7 skills que podrían competir (`dataviz`, `code-review`, `simplify`, `run`, `init`, `security-review`, `loop`; estas con la descripción recortada a la primera frase), y decide para 25 mensajes cuál invocaría primero o si ninguna. Lo hicieron dos agentes distintos con los mensajes en distinto orden. Ficheros en [disparo/](skills/iteracion-4/disparo/): lo que ve el agente (`skills.md`, `mensajes-A.md`, `mensajes-B.md`), sus respuestas (`resultado-A.md`, `resultado-B.md`), la clave oculta (`clave.json`) y el puntuador (`python3 puntuar.py A B`).
+
+**Mensajes:** 16 claros (5 de `perf-audit`, 6 de `perf-compare`, 5 de `perf-fix`; incluye uno en inglés), 4 de frontera entre `perf-compare` y `perf-fix` y 5 que no deberían activar ninguna (botón de login, consulta SQL lenta, qué es el LCP, `useMemo` en React, pipeline de CI).
+
+| Tipo      | Aciertos (2 pasadas) |
+| --------- | -------------------- |
+| Claros    | **32/32**            |
+| Frontera  | **7/8**              |
+| Negativos | **10/10**            |
+| **Total** | **49/50**            |
+
+**El único fallo** es de frontera: «Acabo de aplicar tu arreglo del defer: valida que no ha empeorado nada» se envió a `perf-fix` en el orden A (a `perf-compare`, lo esperado, en el B). Es el solape que se temía: la descripción de `perf-compare` incluye «validar el efecto de un arreglo» y la de `perf-fix` dice que «valida el resultado con `wperf compare`». En el otro sentido, «Quita el script de three.js y mide si mejora» y «Arregla el CLS y dime cuánto ha mejorado» fueron a `perf-fix` en las dos pasadas, y «Ya apliqué el cambio de las imágenes. ¿Ha mejorado el rendimiento?» a `perf-compare` en las dos, como se esperaba. Las dudas que declararon los agentes se concentran en los mismos casos: `perf-fix` frente a `perf-compare` cuando el mensaje arregla _y_ mide, y `perf-compare` frente a `perf-audit` cuando se pregunta si algo mejoró sin mencionar dos reportes.
+
+**Qué NO prueba.** Es un proxy: un modelo decide leyendo las descripciones, como hace el harness, pero no se ha probado el disparo real de Claude Code (por ejemplo con `claude -p` y la herramienta `Skill`); solo 10 skills en el listado, no las de una instalación real; el mismo modelo que escribió las skills; 25 mensajes y dos pasadas, con lo que un 49/50 no distingue una tasa del 100 % de una del 90 %. Los mensajes los escribió quien diseñó las skills.
+
+**Decisión:** las descripciones se dejan como están. Si el solape llegara a molestar, lo de menor riesgo sería añadir a la descripción de `perf-fix` algo como «no la uses si el cambio ya está aplicado y solo hay que validarlo», que no se ha probado.
 
 ### Fricciones menores sin resolver
 
