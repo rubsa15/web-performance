@@ -1,6 +1,6 @@
 # Ejemplo de cierre de `perf-fix`: arreglo revertido
 
-Caso real (evaluación de la fase 5, `docs/metrics/fix.md`): `defer` en los dos scripts de `<head>` de la demo. Mejora el FCP y empeora el TBT hasta `poor`, así que se revierte (paso 6, última fila de la tabla). Cifras de `tests/fixtures/reports/ejemplo-fix-antes.json` y `ejemplo-fix-revertido-despues.json`. **No las reutilices.**
+Caso real (evaluación en `docs/metrics/fix.md`): `defer` en los dos scripts de `<head>` de la demo. Mejora el FCP y empeora el TBT hasta `poor`, así que se revierte (paso 6, última fila de la tabla). Cifras de `tests/fixtures/reports/ejemplo-fix-antes.json` y `ejemplo-fix-revertido-despues.json`. **No las reutilices.**
 
 Antes de aplicar, la propuesta ya avisaba de que "si la re-auditoría empeora algo, lo deshago yo"; esa aprobación es la que cubre el revertir.
 

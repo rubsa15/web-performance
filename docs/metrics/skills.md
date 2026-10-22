@@ -21,7 +21,7 @@
 | `perf-compare` · demo rota → arreglada     | n/a           | 1                            | 0 inventadas. Tamaño del bucle de `app.js` leído en el código.                                                                                                                           |
 | `perf-compare` · dos auditorías de la demo | n/a           | 2                            | 0 inventadas. Diferencia de 43 s entre `createdAt` (cálculo) y el score de otra comparación (99).                                                                                        |
 
-**Criterio de "hecho" de la fase 4 (`perf-audit` ≥ 6/7 sin inventar cifras): cumplido** en esta iteración, con 7/7 y ninguna cifra inventada en las 5 respuestas. El recall sobre las webs públicas no aplica: los 7 problemas son específicos de la demo.
+**Criterio de "hecho" (`perf-audit` ≥ 6/7 sin inventar cifras): cumplido** en esta iteración, con 7/7 y ninguna cifra inventada en las 5 respuestas. El recall sobre las webs públicas no aplica: los 7 problemas son específicos de la demo.
 
 ### Resultados de las auditorías
 

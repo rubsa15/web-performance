@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { compareReports } from '../src/compare.js';
 import { ReportSchema, type Report } from '../src/schema.js';
 
-// Reportes reales de la demo (tests/fixtures/README.md): el criterio de "hecho" de la fase 3.
+// Reportes reales de la demo (tests/fixtures/README.md).
 const load = (name: string): Report =>
   ReportSchema.parse(
     JSON.parse(

@@ -1,6 +1,6 @@
 # Ejemplo de cierre de `perf-fix`: mejora medida
 
-Caso real (evaluación de la fase 5, `docs/metrics/fix.md`): la tarea larga `buildSearchIndex()` de la demo movida a un Web Worker. Las cifras salen de `tests/fixtures/reports/ejemplo-fix-antes.json` y `ejemplo-fix-despues.json` y de su comparación. **No las reutilices** para otra web, y el orden de las secciones es la plantilla, no el texto.
+Caso real (evaluación en `docs/metrics/fix.md`): la tarea larga `buildSearchIndex()` de la demo movida a un Web Worker. Las cifras salen de `tests/fixtures/reports/ejemplo-fix-antes.json` y `ejemplo-fix-despues.json` y de su comparación. **No las reutilices** para otra web, y el orden de las secciones es la plantilla, no el texto.
 
 Antes de este cierre, el usuario vio la propuesta (paso 3: diff, qué se espera que mueva, riesgos y cómo se revierte) y la aprobó.
 

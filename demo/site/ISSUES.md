@@ -20,7 +20,7 @@ CLI es la fuente de verdad, no este fichero.
 
 ## Notas para quien evalúe
 
-- **Recall (fase 4):** el problema 6 solo es detectable de forma indirecta, así que una skill que
+- **Recall:** el problema 6 solo es detectable de forma indirecta, así que una skill que
   lo identifique tiene que apoyarse en `resources` + lectura del código, no en una oportunidad.
   Los otros seis aparecen con su id de auditoría.
 - **Agrupar por causa raíz:** `image-delivery-insight` junta los problemas 1 y 6 en una sola
