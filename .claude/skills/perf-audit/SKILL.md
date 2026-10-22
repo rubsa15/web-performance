@@ -22,7 +22,7 @@ Convierte una auditoría de `wperf` en un plan de mejora priorizado. El CLI mide
 Ejecuta `npx --no-install wperf --version`.
 
 - Si responde con una versión, sigue. Si estás en el repo de `wperf` (tiene `bin/wperf` y `src/`), ejecuta además `npm run build` para no medir con un `dist/` viejo.
-- Si falla, `wperf` no está instalado en este proyecto: pide permiso y ejecuta `npm install -D @rubsa15/wperf`. **No uses `npx wperf` sin instalar**: npm descargaría otro paquete llamado `wperf` que no es este.
+- Si falla, `wperf` no está instalado en este proyecto: pide permiso y ejecuta `npm install -D @rubensa15/wperf`. **No uses `npx wperf` sin instalar**: npm descargaría otro paquete llamado `wperf` que no es este.
 - Necesita Chrome (o `CHROME_PATH`) y Node ≥ 22.19.
 
 ### 1. Obtener los reportes

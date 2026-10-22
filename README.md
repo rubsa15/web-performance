@@ -7,11 +7,11 @@ CLI `wperf` para auditar el rendimiento de una web, priorizar mejoras y comparar
 Requiere Node ≥ 22.19 y Chrome instalado (o `CHROME_PATH` apuntando a su binario).
 
 ```sh
-npm install -D @rubsa15/wperf     # en el proyecto de la web a auditar
+npm install -D @rubensa15/wperf     # en el proyecto de la web a auditar
 npx wperf --help
 ```
 
-Sin instalar nada: `npx @rubsa15/wperf audit https://example.com`. También se puede instalar en global (`npm install -g @rubsa15/wperf`) o directamente desde GitHub (`npm install -D github:rubsa15/web-performance`; el script `prepare` compila al instalar).
+Sin instalar nada: `npx @rubensa15/wperf audit https://example.com`. También se puede instalar en global (`npm install -g @rubensa15/wperf`) o directamente desde GitHub (`npm install -D github:rubsa15/web-performance`; el script `prepare` compila al instalar).
 
 ## Desarrollo
 
