@@ -1,0 +1,15 @@
+diff --git a/index.html b/index.html
+index 543c3cc..8100e5b 100644
+--- a/index.html
++++ b/index.html
+@@ -9,8 +9,8 @@
+       content="Café de especialidad tostado en pequeños lotes y enviado en 48 horas."
+     />
+     <link rel="stylesheet" href="css/styles.css" />
+-    <script src="vendor/three.min.js"></script>
+-    <script src="js/app.js"></script>
++    <script defer src="vendor/three.min.js"></script>
++    <script defer src="js/app.js"></script>
+   </head>
+   <body>
+     <header class="site-header">

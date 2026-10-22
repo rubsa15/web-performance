@@ -1,0 +1,384 @@
+{
+  "before": {
+    "id": "2026-10-22T19-09-11Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T19:09:11Z",
+    "runs": 3,
+    "label": "antes-1",
+    "git": {
+      "commit": "b10171f",
+      "dirty": false
+    }
+  },
+  "after": {
+    "id": "2026-10-22T19-11-22Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T19:11:22Z",
+    "runs": 3,
+    "label": "despues-2",
+    "git": {
+      "commit": "b10171f",
+      "dirty": false
+    }
+  },
+  "warnings": [],
+  "verdict": "improved",
+  "score": {
+    "before": 41,
+    "after": 99,
+    "delta": 58,
+    "change": "improved",
+    "threshold": 5
+  },
+  "metrics": {
+    "lcp": {
+      "unit": "ms",
+      "before": 40730,
+      "after": 2104,
+      "delta": -38626,
+      "deltaPct": -0.9483427449054751,
+      "change": "improved",
+      "ratingBefore": "poor",
+      "ratingAfter": "good",
+      "threshold": 4073,
+      "rangeBefore": {
+        "min": 40729,
+        "max": 40805
+      },
+      "rangeAfter": {
+        "min": 2103,
+        "max": 2104
+      },
+      "rangesOverlap": false
+    },
+    "fcp": {
+      "unit": "ms",
+      "before": 2498,
+      "after": 1410,
+      "delta": -1088,
+      "deltaPct": -0.4355484387510008,
+      "change": "improved",
+      "ratingBefore": "needs-improvement",
+      "ratingAfter": "good",
+      "threshold": 249.8,
+      "rangeBefore": {
+        "min": 2496,
+        "max": 2506
+      },
+      "rangeAfter": {
+        "min": 1408,
+        "max": 1416
+      },
+      "rangesOverlap": false
+    },
+    "tbt": {
+      "unit": "ms",
+      "before": 608,
+      "after": 13,
+      "delta": -595,
+      "deltaPct": -0.9786184210526315,
+      "change": "improved",
+      "ratingBefore": "poor",
+      "ratingAfter": "good",
+      "threshold": 304,
+      "rangeBefore": {
+        "min": 574,
+        "max": 661
+      },
+      "rangeAfter": {
+        "min": 9,
+        "max": 19
+      },
+      "rangesOverlap": false
+    },
+    "cls": {
+      "unit": "",
+      "before": 0.291,
+      "after": 0,
+      "delta": -0.291,
+      "deltaPct": -1,
+      "change": "improved",
+      "ratingBefore": "poor",
+      "ratingAfter": "good",
+      "threshold": 0.02,
+      "rangeBefore": {
+        "min": 0.291,
+        "max": 0.291
+      },
+      "rangeAfter": {
+        "min": 0,
+        "max": 0
+      },
+      "rangesOverlap": false
+    },
+    "si": {
+      "unit": "ms",
+      "before": 2498,
+      "after": 1410,
+      "delta": -1088,
+      "deltaPct": -0.4355484387510008,
+      "change": "improved",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 249.8,
+      "rangeBefore": {
+        "min": 2496,
+        "max": 2506
+      },
+      "rangeAfter": {
+        "min": 1408,
+        "max": 1416
+      },
+      "rangesOverlap": false
+    },
+    "ttfb": {
+      "unit": "ms",
+      "before": 753,
+      "after": 752,
+      "delta": -1,
+      "deltaPct": -0.0013280212483399733,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 150.6,
+      "rangeBefore": {
+        "min": 752,
+        "max": 753
+      },
+      "rangeAfter": {
+        "min": 752,
+        "max": 752
+      },
+      "rangesOverlap": true
+    }
+  },
+  "opportunities": [
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 1550,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "deltaMs": -1550,
+      "deltaBytes": 0
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 1050,
+        "savingsBytes": 120895,
+        "impact": "high"
+      },
+      "deltaMs": -1050,
+      "deltaBytes": -120895
+    },
+    {
+      "id": "font-display-insight",
+      "title": "Font display",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 300,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "deltaMs": -300,
+      "deltaBytes": 0
+    },
+    {
+      "id": "cls-culprits-insight",
+      "title": "Layout shift culprits",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "lcp-discovery-insight",
+      "title": "LCP request discovery",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "total-byte-weight",
+      "title": "Avoid enormous network payloads",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "unsized-images",
+      "title": "Image elements do not have explicit `width` and `height`",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "status": "better",
+      "before": {
+        "savingsMs": 33800,
+        "savingsBytes": 8381381,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 150,
+        "savingsBytes": 546774,
+        "impact": "high"
+      },
+      "deltaMs": -33650,
+      "deltaBytes": -7834607,
+      "threshold": {
+        "ms": 16900,
+        "bytes": 1676276.2
+      }
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "status": "better",
+      "before": {
+        "savingsMs": 600,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": -600,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 300,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "status": "better",
+      "before": {
+        "savingsMs": 600,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": -600,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 300,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 100,
+        "bytes": 10240
+      }
+    }
+  ],
+  "resources": [
+    {
+      "type": "total",
+      "before": 8699207,
+      "after": 906437,
+      "delta": -7792770
+    },
+    {
+      "type": "document",
+      "before": 1455,
+      "after": 2338,
+      "delta": 883
+    },
+    {
+      "type": "font",
+      "before": 34900,
+      "after": 34900,
+      "delta": 0
+    },
+    {
+      "type": "image",
+      "before": 8492779,
+      "after": 867692,
+      "delta": -7625087
+    },
+    {
+      "type": "media",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "other",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "script",
+      "before": 169118,
+      "after": 1507,
+      "delta": -167611
+    },
+    {
+      "type": "stylesheet",
+      "before": 955,
+      "after": 0,
+      "delta": -955
+    }
+  ],
+  "lcpElement": {
+    "before": "body > main > section.hero > img.hero-img",
+    "after": "body > main > section.hero > img.hero-img",
+    "changed": false
+  }
+}

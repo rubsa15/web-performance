@@ -1,0 +1,300 @@
+{
+  "before": {
+    "id": "2026-10-22T19-10-57Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T19:10:57Z",
+    "runs": 3,
+    "label": "despues-1",
+    "git": {
+      "commit": "b10171f",
+      "dirty": false
+    }
+  },
+  "after": {
+    "id": "2026-10-22T19-11-22Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T19:11:22Z",
+    "runs": 3,
+    "label": "despues-2",
+    "git": {
+      "commit": "b10171f",
+      "dirty": false
+    }
+  },
+  "warnings": [],
+  "verdict": "unchanged",
+  "score": {
+    "before": 99,
+    "after": 99,
+    "delta": 0,
+    "change": "unchanged",
+    "threshold": 5
+  },
+  "metrics": {
+    "lcp": {
+      "unit": "ms",
+      "before": 2104,
+      "after": 2104,
+      "delta": 0,
+      "deltaPct": 0,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 210.4,
+      "rangeBefore": {
+        "min": 2103,
+        "max": 2105
+      },
+      "rangeAfter": {
+        "min": 2103,
+        "max": 2104
+      },
+      "rangesOverlap": true
+    },
+    "fcp": {
+      "unit": "ms",
+      "before": 1412,
+      "after": 1410,
+      "delta": -2,
+      "deltaPct": -0.00141643059490085,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 150,
+      "rangeBefore": {
+        "min": 1411,
+        "max": 1415
+      },
+      "rangeAfter": {
+        "min": 1408,
+        "max": 1416
+      },
+      "rangesOverlap": true
+    },
+    "tbt": {
+      "unit": "ms",
+      "before": 19,
+      "after": 13,
+      "delta": -6,
+      "deltaPct": -0.3157894736842105,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 50,
+      "rangeBefore": {
+        "min": 9,
+        "max": 26
+      },
+      "rangeAfter": {
+        "min": 9,
+        "max": 19
+      },
+      "rangesOverlap": true
+    },
+    "cls": {
+      "unit": "",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "deltaPct": null,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 0.02,
+      "rangeBefore": {
+        "min": 0,
+        "max": 0
+      },
+      "rangeAfter": {
+        "min": 0,
+        "max": 0
+      },
+      "rangesOverlap": true
+    },
+    "si": {
+      "unit": "ms",
+      "before": 1412,
+      "after": 1410,
+      "delta": -2,
+      "deltaPct": -0.00141643059490085,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 150,
+      "rangeBefore": {
+        "min": 1411,
+        "max": 1415
+      },
+      "rangeAfter": {
+        "min": 1408,
+        "max": 1416
+      },
+      "rangesOverlap": true
+    },
+    "ttfb": {
+      "unit": "ms",
+      "before": 752,
+      "after": 752,
+      "delta": 0,
+      "deltaPct": 0,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 150.4,
+      "rangeBefore": {
+        "min": 752,
+        "max": 753
+      },
+      "rangeAfter": {
+        "min": 752,
+        "max": 752
+      },
+      "rangesOverlap": true
+    }
+  },
+  "opportunities": [
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 100,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "status": "same",
+      "before": {
+        "savingsMs": 150,
+        "savingsBytes": 546774,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 150,
+        "savingsBytes": 546774,
+        "impact": "high"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 100,
+        "bytes": 109354.8
+      }
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 100,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 100,
+        "bytes": 10240
+      }
+    }
+  ],
+  "resources": [
+    {
+      "type": "total",
+      "before": 906437,
+      "after": 906437,
+      "delta": 0
+    },
+    {
+      "type": "document",
+      "before": 2338,
+      "after": 2338,
+      "delta": 0
+    },
+    {
+      "type": "font",
+      "before": 34900,
+      "after": 34900,
+      "delta": 0
+    },
+    {
+      "type": "image",
+      "before": 867692,
+      "after": 867692,
+      "delta": 0
+    },
+    {
+      "type": "media",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "other",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "script",
+      "before": 1507,
+      "after": 1507,
+      "delta": 0
+    },
+    {
+      "type": "stylesheet",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    }
+  ],
+  "lcpElement": {
+    "before": "body > main > section.hero > img.hero-img",
+    "after": "body > main > section.hero > img.hero-img",
+    "changed": false
+  }
+}

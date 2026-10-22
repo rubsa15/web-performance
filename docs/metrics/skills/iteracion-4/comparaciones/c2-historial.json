@@ -1,0 +1,332 @@
+{
+  "url": "http://127.0.0.1:4173/",
+  "entries": [
+    {
+      "id": "2026-10-22T19-09-11Z-mobile",
+      "createdAt": "2026-10-22T19:09:11Z",
+      "device": "mobile",
+      "network": "default",
+      "label": "antes-1",
+      "git": {
+        "commit": "b10171f",
+        "dirty": false
+      },
+      "runs": 3,
+      "score": 41,
+      "metrics": {
+        "lcp": {
+          "value": 40730,
+          "unit": "ms",
+          "min": 40729,
+          "max": 40805,
+          "rating": "poor"
+        },
+        "fcp": {
+          "value": 2498,
+          "unit": "ms",
+          "min": 2496,
+          "max": 2506,
+          "rating": "needs-improvement"
+        },
+        "tbt": {
+          "value": 608,
+          "unit": "ms",
+          "min": 574,
+          "max": 661,
+          "rating": "poor"
+        },
+        "cls": {
+          "value": 0.291,
+          "unit": "",
+          "min": 0.291,
+          "max": 0.291,
+          "rating": "poor"
+        },
+        "si": {
+          "value": 2498,
+          "unit": "ms",
+          "min": 2496,
+          "max": 2506,
+          "rating": "good"
+        },
+        "ttfb": {
+          "value": 753,
+          "unit": "ms",
+          "min": 752,
+          "max": 753,
+          "rating": "good"
+        }
+      }
+    },
+    {
+      "id": "2026-10-22T19-09-38Z-mobile",
+      "createdAt": "2026-10-22T19:09:38Z",
+      "device": "mobile",
+      "network": "default",
+      "label": "antes-2",
+      "git": {
+        "commit": "b10171f",
+        "dirty": false
+      },
+      "runs": 3,
+      "score": 47,
+      "metrics": {
+        "lcp": {
+          "value": 40954,
+          "unit": "ms",
+          "min": 40728,
+          "max": 43504,
+          "rating": "poor"
+        },
+        "fcp": {
+          "value": 2498,
+          "unit": "ms",
+          "min": 2491,
+          "max": 2545,
+          "rating": "needs-improvement"
+        },
+        "tbt": {
+          "value": 1133,
+          "unit": "ms",
+          "min": 392,
+          "max": 1873,
+          "rating": "poor"
+        },
+        "cls": {
+          "value": 0.291,
+          "unit": "",
+          "min": 0,
+          "max": 0.291,
+          "rating": "poor"
+        },
+        "si": {
+          "value": 2498,
+          "unit": "ms",
+          "min": 2491,
+          "max": 2545,
+          "rating": "good"
+        },
+        "ttfb": {
+          "value": 752,
+          "unit": "ms",
+          "min": 751,
+          "max": 752,
+          "rating": "good"
+        }
+      },
+      "vsPrevious": {
+        "id": "2026-10-22T19-09-11Z-mobile",
+        "score": {
+          "delta": 6,
+          "change": "improved"
+        },
+        "metrics": {
+          "lcp": {
+            "delta": 224,
+            "change": "unchanged"
+          },
+          "fcp": {
+            "delta": 0,
+            "change": "unchanged"
+          },
+          "tbt": {
+            "delta": 525,
+            "change": "unchanged"
+          },
+          "cls": {
+            "delta": 0,
+            "change": "unchanged"
+          },
+          "si": {
+            "delta": 0,
+            "change": "unchanged"
+          },
+          "ttfb": {
+            "delta": -1,
+            "change": "unchanged"
+          }
+        }
+      }
+    },
+    {
+      "id": "2026-10-22T19-10-57Z-mobile",
+      "createdAt": "2026-10-22T19:10:57Z",
+      "device": "mobile",
+      "network": "default",
+      "label": "despues-1",
+      "git": {
+        "commit": "b10171f",
+        "dirty": false
+      },
+      "runs": 3,
+      "score": 99,
+      "metrics": {
+        "lcp": {
+          "value": 2104,
+          "unit": "ms",
+          "min": 2103,
+          "max": 2105,
+          "rating": "good"
+        },
+        "fcp": {
+          "value": 1412,
+          "unit": "ms",
+          "min": 1411,
+          "max": 1415,
+          "rating": "good"
+        },
+        "tbt": {
+          "value": 19,
+          "unit": "ms",
+          "min": 9,
+          "max": 26,
+          "rating": "good"
+        },
+        "cls": {
+          "value": 0,
+          "unit": "",
+          "min": 0,
+          "max": 0,
+          "rating": "good"
+        },
+        "si": {
+          "value": 1412,
+          "unit": "ms",
+          "min": 1411,
+          "max": 1415,
+          "rating": "good"
+        },
+        "ttfb": {
+          "value": 752,
+          "unit": "ms",
+          "min": 752,
+          "max": 753,
+          "rating": "good"
+        }
+      },
+      "vsPrevious": {
+        "id": "2026-10-22T19-09-38Z-mobile",
+        "score": {
+          "delta": 52,
+          "change": "improved"
+        },
+        "metrics": {
+          "lcp": {
+            "delta": -38850,
+            "change": "improved"
+          },
+          "fcp": {
+            "delta": -1086,
+            "change": "improved"
+          },
+          "tbt": {
+            "delta": -1114,
+            "change": "improved"
+          },
+          "cls": {
+            "delta": -0.291,
+            "change": "unchanged"
+          },
+          "si": {
+            "delta": -1086,
+            "change": "improved"
+          },
+          "ttfb": {
+            "delta": 0,
+            "change": "unchanged"
+          }
+        }
+      }
+    },
+    {
+      "id": "2026-10-22T19-11-22Z-mobile",
+      "createdAt": "2026-10-22T19:11:22Z",
+      "device": "mobile",
+      "network": "default",
+      "label": "despues-2",
+      "git": {
+        "commit": "b10171f",
+        "dirty": false
+      },
+      "runs": 3,
+      "score": 99,
+      "metrics": {
+        "lcp": {
+          "value": 2104,
+          "unit": "ms",
+          "min": 2103,
+          "max": 2104,
+          "rating": "good"
+        },
+        "fcp": {
+          "value": 1410,
+          "unit": "ms",
+          "min": 1408,
+          "max": 1416,
+          "rating": "good"
+        },
+        "tbt": {
+          "value": 13,
+          "unit": "ms",
+          "min": 9,
+          "max": 19,
+          "rating": "good"
+        },
+        "cls": {
+          "value": 0,
+          "unit": "",
+          "min": 0,
+          "max": 0,
+          "rating": "good"
+        },
+        "si": {
+          "value": 1410,
+          "unit": "ms",
+          "min": 1408,
+          "max": 1416,
+          "rating": "good"
+        },
+        "ttfb": {
+          "value": 752,
+          "unit": "ms",
+          "min": 752,
+          "max": 752,
+          "rating": "good"
+        }
+      },
+      "vsPrevious": {
+        "id": "2026-10-22T19-10-57Z-mobile",
+        "score": {
+          "delta": 0,
+          "change": "unchanged"
+        },
+        "metrics": {
+          "lcp": {
+            "delta": 0,
+            "change": "unchanged"
+          },
+          "fcp": {
+            "delta": -2,
+            "change": "unchanged"
+          },
+          "tbt": {
+            "delta": -6,
+            "change": "unchanged"
+          },
+          "cls": {
+            "delta": 0,
+            "change": "unchanged"
+          },
+          "si": {
+            "delta": -2,
+            "change": "unchanged"
+          },
+          "ttfb": {
+            "delta": 0,
+            "change": "unchanged"
+          }
+        }
+      }
+    }
+  ]
+}

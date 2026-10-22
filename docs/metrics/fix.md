@@ -66,6 +66,57 @@ Con `src/page-check.ts` (hoy `wperf check`; entonces se ejecutaba como script) (
 
 Estos cambios **no se han vuelto a medir** con subagentes.
 
+## Iteración 4
+
+2026-10-22 (macOS, Lighthouse 13.5.0, mobile, red `default`). Evalúa tres cambios de `perf-fix` hechos después de la primera evaluación: la **instantánea previa obligatoria** (`wperf check snapshot` antes de editar), **5 ejecuciones cuando la métrica objetivo es el TBT** (y no reutilizar una base con menos) y el orden recomendado del catálogo presentado como hipótesis. También el aviso de interacción con el TBT del paso 3. El resto de la iteración está en [skills.md](skills.md#iteración-4).
+
+### Método
+
+- El de la primera evaluación: una copia de la demo (sin `ISSUES.md`) por caso, en un repo git con **el mismo commit** (`6971180`, mismo árbol y fecha fijos, para que una sola línea base valga para las tres) y `wperf` enlazado en `node_modules/.bin` como en un proyecto de usuario; un subagente independiente por caso, en dos fases (hasta la pregunta de aprobación y, tras aprobar, pasos 4 a 7). Demo ya sin las pistas de `app.js` (commit `b10171f`).
+- **Una sola línea base** de 3 ejecuciones (`base`, [reports/base-3-ejecuciones.json](fix/iteracion-4/reports/base-3-ejecuciones.json), `git.dirty: false`) copiada a las tres: en F1 la tenían que **rechazar** (el objetivo es el TBT), en F2 y F3 reutilizar.
+- Mediciones siempre en serie; los agentes arrancaban y paraban su servidor (`demo/serve.ts --root <copia> --port 4173`). La web se sirve desde disco: no hace falta reiniciarla tras editar.
+- Comprobaciones mías, sin fiarme del agente: `git status` de cada árbol, la **fecha de los ficheros** (instantánea previa frente a la edición), que el puerto 4173 quedara libre y `figures` sobre cada cierre, contra los dos reportes y su comparación. Cierres en [fix/iteracion-4/](fix/iteracion-4/), reportes en [reports/](fix/iteracion-4/reports/), comparaciones en [comparaciones/](fix/iteracion-4/comparaciones/), instantáneas de `check` en [capturas/](fix/iteracion-4/capturas/) y el diff que quedó aplicado en [diffs/](fix/iteracion-4/diffs/). **Las propuestas de la fase 1 no se guardaron enteras**: lo que importa de cada una está citado abajo.
+
+### Resultados
+
+Cifras de `wperf compare` entre la base y el reporte posterior.
+
+| Caso                                 | Qué comprueba                                   | Resultado                                                                                                                                                                                                                 | Instantánea previa antes de editar     | Cifras sin origen                                      |
+| ------------------------------------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------ |
+| **F1** tarea larga (TBT)             | Rechaza la base de 3 ejecuciones y mide con 5   | Re-auditó con 5 (base 5: TBT 625 ms, rango 515–1 591). **TBT 625 → 44 ms** (`poor` → `good`, `improved`; rangos 515–1 591 y 43–45 ms), score 41 → 57. **Mejora medida.** Página íntegra                                   | 6 s antes (21:33:56 frente a 21:34:02) | 0                                                      |
+| **F2** `defer` en los 2 scripts      | La propuesta avisa de la interacción con el TBT | La propuesta lo avisó (ver abajo). Tras aplicar: FCP 2 496 → 1 354 ms (`improved`), **TBT 624 → 1 499 ms (`regressed`, +140,2 %)**, score 41 → 34, veredicto `mixed`. **No revirtió**: dejó el cambio aplicado y preguntó | 3 s antes (21:38:52 frente a 21:38:55) | 0                                                      |
+| **F3** imágenes sin `width`/`height` | La instantánea se hace antes de editar          | **CLS 0,291 → 0** (`poor` → `good`, `improved`), score 41 → 56, `unsized-images` y `cls-culprits-insight` `resolved`. **Mejora medida.** Página íntegra                                                                   | 4 s antes (21:42:49 frente a 21:42:53) | 2 (`1600`, `1067`: dimensiones de `sips`, verificadas) |
+
+Evidencia de las reglas nuevas:
+
+- **TBT con 5 ejecuciones (F1).** El agente escribió en su registro que el reporte previo cumplía todo salvo las ejecuciones («la skill dice que la base debe tener "las ejecuciones que toca"») y re-auditó con 5 también en el «después». La base de 3 ejecuciones medía 624 ms (446–742); la de 5, 625 ms (515–1 591): el rango más ancho que salió con 5 justifica el aviso de la skill.
+- **Aviso de interacción (F2).** La propuesta de F2 decía: «Si `defer` adelanta el primer pintado, esa tarea larga puede caer dentro de la ventana que cuenta para el TBT. Entonces el FCP mejoraría y el TBT empeoraría», recomendaba arreglar antes la tarea larga y ofrecía la alternativa. Después se midió exactamente eso.
+- **Instantánea (los tres).** Se hizo siempre antes de editar y `check diff` dijo «La página sigue íntegra» en los tres. El 404 de `favicon.ico` está también antes.
+- **Alcance mínimo y verificación.** F1 aplicó el diff aprobado (+56/−9, merge sort troceado que cede el hilo cada 5 ms; el agente anotó en sus fricciones que ya no era un diff «pequeño») y comprobó con `git diff` que coincidía; F3 aplicó el diff de 7 líneas, con una línea por `<img>` (el diff propuesto reflujaba el hero; el contenido es el mismo).
+- **F1 y el mecanismo.** El agente dijo que el troceo reparte la CPU y no la reduce (`cpuMs` de `app.js` 1 633 → 1 567 ms) y que `bootup-time` sigue listándolo: la mejora del TBT está medida y el mecanismo se marca como hipótesis coherente con los datos.
+
+### Fallo de la skill que salió: F2 no se revierte
+
+La tabla del paso 6 decía: compensación → «pregunta al usuario»; «si empeora algo importante (una métrica **pasa a** `poor`), revierte». En F2 el TBT **ya era `poor`** (624 ms) y se multiplicó por 2,4: no «pasó a `poor`», así que la regla no se activó y el agente dejó el cambio aplicado con una recomendación de revertir. Es el caso contrario del de la primera evaluación (allí el TBT pasaba de `needs-improvement` a `poor` y se revertía).
+
+**Factor de confusión:** la aprobación de F2 incluía «asumiendo el riesgo de que el TBT empeore» y la instrucción de la fase 2 («si la medición lo respalda, mantén; si no, revierte») chocaba con la skill, y el agente eligió la skill. El resultado es válido, pero una instrucción más limpia habría dejado más claro quién manda en ese choque.
+
+### Qué se cambió
+
+- **`perf-fix`** (commit `0a8b613`, [SKILL.md](../../plugins/wperf/skills/perf-fix/SKILL.md)): además de la métrica que pasa a `poor`, se revierte también la que **ya era `poor` y el CLI marca `regressed`**; se dice con las cifras y se ofrece reaplicar el mismo diff, y aceptar el riesgo al aprobar no sustituye esta regla. Se quitó también la frase suelta «el CLI ya comprobado en el paso 0» del paso 1 (la marcaron tres agentes).
+- **Estos cambios no se han vuelto a medir.**
+
+### Fricciones menores sin resolver
+
+- Dónde guardar las instantáneas (los agentes usaron `.perf/check/`); qué hacer sin `package.json` ni README para averiguar el servidor (en esta prueba se lo dio el enunciado); cómo demostrar que el diff aplicado es el aprobado (la skill no lo pide) y si un cambio solo de formato exige volver a pedir aprobación; falta un ejemplo de cierre «compensación» (los dos de la skill son casos cerrados); `wperf history` no muestra dispositivo, red ni ejecuciones; la regla de repetir la re-auditoría solo contempla «rangos solapados» o «apenas supera el umbral», no «rangos separados con delta bajo el umbral» (LCP de F2: −3 375 ms, `unchanged`, rangos separados); la tabla del paso 6 no contempla «objetivo `improved` y la oportunidad solo `better`» (F1); la propuesta de F1 tuvo que citar una cifra no medida por el CLI (458 → 920 ms de un prototipo en Node) que no encaja en las cuatro marcas de fuente.
+
+### Limitaciones de esta iteración
+
+- **La aprobación la dio el evaluador, no una persona**, y los diffs se aprobaron tal cual se propusieron.
+- Una ejecución por caso y un solo modelo. Solo se probaron 3 de los 7 problemas, cada uno a partir de la misma base (casos independientes, no acumulativos).
+- Las capturas se compararon a ojo (visualmente idénticas); la revisión visual humana sigue pendiente.
+- Los árboles de F1, F2 y F3 quedaron con el cambio sin commit en la copia de pruebas; no afecta al repo.
+
 ## Limitaciones
 
 - **La aprobación la dio el evaluador, no una persona.** El flujo en dos fases demuestra que la skill se detiene y pide el visto bueno, pero no que un usuario real lo habría dado con esos diffs; el 6 se aprobó recortado por criterio del evaluador.

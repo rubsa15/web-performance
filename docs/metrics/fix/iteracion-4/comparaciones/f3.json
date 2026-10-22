@@ -1,0 +1,429 @@
+{
+  "before": {
+    "id": "2026-10-22T19-13-10Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T19:13:10Z",
+    "runs": 3,
+    "label": "base",
+    "git": {
+      "commit": "6971180",
+      "dirty": false
+    }
+  },
+  "after": {
+    "id": "2026-10-22T19-43-38Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T19:43:38Z",
+    "runs": 3,
+    "label": "despues-imagenes-sin-dimensiones",
+    "git": {
+      "commit": "6971180",
+      "dirty": true
+    }
+  },
+  "warnings": [],
+  "verdict": "improved",
+  "score": {
+    "before": 41,
+    "after": 56,
+    "delta": 15,
+    "change": "improved",
+    "threshold": 5
+  },
+  "metrics": {
+    "lcp": {
+      "unit": "ms",
+      "before": 40729,
+      "after": 40729,
+      "delta": 0,
+      "deltaPct": 0,
+      "change": "unchanged",
+      "ratingBefore": "poor",
+      "ratingAfter": "poor",
+      "threshold": 4072.9,
+      "rangeBefore": {
+        "min": 40728,
+        "max": 40806
+      },
+      "rangeAfter": {
+        "min": 40728,
+        "max": 40729
+      },
+      "rangesOverlap": true
+    },
+    "fcp": {
+      "unit": "ms",
+      "before": 2496,
+      "after": 2496,
+      "delta": 0,
+      "deltaPct": 0,
+      "change": "unchanged",
+      "ratingBefore": "needs-improvement",
+      "ratingAfter": "needs-improvement",
+      "threshold": 249.6,
+      "rangeBefore": {
+        "min": 2495,
+        "max": 2498
+      },
+      "rangeAfter": {
+        "min": 2492,
+        "max": 2496
+      },
+      "rangesOverlap": true
+    },
+    "tbt": {
+      "unit": "ms",
+      "before": 624,
+      "after": 590,
+      "delta": -34,
+      "deltaPct": -0.05448717948717949,
+      "change": "unchanged",
+      "ratingBefore": "poor",
+      "ratingAfter": "needs-improvement",
+      "threshold": 312,
+      "rangeBefore": {
+        "min": 446,
+        "max": 742
+      },
+      "rangeAfter": {
+        "min": 431,
+        "max": 662
+      },
+      "rangesOverlap": true
+    },
+    "cls": {
+      "unit": "",
+      "before": 0.291,
+      "after": 0,
+      "delta": -0.291,
+      "deltaPct": -1,
+      "change": "improved",
+      "ratingBefore": "poor",
+      "ratingAfter": "good",
+      "threshold": 0.02,
+      "rangeBefore": {
+        "min": 0.291,
+        "max": 0.291
+      },
+      "rangeAfter": {
+        "min": 0,
+        "max": 0
+      },
+      "rangesOverlap": false
+    },
+    "si": {
+      "unit": "ms",
+      "before": 2496,
+      "after": 2496,
+      "delta": 0,
+      "deltaPct": 0,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 249.6,
+      "rangeBefore": {
+        "min": 2495,
+        "max": 2498
+      },
+      "rangeAfter": {
+        "min": 2492,
+        "max": 2496
+      },
+      "rangesOverlap": true
+    },
+    "ttfb": {
+      "unit": "ms",
+      "before": 752,
+      "after": 752,
+      "delta": 0,
+      "deltaPct": 0,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 150.4,
+      "rangeBefore": {
+        "min": 751,
+        "max": 753
+      },
+      "rangeAfter": {
+        "min": 752,
+        "max": 752
+      },
+      "rangesOverlap": true
+    }
+  },
+  "opportunities": [
+    {
+      "id": "cls-culprits-insight",
+      "title": "Layout shift culprits",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "unsized-images",
+      "title": "Image elements do not have explicit `width` and `height`",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "status": "same",
+      "before": {
+        "savingsMs": 600,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 600,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 300,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "font-display-insight",
+      "title": "Font display",
+      "status": "same",
+      "before": {
+        "savingsMs": 300,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "after": {
+        "savingsMs": 300,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 150,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "status": "same",
+      "before": {
+        "savingsMs": 32900,
+        "savingsBytes": 8154587,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 32900,
+        "savingsBytes": 8154587,
+        "impact": "high"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 16450,
+        "bytes": 1630917.4
+      }
+    },
+    {
+      "id": "lcp-discovery-insight",
+      "title": "LCP request discovery",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 100,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "status": "same",
+      "before": {
+        "savingsMs": 600,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 600,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 300,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 100,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "status": "same",
+      "before": {
+        "savingsMs": 1550,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 1550,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 775,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "total-byte-weight",
+      "title": "Avoid enormous network payloads",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 100,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "status": "same",
+      "before": {
+        "savingsMs": 1050,
+        "savingsBytes": 120895,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 1050,
+        "savingsBytes": 120895,
+        "impact": "high"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 525,
+        "bytes": 24179
+      }
+    }
+  ],
+  "resources": [
+    {
+      "type": "total",
+      "before": 8699207,
+      "after": 8699239,
+      "delta": 32
+    },
+    {
+      "type": "document",
+      "before": 1455,
+      "after": 1487,
+      "delta": 32
+    },
+    {
+      "type": "font",
+      "before": 34900,
+      "after": 34900,
+      "delta": 0
+    },
+    {
+      "type": "image",
+      "before": 8492779,
+      "after": 8492779,
+      "delta": 0
+    },
+    {
+      "type": "media",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "other",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "script",
+      "before": 169118,
+      "after": 169118,
+      "delta": 0
+    },
+    {
+      "type": "stylesheet",
+      "before": 955,
+      "after": 955,
+      "delta": 0
+    }
+  ],
+  "lcpElement": {
+    "before": "body > main > section.hero > img.hero-img",
+    "after": "body > main > section.hero > img.hero-img",
+    "changed": false
+  }
+}

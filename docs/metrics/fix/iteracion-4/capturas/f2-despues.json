@@ -1,0 +1,42 @@
+{
+  "url": "http://127.0.0.1:4173/",
+  "title": "Tostadero Atlas — café de especialidad",
+  "text": "Tostadero Atlas Cafés Origen Suscripción Café de especialidad, tostado esta semana Trabajamos con pequeños productores y tostamos en lotes de 12 kg para que cada taza llegue en su mejor punto. Ver los cafés Origen trazable Cada lote indica finca, altura y proceso de lavado, secado o natural. Tueste a demanda Tostamos cuando haces el pedido, no antes. Sin stock envejecido en el almacén. Envío en 48 horas Embalaje compostable y válvula de desgasificado para conservar el aroma. Nuestros cafés Etiopía Guji · tueste claro Brasil Cerrado · tueste oscuro Colombia Huila · tueste medio Kenia Nyeri · tueste medio Guatemala Antigua · tueste medio Costa Rica Tarrazú · tueste claro Suscripción mensual Recibe cada mes un café distinto elegido por nuestro equipo de catadores. Empezar © 2026 Tostadero Atlas · Web de demostración para wperf, no es una tienda real.",
+  "images": [
+    {
+      "src": "http://127.0.0.1:4173/img/hero.jpg",
+      "loaded": true
+    },
+    {
+      "src": "http://127.0.0.1:4173/img/cafe-1.jpg",
+      "loaded": true
+    },
+    {
+      "src": "http://127.0.0.1:4173/img/cafe-2.jpg",
+      "loaded": true
+    },
+    {
+      "src": "http://127.0.0.1:4173/img/cafe-3.jpg",
+      "loaded": true
+    },
+    {
+      "src": "http://127.0.0.1:4173/img/cafe-4.jpg",
+      "loaded": true
+    },
+    {
+      "src": "http://127.0.0.1:4173/img/cafe-5.jpg",
+      "loaded": true
+    },
+    {
+      "src": "http://127.0.0.1:4173/img/cafe-6.jpg",
+      "loaded": true
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "failedRequests": [
+    "404 http://127.0.0.1:4173/favicon.ico"
+  ],
+  "searchIndexLength": 150000
+}

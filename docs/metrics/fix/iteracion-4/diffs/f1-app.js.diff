@@ -1,0 +1,84 @@
+diff --git a/js/app.js b/js/app.js
+index 446c40b..b668361 100644
+--- a/js/app.js
++++ b/js/app.js
+@@ -17,23 +17,70 @@ document.addEventListener('DOMContentLoaded', function () {
+   onResize();
+ });
+ 
+-// Índice de búsqueda del catálogo: se construye de una sola vez en el hilo principal
+-// justo después del primer pintado.
+-function buildSearchIndex() {
++// Índice de búsqueda del catálogo: se construye en trozos cortos que ceden el hilo principal
++// para que ninguna tarea supere el presupuesto y no bloquee la interacción.
++var SLICE_BUDGET_MS = 5;
++var sliceStart = 0;
++
++// Devuelve una promesa (que cede el hilo) solo si el trozo actual ya agotó su presupuesto.
++function yieldIfNeeded() {
++  if (performance.now() - sliceStart < SLICE_BUDGET_MS) return null;
++  return new Promise(function (resolve) {
++    setTimeout(function () {
++      sliceStart = performance.now();
++      resolve();
++    }, 0);
++  });
++}
++
++function compareEntries(a, b) {
++  return a.name.localeCompare(b.name, 'es') || b.score - a.score;
++}
++
++// Mezcla dos tramos ya ordenados; ante empate gana el de la izquierda (orden estable).
++async function mergeRuns(a, b) {
++  var out = [];
++  var i = 0;
++  var j = 0;
++  while (i < a.length && j < b.length) {
++    out.push(compareEntries(b[j], a[i]) < 0 ? b[j++] : a[i++]);
++    if ((out.length & 255) === 0) {
++      var pause = yieldIfNeeded();
++      if (pause) await pause;
++    }
++  }
++  return out.concat(a.slice(i), b.slice(j));
++}
++
++async function buildSearchIndex() {
+   var origins = ['Etiopía', 'Brasil', 'Colombia', 'Kenia', 'Guatemala', 'Costa Rica', 'Perú'];
+-  var entries = [];
++  var runs = [];
++  var chunk = [];
++  var pause;
++  sliceStart = performance.now();
+   for (var i = 0; i < 150000; i++) {
+     var origin = origins[i % origins.length];
+-    entries.push({
++    chunk.push({
+       id: i,
+       name: origin + ' lote ' + ((i * 7919) % 10007),
+       score: (i * 31) % 100,
+     });
++    if (chunk.length === 1000) {
++      runs.push(chunk.sort(compareEntries));
++      chunk = [];
++      pause = yieldIfNeeded();
++      if (pause) await pause;
++    }
+   }
+-  entries.sort(function (a, b) {
+-    return a.name.localeCompare(b.name, 'es') || b.score - a.score;
+-  });
+-  window.searchIndex = entries;
++  if (chunk.length) runs.push(chunk.sort(compareEntries));
++  while (runs.length > 1) {
++    var next = [];
++    for (var r = 0; r < runs.length; r += 2) {
++      next.push(r + 1 < runs.length ? await mergeRuns(runs[r], runs[r + 1]) : runs[r]);
++    }
++    runs = next;
++  }
++  window.searchIndex = runs[0];
+ }
+ 
+ // Arranca justo después del primer pintado, mientras el usuario ya puede interactuar.

@@ -1,0 +1,375 @@
+{
+  "before": {
+    "id": "2026-10-22T19-10-31Z-mobile-4g",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "4g",
+    "createdAt": "2026-10-22T19:10:31Z",
+    "runs": 3,
+    "label": "antes-4g",
+    "git": {
+      "commit": "b10171f",
+      "dirty": false
+    }
+  },
+  "after": {
+    "id": "2026-10-22T19-12-12Z-mobile-4g",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "4g",
+    "createdAt": "2026-10-22T19:12:12Z",
+    "runs": 3,
+    "label": "despues-4g",
+    "git": {
+      "commit": "b10171f",
+      "dirty": false
+    }
+  },
+  "warnings": [],
+  "verdict": "improved",
+  "score": {
+    "before": 37,
+    "after": 100,
+    "delta": 63,
+    "change": "improved",
+    "threshold": 5
+  },
+  "metrics": {
+    "lcp": {
+      "unit": "ms",
+      "before": 7163,
+      "after": 963,
+      "delta": -6200,
+      "deltaPct": -0.8655591232723719,
+      "change": "improved",
+      "ratingBefore": "poor",
+      "ratingAfter": "good",
+      "threshold": 716.3,
+      "rangeBefore": {
+        "min": 7162,
+        "max": 7163
+      },
+      "rangeAfter": {
+        "min": 962,
+        "max": 963
+      },
+      "rangesOverlap": false
+    },
+    "fcp": {
+      "unit": "ms",
+      "before": 1096,
+      "after": 860,
+      "delta": -236,
+      "deltaPct": -0.21532846715328466,
+      "change": "improved",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 150,
+      "rangeBefore": {
+        "min": 1093,
+        "max": 1098
+      },
+      "rangeAfter": {
+        "min": 858,
+        "max": 863
+      },
+      "rangesOverlap": false
+    },
+    "tbt": {
+      "unit": "ms",
+      "before": 1304,
+      "after": 9,
+      "delta": -1295,
+      "deltaPct": -0.9930981595092024,
+      "change": "improved",
+      "ratingBefore": "poor",
+      "ratingAfter": "good",
+      "threshold": 652,
+      "rangeBefore": {
+        "min": 1287,
+        "max": 1366
+      },
+      "rangeAfter": {
+        "min": 3,
+        "max": 14
+      },
+      "rangesOverlap": false
+    },
+    "cls": {
+      "unit": "",
+      "before": 0.291,
+      "after": 0,
+      "delta": -0.291,
+      "deltaPct": -1,
+      "change": "improved",
+      "ratingBefore": "poor",
+      "ratingAfter": "good",
+      "threshold": 0.02,
+      "rangeBefore": {
+        "min": 0.291,
+        "max": 0.291
+      },
+      "rangeAfter": {
+        "min": 0,
+        "max": 0
+      },
+      "rangesOverlap": false
+    },
+    "si": {
+      "unit": "ms",
+      "before": 1096,
+      "after": 860,
+      "delta": -236,
+      "deltaPct": -0.21532846715328466,
+      "change": "improved",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 150,
+      "rangeBefore": {
+        "min": 1093,
+        "max": 1098
+      },
+      "rangeAfter": {
+        "min": 858,
+        "max": 863
+      },
+      "rangesOverlap": false
+    },
+    "ttfb": {
+      "unit": "ms",
+      "before": 422,
+      "after": 421,
+      "delta": -1,
+      "deltaPct": -0.002369668246445498,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good",
+      "threshold": 100,
+      "rangeBefore": {
+        "min": 421,
+        "max": 422
+      },
+      "rangeAfter": {
+        "min": 421,
+        "max": 422
+      },
+      "rangesOverlap": true
+    }
+  },
+  "opportunities": [
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "status": "new",
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 600,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "deltaMs": -600,
+      "deltaBytes": 0
+    },
+    {
+      "id": "font-display-insight",
+      "title": "Font display",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 300,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "deltaMs": -300,
+      "deltaBytes": 0
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 160,
+        "savingsBytes": 120895,
+        "impact": "medium"
+      },
+      "deltaMs": -160,
+      "deltaBytes": -120895
+    },
+    {
+      "id": "cls-culprits-insight",
+      "title": "Layout shift culprits",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "lcp-discovery-insight",
+      "title": "LCP request discovery",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "total-byte-weight",
+      "title": "Avoid enormous network payloads",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "unsized-images",
+      "title": "Image elements do not have explicit `width` and `height`",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "status": "better",
+      "before": {
+        "savingsMs": 5000,
+        "savingsBytes": 8154587,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 50,
+        "savingsBytes": 546774,
+        "impact": "high"
+      },
+      "deltaMs": -4950,
+      "deltaBytes": -7607813,
+      "threshold": {
+        "ms": 2500,
+        "bytes": 1630917.4
+      }
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "status": "better",
+      "before": {
+        "savingsMs": 1250,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": -1250,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 625,
+        "bytes": 10240
+      }
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0,
+      "threshold": {
+        "ms": 100,
+        "bytes": 10240
+      }
+    }
+  ],
+  "resources": [
+    {
+      "type": "total",
+      "before": 8699207,
+      "after": 906437,
+      "delta": -7792770
+    },
+    {
+      "type": "document",
+      "before": 1455,
+      "after": 2338,
+      "delta": 883
+    },
+    {
+      "type": "font",
+      "before": 34900,
+      "after": 34900,
+      "delta": 0
+    },
+    {
+      "type": "image",
+      "before": 8492779,
+      "after": 867692,
+      "delta": -7625087
+    },
+    {
+      "type": "media",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "other",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "script",
+      "before": 169118,
+      "after": 1507,
+      "delta": -167611
+    },
+    {
+      "type": "stylesheet",
+      "before": 955,
+      "after": 0,
+      "delta": -955
+    }
+  ],
+  "lcpElement": {
+    "before": "body > main > section.hero > img.hero-img",
+    "after": "body > main > section.hero > img.hero-img",
+    "changed": false
+  }
+}
