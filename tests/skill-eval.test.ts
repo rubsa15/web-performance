@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { compareReports } from '../src/compare.js';
+import { buildHistory } from '../src/history.js';
 import { extractNumbers, recallOf, unverifiedFigures } from '../src/experiments/skill-eval.js';
 import { ReportSchema, type Report } from '../src/schema.js';
 
@@ -86,6 +87,28 @@ describe('ejemplo de regresión de perf-compare', () => {
       'utf8',
     );
     const source = [regresionAntes, rota, compareReports(regresionAntes, rota)];
+    expect(unverifiedFigures(md, source)).toEqual([]);
+  });
+});
+
+describe('ejemplo de serie de perf-compare', () => {
+  it('las cifras salen del historial y de las comparaciones que hace', () => {
+    const md = readFileSync(
+      here('../.claude/skills/perf-compare/references/ejemplo-serie.md'),
+      'utf8',
+    );
+    const [rota1, clsRuido, rota2] = ['demo-rota-1', 'demo-rota-cls-ruido', 'demo-rota-2'].map(
+      loadReport,
+    );
+    const serie = [regresionAntes, rota, rota1!, clsRuido!, rota2!, redes[0]!];
+    const source = [
+      ...serie,
+      buildHistory('http://127.0.0.1:4173/', serie),
+      compareReports(regresionAntes, rota),
+      compareReports(rota1!, clsRuido!),
+      compareReports(regresionAntes, redes[0]!),
+      compareReports(rota, redes[0]!),
+    ];
     expect(unverifiedFigures(md, source)).toEqual([]);
   });
 });

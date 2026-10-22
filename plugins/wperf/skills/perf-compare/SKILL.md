@@ -29,6 +29,7 @@ Ejecuta `npx --no-install wperf --version`.
 - Dos reportes concretos (ids o rutas): `npx wperf compare <antes> <después> --format json`.
 - Una URL: `npx wperf compare --url <url> --format json` compara los dos últimos de esa URL, device, perfil de red y throttling.
 - Sin nada: `npx wperf compare --format json` usa los dos últimos reportes guardados.
+- Una serie ("¿cómo ha evolucionado?", "¿cuándo empezó a ir peor?") o un antes/después medido en varias redes: ver [Más de dos reportes](#más-de-dos-reportes).
 - Si el usuario cambió algo y quiere saber el efecto pero solo hay un reporte, audita con `perf-audit` (o `npx wperf audit`) y compara después. Para elegir ids, `npx wperf history <url>` los lista.
 - JSON por stdout; las rutas "Antes/Después" salen por stderr. Redirige stdout a un fichero para no volcar el JSON entero al contexto.
 - Si dos reportes distintos comparten etiqueta (`demo v0`), identifícalos por `id`, no por etiqueta; el CLI no avisa de ello.
@@ -82,6 +83,27 @@ Para cada candidato, relaciona *qué tocó el commit* (ficheros del `diff --stat
 ### 5. Cierre
 
 Pregunta al usuario si confirma la causa o quiere que se investigue otra. Ofrece `perf-fix` solo si hay una regresión real en el código. Si la diferencia viene de un cambio de línea base (el "antes" ya estaba degradado, o el sitio cambió entre medidas sin commit), no hay nada que arreglar: avisa de qué reporte es una referencia sensata (`npx wperf history <url>` muestra la serie) y de que cualquier comparación anterior contra ese "antes" mide frente a una base degradada.
+
+## Más de dos reportes
+
+### Evolución de una URL (una serie)
+
+Ejemplo completo en [references/ejemplo-serie.md](references/ejemplo-serie.md).
+
+1. `npx wperf history <url> --device <d> --network <n> --format json`, **un perfil cada vez**: cada entrada trae `vsPrevious`, el cambio frente al reporte anterior del mismo perfil, clasificado con los mismos umbrales que `compare`. Con varios perfiles, una serie por perfil.
+2. **Los saltos son las entradas con algo distinto de `unchanged`** en `vsPrevious` (`score` o alguna métrica). Lo demás es ruido aunque el número se mueva mucho: no lo reclasifiques ni lo señales como tendencia.
+3. Cada salto se detalla con `npx wperf compare <id anterior> <id del salto> --format json` y se cuenta como en los pasos 2–4 (incluido el cruce con git, con su commit y el del anterior). Si hay muchos, cuenta los de la métrica por la que pregunta el usuario y resume el resto.
+4. **Deriva lenta.** Compara los extremos (`compare <primero> <último>`). Si dan `regressed` (o `improved`) en una métrica que ningún salto explica, la métrica ha ido cambiando poco a poco, por debajo del umbral en cada paso: es un hallazgo en sí y no tiene un commit culpable; dilo así. Si los saltos la explican, compara también el último salto con el final para confirmar que no siguió cambiando.
+5. Una serie con un solo reporte no tiene nada que comparar; con dos, es el caso normal (pasos 1–5).
+
+### Antes/después medido en varias redes
+
+Cuando el "antes" y el "después" se midieron en varios perfiles (`perf-fix` lo hace si la causa es sensible a la red), compara **cada perfil con su pareja**, nunca entre perfiles:
+
+- Con un solo dispositivo, `npx wperf compare --url <url> --network <n> --format json` por cada red (toma los dos últimos de ese perfil; el dispositivo es el del último reporte de esa red).
+- Con varios dispositivos, ese atajo no sirve: usa ids explícitos (de las líneas `Reporte guardado` o de `npx wperf history <url> --device <d> --network <n>`).
+
+Presenta primero una tabla con una fila por perfil (veredicto, `score` antes→después y las métricas que no son `unchanged`) y luego el detalle de cada uno con la estructura del paso 3, sin mezclar cifras de redes distintas en una misma fila. Si los perfiles discrepan (`improved` en `default` y `unchanged` en `3g`), eso es el hallazgo: cuéntalo tal cual y no lo resumas en un veredicto global.
 
 ## Antes de responder: comprobación de cifras
 

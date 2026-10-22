@@ -25,6 +25,8 @@ Los tests dependen de estos valores concretos; si se recapturan hay que actualiz
 
 Los tests dependen de estos valores concretos; si se recapturan hay que actualizar las aserciones.
 
+`demo-rota-1`, `demo-rota-cls-ruido` y `demo-rota-2`, junto con `ejemplo-skill-regresion-antes`, `ejemplo-skill-rota` y `ejemplo-skill-red-default`, forman la serie de `.claude/skills/perf-compare/references/ejemplo-serie.md` (misma URL y perfil, ordenados por `createdAt`).
+
 Los dos siguientes son los reportes de los que salen las cifras de los ejemplos de `.claude/skills/perf-audit/references/ejemplo-salida.md` y `.claude/skills/perf-compare/references/ejemplo-salida.md`; `tests/skill-eval.test.ts` comprueba que esas cifras salen de ellos.
 
 | Fichero                                                  | Origen                                                                                                                                                                                                                                |
