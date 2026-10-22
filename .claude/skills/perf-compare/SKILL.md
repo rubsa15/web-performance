@@ -16,13 +16,21 @@ Explica la diferencia entre dos reportes de `wperf`. El CLI decide qué cambio e
 
 ## Flujo
 
+### 0. Comprobar el CLI
+
+Ejecuta `npx --no-install wperf --version`.
+
+- Si responde con una versión, sigue. Si estás en el repo de `wperf` (tiene `bin/wperf` y `src/`), ejecuta además `npm run build` para no medir con un `dist/` viejo.
+- Si falla, `wperf` no está instalado en este proyecto: pide permiso y ejecuta `npm install -D @rubsa15/wperf`. **No uses `npx wperf` sin instalar**: npm descargaría otro paquete llamado `wperf` que no es este.
+- Necesita Chrome (o `CHROME_PATH`) y Node ≥ 22.19.
+
 ### 1. Elegir los reportes
 
 - Dos reportes concretos (ids o rutas): `npx wperf compare <antes> <después> --format json`.
 - Una URL: `npx wperf compare --url <url> --format json` compara los dos últimos de esa URL, device, perfil de red y throttling.
 - Sin nada: `npx wperf compare --format json` usa los dos últimos reportes guardados.
 - Si el usuario cambió algo y quiere saber el efecto pero solo hay un reporte, audita con `perf-audit` (o `npx wperf audit`) y compara después. Para elegir ids, `npx wperf history <url>` los lista.
-- JSON por stdout; las rutas "Antes/Después" salen por stderr. Ejecuta `npm run build` antes y redirige stdout a un fichero para no volcar el JSON entero al contexto.
+- JSON por stdout; las rutas "Antes/Después" salen por stderr. Redirige stdout a un fichero para no volcar el JSON entero al contexto.
 - Si dos reportes distintos comparten etiqueta (`demo v0`), identifícalos por `id`, no por etiqueta; el CLI no avisa de ello.
 - **Perfiles de red distintos no se comparan** (código 2). Si el usuario pregunta "¿en qué red es peor?", no restes valores a mano: explica el motivo, enséñale los valores de cada reporte lado a lado marcándolo como *no* comparación, y derívalo a `perf-audit`, que sí cruza perfiles. Para comparar un perfil concreto a lo largo del tiempo usa `npx wperf compare --url <url> --network 3g --format json` (los dos últimos de ese perfil) o `npx wperf history <url> --network 3g`.
 - Código 2 (distinto `device`, perfil de red `environment.network` o `throttling`, o solo hay un reporte): explica el motivo; no hay comparación válida y no debes forzar una a mano. Código 3: error de ejecución, cuéntalo.

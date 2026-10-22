@@ -18,11 +18,19 @@ Aplica un arreglo de rendimiento en el código y demuestra con mediciones que si
 
 ## Flujo
 
+### 0. Comprobar el CLI
+
+Ejecuta `npx --no-install wperf --version`.
+
+- Si responde con una versión, sigue. Si estás en el repo de `wperf` (tiene `bin/wperf` y `src/`), ejecuta además `npm run build` para no medir con un `dist/` viejo.
+- Si falla, `wperf` no está instalado en este proyecto: pide permiso y ejecuta `npm install -D @rubsa15/wperf`. **No uses `npx wperf` sin instalar**: npm descargaría otro paquete llamado `wperf` que no es este.
+- Necesita Chrome (o `CHROME_PATH`) y Node ≥ 22.19.
+
 ### 1. Qué se arregla y con qué línea base
 
 Entrada: un id de oportunidad (`image-delivery-insight`), una causa raíz de `perf-audit` ("la fila 2") o una descripción ("las imágenes no tienen dimensiones"). Si es ambigua, pregunta cuál.
 
-- Necesitas un reporte **anterior al cambio** del mismo dispositivo y perfil de red con el que vas a comparar. Mira `npx wperf history <url>`: sirve el último si su `git.commit` es el `HEAD` actual y `git.dirty` es `false` (o si el código no ha cambiado desde entonces). Si no existe, está desfasado o no sabes qué código midió, audita ahora (`npx wperf audit <url> --device <d> --network <n> --runs 3 --label antes-<causa> --format json > <fichero>`); el CLI tiene que estar compilado (`npm run build`).
+- Necesitas un reporte **anterior al cambio** del mismo dispositivo y perfil de red con el que vas a comparar. Mira `npx wperf history <url>`: sirve el último si su `git.commit` es el `HEAD` actual y `git.dirty` es `false` (o si el código no ha cambiado desde entonces). Si no existe, está desfasado o no sabes qué código midió, audita ahora (`npx wperf audit <url> --device <d> --network <n> --runs 3 --label antes-<causa> --format json > <fichero>`); el CLI ya comprobado en el paso 0.
 - Perfil de medición: el mismo en que el problema es relevante. Por defecto `mobile` + `default`, 3 ejecuciones. Si la causa es sensible a la red (`perf-audit` lo marca), mide también `3g`. Perfiles distintos no se comparan entre sí (código 2): el "antes" y el "después" de cada perfil van emparejados. Usa las mismas ejecuciones en ambos lados.
 - Las mediciones se lanzan **una detrás de otra, nunca en paralelo**, y con la web servida de la misma forma antes y después (mismo puerto y comando). Si hay que arrancar un servidor (`npm run demo`, `npm run dev`, un `serve`), averigua el comando en `package.json`/README y pregúntalo si dudas.
 - Anota los valores de partida del reporte base: la métrica objetivo y su `rating`, la oportunidad y su ahorro (`opportunities[].items[]` dice qué recursos).

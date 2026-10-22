@@ -17,6 +17,14 @@ Convierte una auditoría de `wperf` en un plan de mejora priorizado. El CLI mide
 
 ## Flujo
 
+### 0. Comprobar el CLI
+
+Ejecuta `npx --no-install wperf --version`.
+
+- Si responde con una versión, sigue. Si estás en el repo de `wperf` (tiene `bin/wperf` y `src/`), ejecuta además `npm run build` para no medir con un `dist/` viejo.
+- Si falla, `wperf` no está instalado en este proyecto: pide permiso y ejecuta `npm install -D @rubsa15/wperf`. **No uses `npx wperf` sin instalar**: npm descargaría otro paquete llamado `wperf` que no es este.
+- Necesita Chrome (o `CHROME_PATH`) y Node ≥ 22.19.
+
 ### 1. Obtener los reportes
 
 Una sola medición engaña: la misma web puede estar bien con buena red y fatal con una mala, y los problemas que dependen de los bytes no son los mismos que los que dependen de la CPU. Por eso, salvo que el usuario pida otra cosa, **audita tres perfiles de red por cada dispositivo** que elija (`mobile` por defecto):
@@ -41,7 +49,7 @@ Las mediciones se lanzan **una detrás de otra, nunca en paralelo**: dos Chrome 
 
 Si el usuario no contesta o dice "lo que quieras", usa `mobile`, los tres presets y 3 ejecuciones. Usa las mismas ejecuciones en todos los presets y dispositivos: con números distintos, los rangos `min`–`max` no son comparables entre perfiles.
 
-- Si el usuario da una URL: ejecuta la auditoría. El CLI debe estar compilado: ejecuta `npm run build` antes (es rápido y evita auditar con un `dist/` viejo).
+- Si el usuario da una URL: ejecuta la auditoría (con el CLI ya comprobado en el paso 0).
   ```sh
   OUT=<carpeta temporal propia de esta auditoría>   # un nombre por sitio, para no pisar resultados
   RUNS=<ejecuciones elegidas>
