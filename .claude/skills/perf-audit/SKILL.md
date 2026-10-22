@@ -1,6 +1,6 @@
 ---
 name: perf-audit
-description: Audita el rendimiento de una web con el CLI `wperf` (Lighthouse) en varios perfiles de red (y de dispositivo si se pide) y explica los resultados - agrupa las oportunidades por causa raíz, distingue las que dependen de la red de las que no, estima esfuerzo S/M/L y entrega una tabla priorizada impacto/esfuerzo con la evidencia medida. Úsala siempre que el usuario pida auditar, medir, analizar o diagnosticar el rendimiento o la velocidad de una URL o de la web del repo (LCP, CLS, TBT, Lighthouse, "va lenta", "qué mejoro primero"), aunque no mencione wperf, y también para interpretar un reporte ya guardado en `.perf/reports/`.
+description: Audita el rendimiento de una web con el CLI `wperf` (Lighthouse) en varios perfiles de red y dispositivos (los pregunta antes de medir) y explica los resultados - agrupa las oportunidades por causa raíz, distingue las que dependen de la red de las que no, estima esfuerzo S/M/L y entrega una tabla priorizada impacto/esfuerzo con la evidencia medida. Úsala siempre que el usuario pida auditar, medir, analizar o diagnosticar el rendimiento o la velocidad de una URL o de la web del repo (LCP, CLS, TBT, Lighthouse, "va lenta", "qué mejoro primero"), aunque no mencione wperf, y también para interpretar un reporte ya guardado en `.perf/reports/`.
 ---
 
 # perf-audit
@@ -19,7 +19,7 @@ Convierte una auditoría de `wperf` en un plan de mejora priorizado. El CLI mide
 
 ### 1. Obtener los reportes
 
-Una sola medición engaña: la misma web puede estar bien con buena red y fatal con una mala, y los problemas que dependen de los bytes no son los mismos que los que dependen de la CPU. Por eso, salvo que el usuario pida otra cosa, **audita tres perfiles de red para un mismo dispositivo** (por defecto `mobile`):
+Una sola medición engaña: la misma web puede estar bien con buena red y fatal con una mala, y los problemas que dependen de los bytes no son los mismos que los que dependen de la CPU. Por eso, salvo que el usuario pida otra cosa, **audita tres perfiles de red por cada dispositivo** que elija (`mobile` por defecto):
 
 | `--network` | Qué simula                                                                    |
 | ----------- | ----------------------------------------------------------------------------- |
@@ -29,19 +29,42 @@ Una sola medición engaña: la misma web puede estar bien con buena red y fatal 
 
 La CPU conserva la ralentización del dispositivo en los tres, así que lo que cambia entre perfiles es solo la red.
 
-Si el usuario pide **varios dispositivos**, repite los tres perfiles con `--device desktop` (o el que pida). En desktop `default` ya es una red rápida, y `4g` se le parece mucho: dilo si los resultados apenas difieren. Si solo quiere una medición rápida, usa `default` y dile que no habrá comparación entre redes.
+Con varios dispositivos, los tres perfiles se repiten en cada uno y se cruzan **dentro de cada dispositivo** (paso 3); presenta una sección por dispositivo. En desktop `default` ya es una red rápida, y `4g` se le parece mucho: dilo si los resultados apenas difieren. Si solo quiere una medición rápida, usa `default` y dile que no habrá comparación entre redes.
 
-Los perfiles se lanzan **uno detrás de otro, nunca en paralelo**: dos Chrome a la vez compiten por la CPU y falsean las métricas.
+Las mediciones se lanzan **una detrás de otra, nunca en paralelo**: dos Chrome a la vez compiten por la CPU y falsean las métricas.
+
+**Antes de auditar una URL, pregunta al usuario qué quiere medir, en este orden y de forma secuencial**: tres preguntas, cada una en su propia llamada a `AskUserQuestion` (una pregunta por llamada), y no lanzas la siguiente hasta tener la respuesta de la anterior. Así cada pregunta puede apoyarse en lo ya elegido. Salta la pregunta que el usuario ya haya respondido en su mensaje (p. ej. "con 5 ejecuciones", "solo 3g" o "en desktop"), y no preguntes nada si pide interpretar un reporte ya guardado.
+
+1. **Para qué dispositivos** (`multiSelect: true`): `mobile` (recomendado: es lo que mide Core Web Vitals en Lighthouse) y `desktop`. Si no marca ninguno, usa `mobile`.
+2. **Qué presets de red** (`multiSelect: true`): `default`, `3g`, `4g`. Marca los tres como opción recomendada (es lo que permite cruzar perfiles en el paso 3). Si elige uno solo, trabaja como en "una medición rápida": sin comparación entre redes. Menciona en la pregunta los dispositivos elegidos en el paso anterior.
+3. **Cuántas ejecuciones por preset** (`--runs`; el CLI usa la mediana): `3` (recomendada, por defecto del CLI), `5` (más fiable, la mediana aguanta más ruido) o `1` (rápido, pero sin dispersión: la mediana no se puede valorar). El usuario puede escribir otro número con "Other". Antes de preguntar, calcula con las respuestas anteriores cuántas cargas implica cada opción (dispositivos × presets × ejecuciones) y avisa del coste en la propia pregunta: el tiempo total es ≈ esas cargas × lo que tarda una, y todo se lanza en serie.
+
+Si el usuario no contesta o dice "lo que quieras", usa `mobile`, los tres presets y 3 ejecuciones. Usa las mismas ejecuciones en todos los presets y dispositivos: con números distintos, los rangos `min`–`max` no son comparables entre perfiles.
 
 - Si el usuario da una URL: ejecuta la auditoría. El CLI debe estar compilado: ejecuta `npm run build` antes (es rápido y evita auditar con un `dist/` viejo).
   ```sh
   OUT=<carpeta temporal propia de esta auditoría>   # un nombre por sitio, para no pisar resultados
-  for n in default 3g 4g; do
-    npx wperf audit <url> --device <mobile|desktop> --network $n --runs 3 --format json > $OUT/$n.json 2> $OUT/$n.err
+  RUNS=<ejecuciones elegidas>
+  : > $OUT/progreso.log
+  for d in <dispositivos elegidos, p. ej. mobile desktop>; do
+    for n in <presets elegidos, p. ej. default 3g 4g>; do
+      echo "[$d/$n] empezando" >> $OUT/progreso.log
+      npx wperf audit <url> --device $d --network $n --runs $RUNS --format json > $OUT/$d-$n.json 2>> $OUT/progreso.log
+      code=$?
+      echo "[$d/$n] terminado (código $code)" >> $OUT/progreso.log
+    done
   done
-  grep -h "Reporte guardado" $OUT/*.err    # rutas de los reportes en .perf/reports/
+  echo "FIN" >> $OUT/progreso.log
+  grep -h "Reporte guardado" $OUT/progreso.log    # rutas de los reportes en .perf/reports/
   ```
-  Usa `mobile` por defecto (es lo que mide Core Web Vitals en Lighthouse). Cada perfil tarda de medio minuto a varios: ponle un `timeout` alto, o lanza el bucle entero en segundo plano y espera a que termine (no lo vigiles con esperas cortas). `.perf/reports/<sitio>/` acumula reportes de auditorías anteriores: usa los de este bucle, no el último que encuentres. El JSON va por stdout y el progreso por stderr; la ruta del reporte guardado sale en stderr.
+  `.perf/reports/<sitio>/` acumula reportes de auditorías anteriores: usa los de este bucle, no el último que encuentres. El JSON va por stdout (a `$OUT/<dispositivo>-<preset>.json`) y el progreso por stderr (a `$OUT/progreso.log`, con una línea `[dispositivo/preset] empezando`/`terminado` por medición y `FIN` al acabar); la ruta del reporte guardado sale en stderr.
+
+  **Avisa al usuario mientras corre.** Cada perfil tarda de medio minuto a varios y, en segundo plano, el usuario no ve nada salvo lo que le escribas. Por eso:
+  1. Lanza el bucle **entero en segundo plano** (`run_in_background`), no uno por medición.
+  2. Engancha `Monitor` al fichero de progreso, con un filtro que deje pasar solo los eventos útiles y termine en `FIN`, p. ej. `tail -n +1 -F $OUT/progreso.log | grep --line-buffered -E "empezando|ejecución|terminado|Reporte guardado|rror|FIN"`. Si `Monitor` aparece como herramienta diferida, cárgala antes con `ToolSearch`. Páralo con `TaskStop` cuando llegue `FIN`.
+  3. **Por cada evento que reciba el monitor, escribe al usuario una línea corta** ("`mobile/3g`: ejecución 2/3 en curso", "`mobile/default` terminado, empiezo `mobile/3g`"). `ejecución n/N` se emite al *empezar* esa ejecución, así que no digas que la anterior "ha terminado" salvo con la línea `terminado`. Son avisos de estado: sin cifras de métricas y sin interpretar nada hasta tener todos los reportes.
+  4. Al llegar `FIN`, o si un perfil termina con código distinto de 0, manda además una notificación con `PushNotification` (también diferida: cárgala con `ToolSearch`), de una línea: sitio, perfiles completados y fallidos. Sin cifras de rendimiento. Si falla un perfil, la notificación debe decirlo.
+  5. Si `Monitor` o `PushNotification` no están disponibles, avisa de ello y lanza cada perfil en segundo plano por separado, escribiendo al usuario cuando cada uno termine. Sigue siendo en serie: no arranques el siguiente antes de que acabe el anterior.
 - Redirige stdout a un fichero y léelo de ahí o de `.perf/reports/`: el JSON es largo y no hace falta volcarlo entero al contexto.
 - Si un perfil falla, cuéntalo y continúa con los demás; no rellenes el hueco. `warnings` puede avisar de que Lighthouse no aplicó el perfil pedido: en ese caso descarta ese reporte.
 - Si la URL es la demo (`127.0.0.1:4173`) y no responde, arranca `npm run demo` en segundo plano antes de auditar.
@@ -100,13 +123,13 @@ Orden: (1) causas cuya `affectedMetrics` incluye una métrica `poor` en el perfi
 
 Estructura de la respuesta (ejemplo de un perfil en [references/ejemplo-salida.md](references/ejemplo-salida.md); de tres perfiles de red en [references/ejemplo-multiperfil.md](references/ejemplo-multiperfil.md)):
 
-1. **Resumen**: URL, dispositivo, fecha/ids de los reportes, nº de ejecuciones y una tabla con una columna por perfil de red: `score` y las seis métricas (valor y `rating`). Una frase de diagnóstico general que diga cuánto depende la web de la red.
+1. **Resumen**: URL, dispositivo (con varios, una tabla por dispositivo), fecha/ids de los reportes, nº de ejecuciones y una tabla con una columna por perfil de red: `score` y las seis métricas (valor y `rating`). Una frase de diagnóstico general que diga cuánto depende la web de la red.
 2. **Tabla priorizada** — una fila por causa raíz: prioridad, problema, evidencia medida (recurso + ahorro, con ids de auditoría), **comportamiento ante la red** (independiente / sensible / solo en un perfil, con el ahorro en cada perfil), métricas afectadas, esfuerzo (S/M/L, hipótesis).
 3. **Detalle por problema** (unas 4–6 líneas cada uno): qué pasa en lenguaje claro, evidencia (`items[]`: URL del recurso y su ahorro), causa probable marcada como *hipótesis*, y cómo comprobarla. Sin código fuente (web ajena), la comprobación es "inspecciona el HTML/DevTools"; no finjas haber leído el código.
 4. **Qué no está medido**: hallazgos indirectos, oportunidades sin ahorro y diagnósticos sin `impact` (`bf-cache`, `non-composited-animations`…) que no mereció la pena priorizar.
 5. **Siguiente paso**: pregunta qué problemas quiere abordar; ofrece `perf-fix` para aplicarlos y volver a auditar con `perf-compare`.
 
-Con un solo perfil, omite las columnas por red y la clasificación. Guarda el informe como Markdown junto al reporte si el usuario lo pide (`.perf/reports/<sitio>/<id>.md`); no lo hagas por defecto.
+Con un solo perfil, omite las columnas por red y la clasificación. Con dos, mantén una columna por perfil y clasifica solo lo que puedas sostener con dos reportes (no hay "aparece en 2 de 3"). Guarda el informe como Markdown junto al reporte si el usuario lo pide (`.perf/reports/<sitio>/<id>.md`); no lo hagas por defecto.
 
 ## Antes de responder: comprobación de cifras
 
