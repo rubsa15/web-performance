@@ -1,10 +1,7 @@
 // Interacciones de la página: cabecera pegajosa y búsqueda del catálogo.
-// Se carga en <head> y de forma síncrona (problema 3 de ISSUES.md).
 
 var header;
 
-// three.min.js se cargó para un visor 3D de granos que ya no existe y nadie lo ha quitado
-// (problema 4: no se ejecuta nada de esa librería).
 var resizeTimer;
 function onResize() {
   clearTimeout(resizeTimer);
@@ -21,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Índice de búsqueda del catálogo: se construye de una sola vez en el hilo principal
-// justo después del primer pintado (problema 7: tarea larga).
+// justo después del primer pintado.
 function buildSearchIndex() {
   var origins = ['Etiopía', 'Brasil', 'Colombia', 'Kenia', 'Guatemala', 'Costa Rica', 'Perú'];
   var entries = [];
