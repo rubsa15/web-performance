@@ -1,11 +1,17 @@
 {
-  "name": "web-performance",
+  "name": "@rubsa15/wperf",
   "version": "1.0.0",
   "description": "CLI para auditar el rendimiento de una web, priorizar mejoras y comparar auditorías.",
   "type": "module",
   "bin": {
     "wperf": "bin/wperf"
   },
+  "files": [
+    "bin",
+    "dist",
+    "!dist/**/*.map",
+    "README.md"
+  ],
   "engines": {
     "node": ">=22.19"
   },
@@ -21,7 +27,8 @@
     "demo": "node demo/serve.ts site",
     "demo:fixed": "node demo/serve.ts site-fixed",
     "verify": "npm run typecheck && npm run lint && npm test",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run verify"
   },
   "repository": {
     "type": "git",
@@ -30,7 +37,9 @@
   "keywords": [
     "performance",
     "lighthouse",
-    "cli"
+    "cli",
+    "web-vitals",
+    "claude-code"
   ],
   "author": "",
   "license": "ISC",
@@ -54,5 +63,8 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.0",
     "vitest": "^5.0.5"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
