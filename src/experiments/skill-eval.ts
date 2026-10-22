@@ -150,7 +150,7 @@ function readNumber(token: string): Reading[] {
 }
 
 /** Marca con la que una respuesta declara que una cifra no sale del CLI: código, fichero, curl o un cálculo propio. */
-export const CODE_SOURCE_MARK = /fuente:\s*(código|fichero|curl|cálculo)/i;
+export const CODE_SOURCE_MARK = /fuente:\s*(código|fichero|curl|cálculo|page-check)/i;
 
 export function extractNumbers(markdown: string): ParsedNumber[] {
   const text = stripNonMeasures(markdown);

@@ -1,4 +1,4 @@
-// Servidor estático de la demo: `node demo/serve.ts [site|site-fixed] [--port 4173] [--latency 300]`.
+// Servidor estático de la demo: `node demo/serve.ts [site|site-fixed] [--port 4173] [--latency 300] [--root <dir>]`.
 // Sirve texto comprimido (gzip) y cabeceras de caché largas para que los únicos problemas que
 // detecte Lighthouse sean los catalogados en demo/site/ISSUES.md. La latencia (ms) se aplica solo a
 // imágenes y fuentes, como si vinieran de un CDN: sin ella en localhost llegarían antes del primer
@@ -31,10 +31,12 @@ export interface DemoOptions {
   port: number;
   /** Latencia (ms) añadida a imágenes y fuentes. */
   latency: number;
+  /** Carpeta absoluta a servir en lugar de `site` (copias de trabajo de la evaluación de `perf-fix`). */
+  root?: string;
 }
 
-export function startDemoServer({ site, port, latency }: DemoOptions): Promise<Server> {
-  const root = resolve(import.meta.dirname, site);
+export function startDemoServer({ site, port, latency, root: dir }: DemoOptions): Promise<Server> {
+  const root = dir ? resolve(dir) : resolve(import.meta.dirname, site);
 
   const server = createServer(async (req, res) => {
     try {
@@ -82,7 +84,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const site = arg === 'site-fixed' ? 'site-fixed' : 'site';
   const port = Number(option('port', site === 'site-fixed' ? '4174' : '4173'));
   const latency = Number(option('latency', '300'));
-  const server = await startDemoServer({ site, port, latency });
+  const root = process.argv.includes('--root') ? option('root', '') : undefined;
+  const server = await startDemoServer({ site, port, latency, ...(root && { root }) });
   const { port: actual } = server.address() as AddressInfo;
-  console.log(`demo/${site} en http://127.0.0.1:${actual}/ (latencia ${latency} ms)`);
+  console.log(`${root ?? `demo/${site}`} en http://127.0.0.1:${actual}/ (latencia ${latency} ms)`);
 }

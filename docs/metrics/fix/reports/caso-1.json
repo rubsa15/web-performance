@@ -1,0 +1,385 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-22T07-42-48Z-mobile",
+  "url": "http://127.0.0.1:4173/",
+  "finalUrl": "http://127.0.0.1:4173/",
+  "device": "mobile",
+  "label": "despues-hero",
+  "createdAt": "2026-10-22T07:42:48Z",
+  "environment": {
+    "lighthouseVersion": "13.5.0",
+    "chromeVersion": "155.0.0.0",
+    "throttling": "simulate",
+    "network": "default",
+    "runs": 3,
+    "representativeRun": 2
+  },
+  "git": {
+    "commit": "abbfa96",
+    "dirty": true
+  },
+  "score": 51,
+  "metrics": {
+    "lcp": {
+      "value": 24381,
+      "unit": "ms",
+      "min": 24378,
+      "max": 24381,
+      "rating": "poor"
+    },
+    "fcp": {
+      "value": 2491,
+      "unit": "ms",
+      "min": 2490,
+      "max": 2493,
+      "rating": "needs-improvement"
+    },
+    "tbt": {
+      "value": 282,
+      "unit": "ms",
+      "min": 153,
+      "max": 455,
+      "rating": "needs-improvement"
+    },
+    "cls": {
+      "value": 0.291,
+      "unit": "",
+      "min": 0.291,
+      "max": 0.291,
+      "rating": "poor"
+    },
+    "si": {
+      "value": 2491,
+      "unit": "ms",
+      "min": 2490,
+      "max": 2493,
+      "rating": "good"
+    },
+    "ttfb": {
+      "value": 752,
+      "unit": "ms",
+      "min": 751,
+      "max": 752,
+      "rating": "good"
+    }
+  },
+  "lcp": {
+    "element": {
+      "selector": "body > main > section.hero > img.hero-img",
+      "snippet": "<img class=\"hero-img\" src=\"img/hero-960.jpg\" srcset=\"img/hero-480.jpg 480w, img/hero-960.jpg 960w, img/hero-1600.jpg 1600w\" sizes=\"100vw\" fetchpriority=\"high\" alt=\"Tonos cálidos de café recién tostado\">",
+      "nodeLabel": "Tonos cálidos de café recién tostado",
+      "url": "http://127.0.0.1:4173/img/hero-960.jpg"
+    },
+    "breakdown": {
+      "ttfb": 2,
+      "loadDelay": 9,
+      "loadDuration": 307,
+      "renderDelay": 112
+    },
+    "discovery": {
+      "priorityHinted": true,
+      "requestDiscoverable": true,
+      "eagerlyLoaded": true
+    }
+  },
+  "opportunities": [
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "category": "images",
+      "savingsMs": 18050,
+      "savingsBytes": 5233794,
+      "impact": "high",
+      "affectedMetrics": [
+        "lcp"
+      ],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-2.jpg",
+          "selector": "section#cafes > div.grid > figure > img",
+          "wastedBytes": 872837,
+          "totalBytes": 919938
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-4.jpg",
+          "selector": "section#cafes > div.grid > figure > img",
+          "wastedBytes": 870336,
+          "totalBytes": 917437
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-6.jpg",
+          "selector": "section#cafes > div.grid > figure > img",
+          "wastedBytes": 869472,
+          "totalBytes": 916573
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-1.jpg",
+          "selector": "section#cafes > div.grid > figure > img",
+          "wastedBytes": 865644,
+          "totalBytes": 912745
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-5.jpg",
+          "selector": "section#cafes > div.grid > figure > img",
+          "wastedBytes": 864410,
+          "totalBytes": 911511
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-3.jpg",
+          "selector": "section#cafes > div.grid > figure > img",
+          "wastedBytes": 862539,
+          "totalBytes": 909640
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/hero-960.jpg",
+          "selector": "body > main > section.hero > img.hero-img",
+          "wastedBytes": 28556,
+          "totalBytes": 65506
+        }
+      ]
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "category": "rendering",
+      "savingsMs": 1550,
+      "savingsBytes": 0,
+      "impact": "high",
+      "affectedMetrics": [
+        "fcp"
+      ],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/vendor/three.min.js",
+          "wastedMs": 1502,
+          "totalBytes": 168137
+        },
+        {
+          "url": "http://127.0.0.1:4173/js/app.js",
+          "wastedMs": 602,
+          "totalBytes": 1122
+        },
+        {
+          "url": "http://127.0.0.1:4173/css/styles.css",
+          "wastedMs": 452,
+          "totalBytes": 955
+        }
+      ]
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "category": "javascript",
+      "savingsMs": 750,
+      "savingsBytes": 120895,
+      "impact": "high",
+      "affectedMetrics": [
+        "fcp",
+        "lcp"
+      ],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/vendor/three.min.js",
+          "wastedBytes": 120895,
+          "totalBytes": 167861
+        }
+      ]
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "category": "javascript",
+      "savingsMs": 300,
+      "savingsBytes": 0,
+      "impact": "medium",
+      "affectedMetrics": [
+        "tbt"
+      ],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/js/app.js",
+          "cpuMs": 1289
+        },
+        {
+          "url": "Unattributable",
+          "cpuMs": 175
+        },
+        {
+          "url": "http://127.0.0.1:4173/",
+          "cpuMs": 125
+        },
+        {
+          "url": "http://127.0.0.1:4173/vendor/three.min.js",
+          "cpuMs": 89
+        }
+      ]
+    },
+    {
+      "id": "font-display-insight",
+      "title": "Font display",
+      "category": "fonts",
+      "savingsMs": 300,
+      "savingsBytes": 0,
+      "impact": "medium",
+      "affectedMetrics": [
+        "fcp"
+      ],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/fonts/inter-latin-700.woff2",
+          "wastedMs": 305
+        },
+        {
+          "url": "http://127.0.0.1:4173/fonts/inter-latin-400.woff2",
+          "wastedMs": 300
+        }
+      ]
+    },
+    {
+      "id": "cls-culprits-insight",
+      "title": "Layout shift culprits",
+      "category": "rendering",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": [
+        "cls"
+      ],
+      "items": []
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": [
+        "lcp"
+      ],
+      "items": []
+    },
+    {
+      "id": "total-byte-weight",
+      "title": "Avoid enormous network payloads",
+      "category": "network",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": [],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-2.jpg",
+          "totalBytes": 920143
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-4.jpg",
+          "totalBytes": 917642
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-6.jpg",
+          "totalBytes": 916778
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-1.jpg",
+          "totalBytes": 912950
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-5.jpg",
+          "totalBytes": 911716
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-3.jpg",
+          "totalBytes": 909845
+        },
+        {
+          "url": "http://127.0.0.1:4173/vendor/three.min.js",
+          "totalBytes": 168137
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/hero-960.jpg",
+          "totalBytes": 65710
+        },
+        {
+          "url": "http://127.0.0.1:4173/fonts/inter-latin-700.woff2",
+          "totalBytes": 17988
+        },
+        {
+          "url": "http://127.0.0.1:4173/fonts/inter-latin-400.woff2",
+          "totalBytes": 16912
+        }
+      ]
+    },
+    {
+      "id": "unsized-images",
+      "title": "Image elements do not have explicit `width` and `height`",
+      "category": "images",
+      "savingsMs": 0,
+      "savingsBytes": 0,
+      "impact": "low",
+      "affectedMetrics": [
+        "cls"
+      ],
+      "items": [
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-1.jpg",
+          "selector": "section#cafes > div.grid > figure > img"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-2.jpg",
+          "selector": "section#cafes > div.grid > figure > img"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-3.jpg",
+          "selector": "section#cafes > div.grid > figure > img"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-4.jpg",
+          "selector": "section#cafes > div.grid > figure > img"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-5.jpg",
+          "selector": "section#cafes > div.grid > figure > img"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/cafe-6.jpg",
+          "selector": "section#cafes > div.grid > figure > img"
+        },
+        {
+          "url": "http://127.0.0.1:4173/img/hero-960.jpg",
+          "selector": "body > main > section.hero > img.hero-img"
+        }
+      ]
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimizes main-thread work",
+      "displayValue": "1.7 s"
+    },
+    {
+      "id": "long-tasks",
+      "title": "Avoid long main-thread tasks",
+      "displayValue": "2 long tasks found"
+    },
+    {
+      "id": "server-response-time",
+      "title": "Initial server response time was short",
+      "displayValue": "Root document took 0 ms"
+    }
+  ],
+  "resources": {
+    "totalBytes": 5761423,
+    "byType": {
+      "image": 5554784,
+      "script": 169259,
+      "font": 34900,
+      "document": 1525,
+      "stylesheet": 955,
+      "media": 0,
+      "other": 0
+    }
+  },
+  "warnings": []
+}

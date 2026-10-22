@@ -1,0 +1,315 @@
+{
+  "before": {
+    "id": "2026-10-22T07-39-28Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T07:39:28Z",
+    "runs": 3,
+    "label": "base-fix-eval",
+    "git": {
+      "commit": "abbfa96",
+      "dirty": false
+    }
+  },
+  "after": {
+    "id": "2026-10-22T07-49-27Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T07:49:27Z",
+    "runs": 3,
+    "label": "despues-unused-js",
+    "git": {
+      "commit": "abbfa96",
+      "dirty": true
+    }
+  },
+  "warnings": [],
+  "verdict": "mixed",
+  "score": {
+    "before": 47,
+    "after": 36,
+    "delta": -11,
+    "change": "regressed"
+  },
+  "metrics": {
+    "lcp": {
+      "unit": "ms",
+      "before": 40729,
+      "after": 39453,
+      "delta": -1276,
+      "deltaPct": -0.031329028456382434,
+      "change": "unchanged",
+      "ratingBefore": "poor",
+      "ratingAfter": "poor"
+    },
+    "fcp": {
+      "unit": "ms",
+      "before": 2495,
+      "after": 1503,
+      "delta": -992,
+      "deltaPct": -0.3975951903807615,
+      "change": "improved",
+      "ratingBefore": "needs-improvement",
+      "ratingAfter": "good"
+    },
+    "tbt": {
+      "unit": "ms",
+      "before": 417,
+      "after": 1243,
+      "delta": 826,
+      "deltaPct": 1.9808153477218224,
+      "change": "regressed",
+      "ratingBefore": "needs-improvement",
+      "ratingAfter": "poor"
+    },
+    "cls": {
+      "unit": "",
+      "before": 0.291,
+      "after": 0.291,
+      "delta": 0,
+      "deltaPct": 0,
+      "change": "unchanged",
+      "ratingBefore": "poor",
+      "ratingAfter": "poor"
+    },
+    "si": {
+      "unit": "ms",
+      "before": 2495,
+      "after": 1503,
+      "delta": -992,
+      "deltaPct": -0.3975951903807615,
+      "change": "improved",
+      "ratingBefore": "good",
+      "ratingAfter": "good"
+    },
+    "ttfb": {
+      "unit": "ms",
+      "before": 752,
+      "after": 752,
+      "delta": 0,
+      "deltaPct": 0,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good"
+    }
+  },
+  "opportunities": [
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 1050,
+        "savingsBytes": 120895,
+        "impact": "high"
+      },
+      "deltaMs": -1050,
+      "deltaBytes": -120895
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 400,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "deltaMs": -400,
+      "deltaBytes": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "status": "better",
+      "before": {
+        "savingsMs": 1550,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 550,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "deltaMs": -1000,
+      "deltaBytes": 0
+    },
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "status": "same",
+      "before": {
+        "savingsMs": 32900,
+        "savingsBytes": 8154587,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 32700,
+        "savingsBytes": 8154587,
+        "impact": "high"
+      },
+      "deltaMs": -200,
+      "deltaBytes": 0
+    },
+    {
+      "id": "cls-culprits-insight",
+      "title": "Layout shift culprits",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "font-display-insight",
+      "title": "Font display",
+      "status": "same",
+      "before": {
+        "savingsMs": 300,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "after": {
+        "savingsMs": 300,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "lcp-discovery-insight",
+      "title": "LCP request discovery",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "total-byte-weight",
+      "title": "Avoid enormous network payloads",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "unsized-images",
+      "title": "Image elements do not have explicit `width` and `height`",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    }
+  ],
+  "resources": [
+    {
+      "type": "total",
+      "before": 8699348,
+      "after": 8531197,
+      "delta": -168151
+    },
+    {
+      "type": "document",
+      "before": 1455,
+      "after": 1441,
+      "delta": -14
+    },
+    {
+      "type": "font",
+      "before": 34900,
+      "after": 34900,
+      "delta": 0
+    },
+    {
+      "type": "image",
+      "before": 8492779,
+      "after": 8492779,
+      "delta": 0
+    },
+    {
+      "type": "media",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "other",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "script",
+      "before": 169259,
+      "after": 1122,
+      "delta": -168137
+    },
+    {
+      "type": "stylesheet",
+      "before": 955,
+      "after": 955,
+      "delta": 0
+    }
+  ],
+  "lcpElement": {
+    "before": "body > main > section.hero > img.hero-img",
+    "after": "body > main > section.hero > img.hero-img",
+    "changed": false
+  }
+}

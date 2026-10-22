@@ -14,6 +14,9 @@ const loadExample = (skill: string): string =>
 const rota = loadReport('ejemplo-skill-rota');
 const arreglada = loadReport('ejemplo-skill-arreglada');
 const regresionAntes = loadReport('ejemplo-skill-regresion-antes');
+const fixAntes = loadReport('ejemplo-fix-antes');
+const fixDespues = loadReport('ejemplo-fix-despues');
+const fixRevertido = loadReport('ejemplo-fix-revertido-despues');
 const redes = ['default', '3g', '4g'].map((n) => loadReport(`ejemplo-skill-red-${n}`));
 
 describe('extractNumbers', () => {
@@ -92,5 +95,20 @@ describe('recallOf', () => {
     const r = recallOf('Solo `render-blocking-insight` y `unused-javascript`.');
     expect(r.found).toEqual([3, 4]);
     expect(r.missing).toEqual([1, 2, 5, 6, 7]);
+  });
+});
+
+describe('ejemplos de perf-fix', () => {
+  const read = (name: string): string =>
+    readFileSync(here(`../.claude/skills/perf-fix/references/${name}`), 'utf8');
+
+  it('mejora medida: las cifras salen de los dos reportes y su comparación', () => {
+    const source = [fixAntes, fixDespues, compareReports(fixAntes, fixDespues)];
+    expect(unverifiedFigures(read('ejemplo-salida.md'), source)).toEqual([]);
+  });
+
+  it('arreglo revertido: las cifras salen de los dos reportes y su comparación', () => {
+    const source = [fixAntes, fixRevertido, compareReports(fixAntes, fixRevertido)];
+    expect(unverifiedFigures(read('ejemplo-revertido.md'), source)).toEqual([]);
   });
 });

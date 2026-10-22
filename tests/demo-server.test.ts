@@ -1,5 +1,6 @@
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
+import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startDemoServer } from '../demo/serve.js';
 
@@ -39,6 +40,24 @@ describe('servidor de la demo', () => {
     expect((await fetch(`${base}/no-existe.html`)).status).toBe(404);
     const escape = await fetch(`${base}/..%2fserve.ts`);
     expect(escape.status).not.toBe(200);
+  });
+});
+
+describe('--root', () => {
+  it('sirve otra carpeta en lugar de la del sitio', async () => {
+    const other = await startDemoServer({
+      site: 'site',
+      port: 0,
+      latency: 0,
+      root: fileURLToPath(new URL('../demo/site-fixed', import.meta.url)),
+    });
+    try {
+      const { port } = other.address() as AddressInfo;
+      const html = await (await fetch(`http://127.0.0.1:${port}/`)).text();
+      expect(html).not.toContain('css/styles.css'); // site-fixed lleva el CSS en línea
+    } finally {
+      other.close();
+    }
   });
 });
 

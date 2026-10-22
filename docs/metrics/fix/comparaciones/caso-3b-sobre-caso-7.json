@@ -1,0 +1,308 @@
+{
+  "before": {
+    "id": "2026-10-22T07-56-52Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T07:56:52Z",
+    "runs": 3,
+    "label": "despues-tarea-larga",
+    "git": {
+      "commit": "abbfa96",
+      "dirty": true
+    }
+  },
+  "after": {
+    "id": "2026-10-22T07-59-53Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T07:59:53Z",
+    "runs": 3,
+    "label": "caso-3b",
+    "git": {
+      "commit": "abbfa96",
+      "dirty": true
+    }
+  },
+  "warnings": [],
+  "verdict": "mixed",
+  "score": {
+    "before": 57,
+    "after": 55,
+    "delta": -2,
+    "change": "unchanged"
+  },
+  "metrics": {
+    "lcp": {
+      "unit": "ms",
+      "before": 40728,
+      "after": 37357,
+      "delta": -3371,
+      "deltaPct": -0.08276861127479866,
+      "change": "unchanged",
+      "ratingBefore": "poor",
+      "ratingAfter": "poor"
+    },
+    "fcp": {
+      "unit": "ms",
+      "before": 2492,
+      "after": 1356,
+      "delta": -1136,
+      "deltaPct": -0.45585874799357945,
+      "change": "improved",
+      "ratingBefore": "needs-improvement",
+      "ratingAfter": "good"
+    },
+    "tbt": {
+      "unit": "ms",
+      "before": 39,
+      "after": 269,
+      "delta": 230,
+      "deltaPct": 5.897435897435898,
+      "change": "regressed",
+      "ratingBefore": "good",
+      "ratingAfter": "needs-improvement"
+    },
+    "cls": {
+      "unit": "",
+      "before": 0.291,
+      "after": 0.291,
+      "delta": 0,
+      "deltaPct": 0,
+      "change": "unchanged",
+      "ratingBefore": "poor",
+      "ratingAfter": "poor"
+    },
+    "si": {
+      "unit": "ms",
+      "before": 2492,
+      "after": 1356,
+      "delta": -1136,
+      "deltaPct": -0.45585874799357945,
+      "change": "improved",
+      "ratingBefore": "good",
+      "ratingAfter": "good"
+    },
+    "ttfb": {
+      "unit": "ms",
+      "before": 752,
+      "after": 753,
+      "delta": 1,
+      "deltaPct": 0.0013297872340425532,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good"
+    }
+  },
+  "opportunities": [
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "status": "better",
+      "before": {
+        "savingsMs": 1550,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 400,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "deltaMs": -1150,
+      "deltaBytes": 0
+    },
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "status": "same",
+      "before": {
+        "savingsMs": 32900,
+        "savingsBytes": 8154587,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 33050,
+        "savingsBytes": 8154587,
+        "impact": "high"
+      },
+      "deltaMs": 150,
+      "deltaBytes": 0
+    },
+    {
+      "id": "cls-culprits-insight",
+      "title": "Layout shift culprits",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "font-display-insight",
+      "title": "Font display",
+      "status": "same",
+      "before": {
+        "savingsMs": 300,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "after": {
+        "savingsMs": 300,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "lcp-discovery-insight",
+      "title": "LCP request discovery",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "total-byte-weight",
+      "title": "Avoid enormous network payloads",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "unsized-images",
+      "title": "Image elements do not have explicit `width` and `height`",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "status": "same",
+      "before": {
+        "savingsMs": 1050,
+        "savingsBytes": 120895,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 1050,
+        "savingsBytes": 120895,
+        "impact": "high"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    }
+  ],
+  "resources": [
+    {
+      "type": "total",
+      "before": 8699412,
+      "after": 8699417,
+      "delta": 5
+    },
+    {
+      "type": "document",
+      "before": 1455,
+      "after": 1460,
+      "delta": 5
+    },
+    {
+      "type": "font",
+      "before": 34900,
+      "after": 34900,
+      "delta": 0
+    },
+    {
+      "type": "image",
+      "before": 8492779,
+      "after": 8492779,
+      "delta": 0
+    },
+    {
+      "type": "media",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "other",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "script",
+      "before": 169323,
+      "after": 169323,
+      "delta": 0
+    },
+    {
+      "type": "stylesheet",
+      "before": 955,
+      "after": 955,
+      "delta": 0
+    }
+  ],
+  "lcpElement": {
+    "before": "body > main > section.hero > img.hero-img",
+    "after": "body > main > section.hero > img.hero-img",
+    "changed": false
+  }
+}

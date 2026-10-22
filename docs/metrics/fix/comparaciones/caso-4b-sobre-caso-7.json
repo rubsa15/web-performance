@@ -1,0 +1,303 @@
+{
+  "before": {
+    "id": "2026-10-22T07-56-52Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T07:56:52Z",
+    "runs": 3,
+    "label": "despues-tarea-larga",
+    "git": {
+      "commit": "abbfa96",
+      "dirty": true
+    }
+  },
+  "after": {
+    "id": "2026-10-22T08-00-23Z-mobile",
+    "url": "http://127.0.0.1:4173/",
+    "device": "mobile",
+    "network": "default",
+    "createdAt": "2026-10-22T08:00:23Z",
+    "runs": 3,
+    "label": "caso-4b",
+    "git": {
+      "commit": "abbfa96",
+      "dirty": true
+    }
+  },
+  "warnings": [],
+  "verdict": "mixed",
+  "score": {
+    "before": 57,
+    "after": 58,
+    "delta": 1,
+    "change": "unchanged"
+  },
+  "metrics": {
+    "lcp": {
+      "unit": "ms",
+      "before": 40728,
+      "after": 39456,
+      "delta": -1272,
+      "deltaPct": -0.031231585150265175,
+      "change": "unchanged",
+      "ratingBefore": "poor",
+      "ratingAfter": "poor"
+    },
+    "fcp": {
+      "unit": "ms",
+      "before": 2492,
+      "after": 1508,
+      "delta": -984,
+      "deltaPct": -0.39486356340288925,
+      "change": "improved",
+      "ratingBefore": "needs-improvement",
+      "ratingAfter": "good"
+    },
+    "tbt": {
+      "unit": "ms",
+      "before": 39,
+      "after": 163,
+      "delta": 124,
+      "deltaPct": 3.1794871794871793,
+      "change": "regressed",
+      "ratingBefore": "good",
+      "ratingAfter": "good"
+    },
+    "cls": {
+      "unit": "",
+      "before": 0.291,
+      "after": 0.291,
+      "delta": 0,
+      "deltaPct": 0,
+      "change": "unchanged",
+      "ratingBefore": "poor",
+      "ratingAfter": "poor"
+    },
+    "si": {
+      "unit": "ms",
+      "before": 2492,
+      "after": 1508,
+      "delta": -984,
+      "deltaPct": -0.39486356340288925,
+      "change": "improved",
+      "ratingBefore": "good",
+      "ratingAfter": "good"
+    },
+    "ttfb": {
+      "unit": "ms",
+      "before": 752,
+      "after": 753,
+      "delta": 1,
+      "deltaPct": 0.0013297872340425532,
+      "change": "unchanged",
+      "ratingBefore": "good",
+      "ratingAfter": "good"
+    }
+  },
+  "opportunities": [
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "status": "resolved",
+      "before": {
+        "savingsMs": 1050,
+        "savingsBytes": 120895,
+        "impact": "high"
+      },
+      "deltaMs": -1050,
+      "deltaBytes": -120895
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "status": "better",
+      "before": {
+        "savingsMs": 1550,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 550,
+        "savingsBytes": 0,
+        "impact": "high"
+      },
+      "deltaMs": -1000,
+      "deltaBytes": 0
+    },
+    {
+      "id": "image-delivery-insight",
+      "title": "Improve image delivery",
+      "status": "same",
+      "before": {
+        "savingsMs": 32900,
+        "savingsBytes": 8154587,
+        "impact": "high"
+      },
+      "after": {
+        "savingsMs": 32700,
+        "savingsBytes": 8154587,
+        "impact": "high"
+      },
+      "deltaMs": -200,
+      "deltaBytes": 0
+    },
+    {
+      "id": "cls-culprits-insight",
+      "title": "Layout shift culprits",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "font-display-insight",
+      "title": "Font display",
+      "status": "same",
+      "before": {
+        "savingsMs": 300,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "after": {
+        "savingsMs": 300,
+        "savingsBytes": 0,
+        "impact": "medium"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "lcp-discovery-insight",
+      "title": "LCP request discovery",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "total-byte-weight",
+      "title": "Avoid enormous network payloads",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    },
+    {
+      "id": "unsized-images",
+      "title": "Image elements do not have explicit `width` and `height`",
+      "status": "same",
+      "before": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "after": {
+        "savingsMs": 0,
+        "savingsBytes": 0,
+        "impact": "low"
+      },
+      "deltaMs": 0,
+      "deltaBytes": 0
+    }
+  ],
+  "resources": [
+    {
+      "type": "total",
+      "before": 8699412,
+      "after": 8531261,
+      "delta": -168151
+    },
+    {
+      "type": "document",
+      "before": 1455,
+      "after": 1441,
+      "delta": -14
+    },
+    {
+      "type": "font",
+      "before": 34900,
+      "after": 34900,
+      "delta": 0
+    },
+    {
+      "type": "image",
+      "before": 8492779,
+      "after": 8492779,
+      "delta": 0
+    },
+    {
+      "type": "media",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "other",
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    {
+      "type": "script",
+      "before": 169323,
+      "after": 1186,
+      "delta": -168137
+    },
+    {
+      "type": "stylesheet",
+      "before": 955,
+      "after": 955,
+      "delta": 0
+    }
+  ],
+  "lcpElement": {
+    "before": "body > main > section.hero > img.hero-img",
+    "after": "body > main > section.hero > img.hero-img",
+    "changed": false
+  }
+}
