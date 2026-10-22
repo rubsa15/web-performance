@@ -58,7 +58,7 @@ npx wperf compare <antes> <después> --format md     # ids o rutas a reportes co
 npx wperf history https://example.com --metric lcp  # evolución de una métrica
 ```
 
-`compare` clasifica cada métrica como `improved`, `regressed` o `unchanged` (ruido) y cada oportunidad como `new`, `resolved`, `better`, `worse` o `same`. Una métrica solo cambia si el salto supera su umbral **y** los rangos min–max de ambos reportes no se solapan; los umbrales salen de [docs/metrics/noise.md](docs/metrics/noise.md). No compara reportes de distinto `device`, perfil de red (`--network`) o `throttling` (error de uso, código 2) y avisa si cambia la versión de Lighthouse o de Chrome, o si las URLs difieren.
+`compare` clasifica cada métrica como `improved`, `regressed` o `unchanged` (ruido) y cada oportunidad como `new`, `resolved`, `better`, `worse` o `same`. Una métrica solo cambia si el salto supera su umbral **y** los rangos min–max de ambos reportes no se solapan; los umbrales salen de [docs/metrics/noise.md](docs/metrics/noise.md). Cada métrica trae en el JSON su umbral efectivo (`threshold`), los rangos de ambos lados (`rangeBefore`, `rangeAfter`) y `rangesOverlap`, y la salida de texto marca `unchanged (rangos solapados)` cuando el salto supera el umbral pero es ruido. No compara reportes de distinto `device`, perfil de red (`--network`) o `throttling` (error de uso, código 2) y avisa si cambia la versión de Lighthouse o de Chrome, o si las URLs difieren.
 
 ### Comprobar que la página no se rompió
 

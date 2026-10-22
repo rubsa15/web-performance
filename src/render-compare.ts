@@ -1,4 +1,4 @@
-import type { Comparison, OpportunityStatus } from './compare.js';
+import type { Comparison, MetricDiff, OpportunityStatus } from './compare.js';
 import type { History, HistoryEntry } from './history.js';
 import {
   formatBytes,
@@ -80,6 +80,16 @@ function describeRef(ref: Comparison['before']): string {
 const ratingShift = (before: string, after: string): string =>
   before === after ? before : `${before} → ${after}`;
 
+/** El resultado, y por qué es ruido cuando el salto supera el umbral pero los rangos se solapan. */
+const changeLabel = (m: MetricDiff): string =>
+  m.change === 'unchanged' && Math.abs(m.delta) > m.threshold && m.rangesOverlap
+    ? 'unchanged (rangos solapados)'
+    : m.change;
+
+// En ms el umbral sale con decimales (10 % de 40 728 = 4 072,8); se muestra redondeado.
+const formatThreshold = (m: MetricDiff): string =>
+  `±${formatValue(m, m.unit === 'ms' ? Math.round(m.threshold) : m.threshold)}`;
+
 function savingsSide(side: { savingsMs: number; savingsBytes: number } | undefined): string {
   return side ? formatSavings(side) : '—';
 }
@@ -99,7 +109,7 @@ export function renderComparisonText(comparison: Comparison, options: RenderOpti
     `  Antes:   ${describeRef(comparison.before)}`,
     `  Después: ${describeRef(comparison.after)}`,
     '',
-    `Puntuación: ${score.before} → ${score.after} (${sign(score.delta)}${Math.abs(score.delta)})  ${paint(CHANGE_COLOR[score.change], score.change)}`,
+    `Puntuación: ${score.before} → ${score.after} (${sign(score.delta)}${Math.abs(score.delta)})  ${paint(CHANGE_COLOR[score.change], score.change)}  (umbral ±${score.threshold})`,
     '',
     paint('bold', 'Métricas (mediana)'),
   ];
@@ -112,15 +122,16 @@ export function renderComparisonText(comparison: Comparison, options: RenderOpti
       '→',
       formatValue(m, m.after),
       `${formatDelta(m.unit, m.delta)}${pctSuffix(m)}`,
+      formatThreshold(m),
       ratingShift(m.ratingBefore, m.ratingAfter),
-      m.change,
+      changeLabel(m),
     ];
   });
   lines.push(
     ...textTable(metricRows, {
-      right: [1, 3, 4],
+      right: [1, 3, 4, 5],
       paint: (column, cell, row) =>
-        column === 6
+        column === 7
           ? paint(CHANGE_COLOR[comparison.metrics[METRIC_IDS[row]!].change], cell)
           : cell,
     }).map((line) => `  ${line}`),
@@ -178,17 +189,17 @@ export function renderComparisonMarkdown(comparison: Comparison): string {
     `- **Resultado:** ${comparison.verdict}`,
     `- **Antes:** ${describeRef(comparison.before)}`,
     `- **Después:** ${describeRef(comparison.after)}`,
-    `- **Puntuación:** ${score.before} → ${score.after} (${sign(score.delta)}${Math.abs(score.delta)}) — ${score.change}`,
+    `- **Puntuación:** ${score.before} → ${score.after} (${sign(score.delta)}${Math.abs(score.delta)}) — ${score.change} (umbral ±${score.threshold})`,
     '',
     '## Métricas (mediana)',
     '',
-    '| Métrica | Antes | Después | Cambio | Valoración | Resultado |',
-    '| --- | ---: | ---: | ---: | --- | --- |',
+    '| Métrica | Antes | Después | Cambio | Umbral | Valoración | Resultado |',
+    '| --- | ---: | ---: | ---: | ---: | --- | --- |',
   ];
   for (const id of METRIC_IDS) {
     const m = comparison.metrics[id];
     lines.push(
-      `| ${METRIC_LABELS[id]} | ${formatValue(m, m.before)} | ${formatValue(m, m.after)} | ${formatDelta(m.unit, m.delta)}${pctSuffix(m)} | ${ratingShift(m.ratingBefore, m.ratingAfter)} | ${m.change} |`,
+      `| ${METRIC_LABELS[id]} | ${formatValue(m, m.before)} | ${formatValue(m, m.after)} | ${formatDelta(m.unit, m.delta)}${pctSuffix(m)} | ${formatThreshold(m)} | ${ratingShift(m.ratingBefore, m.ratingAfter)} | ${changeLabel(m)} |`,
     );
   }
 

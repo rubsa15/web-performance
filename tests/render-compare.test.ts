@@ -43,15 +43,22 @@ describe('renderComparisonText', () => {
     expect(text).toContain('Comparación de rendimiento — improved');
     expect(text).toContain('Antes:   ' + before.id);
     expect(text).toContain('"rota"');
-    expect(text).toContain('Puntuación: 41 → 92 (+51)  improved');
+    expect(text).toContain('Puntuación: 41 → 92 (+51)  improved  (umbral ±5)');
   });
 
-  it('muestra cada métrica con antes, después, delta, porcentaje y valoración', () => {
+  it('muestra cada métrica con antes, después, delta, porcentaje, umbral y valoración', () => {
     expect(text).toMatch(
-      /LCP\s+4,800 ms\s+→\s+2,100 ms\s+-2,700 ms \(-56%\)\s+poor → good\s+improved/,
+      /LCP\s+4,800 ms\s+→\s+2,100 ms\s+-2,700 ms \(-56%\)\s+±480 ms\s+poor → good\s+improved/,
     );
-    expect(text).toMatch(/CLS\s+0.29\s+→\s+0\s+-0.29 \(-100%\)\s+poor → good\s+improved/);
-    expect(text).toMatch(/TTFB\s+750 ms\s+→\s+750 ms\s+0 ms\s+good\s+unchanged/);
+    expect(text).toMatch(/CLS\s+0.29\s+→\s+0\s+-0.29 \(-100%\)\s+±0.02\s+poor → good\s+improved/);
+    expect(text).toMatch(/TTFB\s+750 ms\s+→\s+750 ms\s+0 ms\s+±150 ms\s+good\s+unchanged/);
+  });
+
+  it('dice cuándo un salto mayor que el umbral es ruido por los rangos solapados', () => {
+    const noisy = makeReport({ metrics: { lcp: m(7000, 4000, 7500), cls: m(0.29), ttfb: m(750) } });
+    expect(renderComparisonText(compareReports(before, noisy))).toMatch(
+      /LCP\s+4,800 ms\s+→\s+7,000 ms.*unchanged \(rangos solapados\)/,
+    );
   });
 
   it('lista solo las oportunidades que cambian y cuenta las que no', () => {
@@ -94,7 +101,7 @@ describe('renderComparisonMarkdown', () => {
     expect(md).toMatch(/^# Comparación de rendimiento/);
     expect(md).toContain('- **Resultado:** improved');
     expect(md).toContain(
-      '| LCP | 4,800 ms | 2,100 ms | -2,700 ms (-56%) | poor → good | improved |',
+      '| LCP | 4,800 ms | 2,100 ms | -2,700 ms (-56%) | ±480 ms | poor → good | improved |',
     );
     expect(md).toContain(
       '| resolved | high | Título de render-blocking-insight (`render-blocking-insight`) | 1,550 ms → — |',

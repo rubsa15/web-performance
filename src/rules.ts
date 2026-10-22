@@ -77,11 +77,22 @@ export const DEFAULT_THRESHOLDS: Thresholds = {
 // Evita que 0.22 - 0.2 > 0.02 por error de coma flotante (los valores ya vienen a 3 decimales).
 const round3 = (value: number): number => Math.round(value * 1000) / 1000;
 
+/** Umbral efectivo para un valor de partida: `max(abs, rel × |before|)`. */
+export function thresholdFor(before: number, threshold: ChangeThreshold): number {
+  return round3(Math.max(threshold.abs, threshold.rel * Math.abs(before)));
+}
+
 /** `true` si el cambio de `before` a `after` supera el umbral (en valor absoluto). */
 export function exceeds(before: number, after: number, threshold: ChangeThreshold): boolean {
-  return (
-    Math.abs(round3(after - before)) > Math.max(threshold.abs, threshold.rel * Math.abs(before))
-  );
+  return Math.abs(round3(after - before)) > thresholdFor(before, threshold);
+}
+
+/** `true` si los rangos min–max de dos mediciones se solapan (entonces el cambio no es real). */
+export function rangesOverlap(
+  a: Pick<Metric, 'min' | 'max'>,
+  b: Pick<Metric, 'min' | 'max'>,
+): boolean {
+  return a.min <= b.max && b.min <= a.max;
 }
 
 /**
@@ -95,7 +106,7 @@ export function classifyMetric(
   thresholds: Thresholds = DEFAULT_THRESHOLDS,
 ): Change {
   if (!exceeds(before.value, after.value, thresholds.metrics[id])) return 'unchanged';
-  if (before.min <= after.max && after.min <= before.max) return 'unchanged';
+  if (rangesOverlap(before, after)) return 'unchanged';
   return after.value < before.value ? 'improved' : 'regressed';
 }
 

@@ -97,7 +97,7 @@ Con la comparación delante, clasifica el resultado por lo que dice el CLI:
 
 Revertir: `git checkout -- <ficheros que tocaste>` (y borra los que creaste), o restaura de `.perf/backup/`. Comprueba con `git status --short` que el árbol queda como antes (salvo lo que ya estaba sucio). No uses `git reset --hard`/`git stash` sobre cambios ajenos.
 
-Si la comparación avisa de un `warnings` serio o la medición es dudosa (rangos min–max solapados con un solo cambio pequeño), repite la re-auditoría una vez antes de concluir; no la repitas más de una vez ni hasta que "salga bien".
+Si la comparación avisa de un `warnings` serio o la medición es dudosa (en la métrica objetivo `rangesOverlap` es `true`, o el `delta` apenas supera su `threshold`), repite la re-auditoría una vez antes de concluir; no la repitas más de una vez ni hasta que "salga bien".
 
 ### 7. Cerrar
 

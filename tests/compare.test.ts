@@ -33,7 +33,7 @@ describe('compareReports — métricas', () => {
     const c = compareReports(before, after);
 
     expect(c.verdict).toBe('improved');
-    expect(c.score).toEqual({ before: 41, after: 92, delta: 51, change: 'improved' });
+    expect(c.score).toEqual({ before: 41, after: 92, delta: 51, change: 'improved', threshold: 5 });
     expect(c.metrics.lcp).toMatchObject({
       before: 4800,
       after: 2100,
@@ -46,6 +46,56 @@ describe('compareReports — métricas', () => {
     expect(c.metrics.lcp.deltaPct).toBeCloseTo(-0.5625);
     expect(c.metrics.cls).toMatchObject({ delta: -0.29, change: 'improved', unit: '' });
     expect(c.metrics.ttfb).toMatchObject({ delta: 0, change: 'unchanged' });
+  });
+
+  it('expone el umbral efectivo y los rangos con los que clasifica', () => {
+    const after = makeReport({
+      metrics: {
+        lcp: m(2100, 2050, 2200),
+        cls: m(0),
+        tbt: m(500, 400, 700),
+        fcp: m(2500, 2490, 2510),
+        si: m(2500, 2490, 2510),
+        ttfb: m(750),
+      },
+    });
+    const c = compareReports(before, after);
+
+    // LCP: max(150, 10 % de 4800); rangos separados.
+    expect(c.metrics.lcp).toMatchObject({
+      threshold: 480,
+      rangeBefore: { min: 4700, max: 4900 },
+      rangeAfter: { min: 2050, max: 2200 },
+      rangesOverlap: false,
+    });
+    // TBT: max(50, 50 % de 640) = 320; -140 ms no lo supera y además los rangos se solapan.
+    expect(c.metrics.tbt).toMatchObject({
+      threshold: 320,
+      rangesOverlap: true,
+      change: 'unchanged',
+    });
+    // CLS solo tiene umbral absoluto; TTFB: max(100, 20 % de 750).
+    expect(c.metrics.cls.threshold).toBe(0.02);
+    expect(c.metrics.ttfb.threshold).toBe(150);
+  });
+
+  it('un salto mayor que el umbral con rangos solapados es ruido, y el JSON dice por qué', () => {
+    const after = makeReport({
+      metrics: {
+        lcp: m(4800, 4700, 4900),
+        cls: m(0.29),
+        tbt: m(1200, 600, 1300),
+        fcp: m(2500, 2490, 2510),
+        si: m(2500, 2490, 2510),
+        ttfb: m(750),
+      },
+    });
+    expect(compareReports(before, after).metrics.tbt).toMatchObject({
+      delta: 560,
+      threshold: 320,
+      rangesOverlap: true,
+      change: 'unchanged',
+    });
   });
 
   it('regresión: el mismo par al revés', () => {
@@ -283,6 +333,20 @@ describe('compareReports — oportunidades', () => {
       deltaBytes: -2048,
     });
     expect(c.opportunities[0]).not.toHaveProperty('after');
+    expect(c.opportunities[0]).not.toHaveProperty('threshold');
+  });
+
+  it('con la oportunidad en ambos reportes, da el umbral en ms y en bytes', () => {
+    const KiB = 1024;
+    const c = compareReports(
+      makeReport({ opportunities: [makeOpportunity('img', 800, 100 * KiB)] }),
+      makeReport({ opportunities: [makeOpportunity('img', 850, 101 * KiB)] }),
+    );
+    // ms: max(100, 50 % de 800); bytes: max(10 KiB, 20 % de 100 KiB).
+    expect(c.opportunities[0]).toMatchObject({
+      status: 'same',
+      threshold: { ms: 400, bytes: 20 * KiB },
+    });
   });
 });
 

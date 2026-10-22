@@ -4,6 +4,8 @@ import {
   classifyScore,
   DEFAULT_THRESHOLDS,
   exceeds,
+  rangesOverlap,
+  thresholdFor,
   type Change,
   type Thresholds,
 } from './rules.js';
@@ -42,6 +44,17 @@ export interface MetricDiff {
   change: Change;
   ratingBefore: Rating;
   ratingAfter: Rating;
+  /** Umbral efectivo, `max(abs, rel × before)`: un `delta` que no lo supera es ruido. */
+  threshold: number;
+  rangeBefore: Range;
+  rangeAfter: Range;
+  /** Si los rangos min–max se solapan, el cambio es ruido aunque supere el umbral. */
+  rangesOverlap: boolean;
+}
+
+export interface Range {
+  min: number;
+  max: number;
 }
 
 export interface OpportunitySide {
@@ -59,6 +72,8 @@ export interface OpportunityDiff {
   /** `after - before`; el lado ausente cuenta como 0. */
   deltaMs: number;
   deltaBytes: number;
+  /** Umbrales efectivos de `better`/`worse`; solo si la oportunidad está en ambos reportes. */
+  threshold?: { ms: number; bytes: number };
 }
 
 export interface ResourceDiff {
@@ -74,7 +89,8 @@ export interface Comparison {
   after: ReportRef;
   warnings: string[];
   verdict: Verdict;
-  score: { before: number; after: number; delta: number; change: Change };
+  /** `threshold`: puntos que tiene que moverse la puntuación para no ser ruido. */
+  score: { before: number; after: number; delta: number; change: Change; threshold: number };
   metrics: Record<MetricId, MetricDiff>;
   opportunities: OpportunityDiff[];
   resources: ResourceDiff[];
@@ -193,6 +209,13 @@ function diffOpportunities(
         ...(a && { after: sideOf(a) }),
         deltaMs: (a?.savingsMs ?? 0) - (b?.savingsMs ?? 0),
         deltaBytes: (a?.savingsBytes ?? 0) - (b?.savingsBytes ?? 0),
+        ...(b &&
+          a && {
+            threshold: {
+              ms: thresholdFor(b.savingsMs, thresholds.opportunity.ms),
+              bytes: thresholdFor(b.savingsBytes, thresholds.opportunity.bytes),
+            },
+          }),
       };
     })
     .sort(
@@ -254,6 +277,10 @@ export function compareReports(
         change: classifyMetric(id, b, a, thresholds),
         ratingBefore: b.rating,
         ratingAfter: a.rating,
+        threshold: thresholdFor(b.value, thresholds.metrics[id]),
+        rangeBefore: { min: b.min, max: b.max },
+        rangeAfter: { min: a.min, max: a.max },
+        rangesOverlap: rangesOverlap(b, a),
       };
       return [id, diff];
     }),
@@ -270,6 +297,7 @@ export function compareReports(
       after: after.score,
       delta: after.score - before.score,
       change: scoreChange,
+      threshold: thresholds.score,
     },
     metrics,
     opportunities: diffOpportunities(before, after, thresholds),
