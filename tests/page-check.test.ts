@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { pageRegressions, type PageSnapshot } from '../src/experiments/page-check.js';
+import { pageRegressions, type PageSnapshot } from '../src/page-check.js';
 
 const healthy: PageSnapshot = {
   url: 'http://127.0.0.1:4173/',

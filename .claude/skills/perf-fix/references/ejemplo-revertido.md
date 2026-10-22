@@ -40,7 +40,7 @@ La tabla del paso 6 manda revertir cuando una métrica pasa a `poor` y no hay me
 
 ## Integridad de la página
 
-`page-check diff` (antes vs. después de aplicar el cambio): "La página sigue íntegra". Los errores de consola y peticiones fallidas son los mismos que antes (404 del favicon, fuente: page-check). Falta mirar a mano las capturas.
+`wperf check diff` (antes vs. después de aplicar el cambio): "La página sigue íntegra". Los errores de consola y peticiones fallidas son los mismos que antes (404 del favicon, fuente: page-check). Falta mirar a mano las capturas.
 
 ## Qué queda
 

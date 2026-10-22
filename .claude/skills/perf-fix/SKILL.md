@@ -63,10 +63,10 @@ Pregunta si lo aplicas y **para**. Si el usuario pide ajustes, repropón. Si rec
 
 Tras la aprobación:
 
-1. **Instantánea previa (si procede).** Para una web servida, `node dist/experiments/page-check.js snapshot <url> <antes.json> <antes.png>` guarda texto, imágenes, errores de consola, peticiones fallidas y el estado del JS **antes de editar**. Es opcional pero recomendable: sin ella, "no se rompió" es solo una impresión.
+1. **Instantánea previa (si procede).** Para una web servida, `npx wperf check snapshot <url> <antes.json> --screenshot <antes.png>` guarda texto, imágenes, errores de consola, peticiones fallidas y el estado del JS **antes de editar**. Es opcional pero recomendable: sin ella, "no se rompió" es solo una impresión.
 2. Aplica **solo** el diff aprobado (con `Edit`/`Write`). Si tienes que generar ficheros (imágenes redimensionadas), usa la herramienta que hayas dicho en la propuesta.
 3. Si el repo tiene `build`, `typecheck`, `lint` o tests, ejecútalos. Un fallo es un fallo del arreglo hasta que se demuestre lo contrario.
-4. Sirve la web como antes, repite la instantánea (`<después>.json`) y compara: `node dist/experiments/page-check.js diff <antes.json> <después.json>`. Lo que marque (texto distinto, imagen que no carga, error de consola nuevo, JS que dejó de ejecutarse) rompe el arreglo. Mira también la captura: el CLS o un cambio de layout no se ven en el diff de texto; si no puedes mirarla, pide al usuario que la revise.
+4. Sirve la web como antes, repite la instantánea (`<después>.json`) y compara: `npx wperf check diff <antes.json> <después.json>` (código de salida 1 si algo se rompió). Lo que marque (texto distinto, imagen que no carga, error de consola nuevo, JS que dejó de ejecutarse) rompe el arreglo. Mira también la captura: el CLS o un cambio de layout no se ven en el diff de texto; si no puedes mirarla, pide al usuario que la revise.
 
 Si algo está roto, **no sigas a medir**: arréglalo con un ajuste mínimo y, si no es evidente, revierte y cuéntalo (paso 6).
 
@@ -106,7 +106,7 @@ Responde con (formato en [references/ejemplo-salida.md](references/ejemplo-salid
 1. **Veredicto**: una línea (mejora medida / corrección sin efecto medible / revertido / compensación) con el id de la comparación y los ids antes/después.
 2. **Qué se cambió**: ficheros y resumen del diff aplicado (o "revertido; el árbol no tiene cambios tuyos").
 3. **Antes → después**: tabla de las métricas con `change` del CLI (clasificadas en mejora / empeora / ruido) y de la oportunidad (`status`, `deltaMs`, `deltaBytes`). Cifras copiadas, ms enteros, MiB con dos decimales (coma decimal).
-4. **Integridad de la página**: resultado de `page-check diff` o de los tests, y qué falta por mirar a mano (captura).
+4. **Integridad de la página**: resultado de `wperf check diff` o de los tests, y qué falta por mirar a mano (captura).
 5. **Qué queda**: causas que viste pero no tocaste, y la pregunta de si abordas otra. Recuerda que los cambios no están commiteados.
 
 ## Antes de responder: comprobación de cifras

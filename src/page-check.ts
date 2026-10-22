@@ -1,30 +1,28 @@
-// Evaluación de `perf-fix`: ¿la página sigue funcionando tras un arreglo?
+// Comprobación de integridad de la página (`wperf check`): ¿sigue funcionando tras un arreglo?
 //
-//   node dist/experiments/page-check.js snapshot <url> <salida.json> [captura.png]
-//       Abre la URL en Chrome (viewport móvil), recorre la página para disparar la carga diferida y
-//       guarda texto visible, imágenes, errores de consola, peticiones fallidas y el tamaño del
-//       índice de búsqueda de la demo.
-//   node dist/experiments/page-check.js diff <antes.json> <después.json>
-//       Lista lo que se ha roto entre dos instantáneas. Sale con código 1 si hay algo.
+// `takeSnapshot` abre la URL en Chrome (viewport móvil), recorre la página para disparar la carga
+// diferida y recoge texto visible, imágenes, errores de consola y peticiones fallidas.
+// `pageRegressions` lista lo que se ha roto entre dos instantáneas.
 //
 // No juzga el aspecto: la captura se revisa a mano. Comprueba invariantes que un arreglo de
 // rendimiento no debe cambiar (el contenido, que todo cargue y que el JS siga haciendo su trabajo).
-import { writeFile } from 'node:fs/promises';
-import { readFile } from 'node:fs/promises';
 import { launch } from 'chrome-launcher';
 import puppeteer from 'puppeteer-core';
+import { z } from 'zod';
 
-export interface PageSnapshot {
-  url: string;
-  title: string;
+export const PageSnapshotSchema = z.object({
+  url: z.string(),
+  title: z.string(),
   /** `innerText` del body con los espacios normalizados. */
-  text: string;
-  images: { src: string; loaded: boolean }[];
-  consoleErrors: string[];
-  failedRequests: string[];
+  text: z.string(),
+  images: z.array(z.object({ src: z.string(), loaded: z.boolean() })),
+  consoleErrors: z.array(z.string()),
+  failedRequests: z.array(z.string()),
   /** Longitud de `window.searchIndex` (la demo lo construye tras el primer pintado); `null` si no existe. */
-  searchIndexLength: number | null;
-}
+  searchIndexLength: z.number().nullable(),
+});
+
+export type PageSnapshot = z.infer<typeof PageSnapshotSchema>;
 
 interface BrowserData {
   title: string;
@@ -124,30 +122,5 @@ export async function takeSnapshot(url: string, screenshotPath?: string): Promis
   } finally {
     await browser.disconnect();
     chrome.kill();
-  }
-}
-
-async function load(path: string): Promise<PageSnapshot> {
-  return JSON.parse(await readFile(path, 'utf8')) as PageSnapshot;
-}
-
-if (import.meta.main) {
-  const [command, a, b, c] = process.argv.slice(2);
-  if (command === 'snapshot' && a && b) {
-    const snapshot = await takeSnapshot(a, c);
-    await writeFile(b, `${JSON.stringify(snapshot, null, 2)}\n`);
-    console.log(
-      `${snapshot.images.length} imágenes, ${snapshot.consoleErrors.length} errores de consola, ` +
-        `${snapshot.failedRequests.length} peticiones fallidas, índice: ${snapshot.searchIndexLength ?? 'ausente'}`,
-    );
-  } else if (command === 'diff' && a && b) {
-    const problems = pageRegressions(await load(a), await load(b));
-    console.log(problems.length === 0 ? 'La página sigue íntegra.' : problems.join('\n'));
-    process.exitCode = problems.length === 0 ? 0 : 1;
-  } else {
-    console.error(
-      'Uso: page-check snapshot <url> <salida.json> [captura.png] | diff <antes.json> <después.json>',
-    );
-    process.exitCode = 2;
   }
 }

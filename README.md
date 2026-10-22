@@ -45,6 +45,19 @@ npx wperf history https://example.com --metric lcp  # evolución de una métrica
 
 `compare` clasifica cada métrica como `improved`, `regressed` o `unchanged` (ruido) y cada oportunidad como `new`, `resolved`, `better`, `worse` o `same`. Una métrica solo cambia si el salto supera su umbral **y** los rangos min–max de ambos reportes no se solapan; los umbrales salen de [docs/metrics/noise.md](docs/metrics/noise.md). No compara reportes de distinto `device`, perfil de red (`--network`) o `throttling` (error de uso, código 2) y avisa si cambia la versión de Lighthouse o de Chrome, o si las URLs difieren.
 
+### Comprobar que la página no se rompió
+
+Tras un arreglo de rendimiento, `check` verifica que la página sigue igual de sana:
+
+```sh
+npx wperf check snapshot https://example.com antes.json --screenshot antes.png
+# … aplica el cambio …
+npx wperf check snapshot https://example.com despues.json --screenshot despues.png
+npx wperf check diff antes.json despues.json                # código 1 si algo se rompió
+```
+
+`snapshot` abre la URL en Chrome (viewport móvil), recorre la página para disparar la carga diferida y guarda el texto visible, las imágenes (cargadas o no), los errores de consola y las peticiones fallidas. `diff` marca texto o título distintos, imágenes que no cargan, y errores o peticiones fallidas que antes no estaban; ignora el origen, así que sirve entre puertos distintos. No juzga el aspecto: las capturas se revisan a mano.
+
 Los tests que lanzan Chrome real son lentos y van aparte: `npm run test:slow`.
 
 ## Web demo

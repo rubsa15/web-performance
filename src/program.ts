@@ -5,6 +5,13 @@ import {
   type AuditDeps,
   type AuditOptions,
 } from './commands/audit.js';
+import {
+  defaultCheckDeps,
+  diffCommand,
+  snapshotCommand,
+  type CheckDeps,
+  type SnapshotOptions,
+} from './commands/check.js';
 import { compareCommand, type CompareOptions } from './commands/compare.js';
 import { historyCommand, type HistoryOptions } from './commands/history.js';
 import type { ReadDeps } from './commands/read-deps.js';
@@ -14,6 +21,8 @@ export const EXIT_CODES = {
   ok: 0,
   usage: 2,
   runtime: 3,
+  /** `check diff`: la página dejó de estar íntegra tras el cambio. */
+  broken: 1,
 } as const;
 
 function parsePositiveInt(value: string): number {
@@ -28,7 +37,11 @@ const FORMATS = ['text', 'json', 'md'] as const;
 const formatOption = (): Option =>
   new Option('--format <format>', 'formato de salida').choices(FORMATS).default('text');
 
-export function buildProgram(auditDeps?: AuditDeps, readDeps?: ReadDeps): Command {
+export function buildProgram(
+  auditDeps?: AuditDeps,
+  readDeps?: ReadDeps,
+  checkDeps?: CheckDeps,
+): Command {
   const program = new Command()
     .name('wperf')
     .description('Audita el rendimiento de una web, prioriza mejoras y compara auditorías.')
@@ -92,6 +105,34 @@ export function buildProgram(auditDeps?: AuditDeps, readDeps?: ReadDeps): Comman
     )
     .addOption(formatOption())
     .action((url: string, options: HistoryOptions) => historyCommand(url, options, readDeps));
+
+  const check = program
+    .command('check')
+    .description('Comprueba que la página sigue íntegra tras un cambio (antes/después).');
+
+  check
+    .command('snapshot')
+    .description(
+      'Abre la URL en Chrome (viewport móvil), recorre la página y guarda texto, imágenes, errores de consola y peticiones fallidas.',
+    )
+    .argument('<url>', 'URL pública (http o https)')
+    .argument('<file>', 'fichero JSON donde guardar la instantánea')
+    .option('--screenshot <png>', 'guarda también una captura de página completa')
+    .action((url: string, file: string, options: SnapshotOptions) =>
+      snapshotCommand(url, file, options, checkDeps ?? defaultCheckDeps()),
+    );
+
+  check
+    .command('diff')
+    .description(
+      'Lista lo que se ha roto entre dos instantáneas. Sale con código 1 si la página no sigue íntegra.',
+    )
+    .argument('<before>', 'instantánea anterior al cambio')
+    .argument('<after>', 'instantánea posterior al cambio')
+    .action(async (before: string, after: string) => {
+      const intact = await diffCommand(before, after, checkDeps ?? defaultCheckDeps());
+      if (!intact) process.exitCode = EXIT_CODES.broken;
+    });
 
   return program;
 }

@@ -28,7 +28,7 @@ Cifras de `wperf compare` entre la base y el reporte posterior al arreglo.
 
 ### Integridad de la página
 
-Con `src/experiments/page-check.ts` (Chrome viewport móvil, recorre la página para disparar `lazy`, compara texto visible, imágenes cargadas, errores de consola, peticiones fallidas y el tamaño de `window.searchIndex`), la base frente a los 7 árboles finales: **7/7 "La página sigue íntegra"**. El 404 de `favicon.ico` está también en la base. La captura base y la del caso 1 están en [fix/capturas/](fix/capturas/); **la revisión visual humana de las capturas (cambios de layout, calidad del JPEG al 70 % en el hero) está pendiente** y la skill lo pide en el cierre.
+Con `src/page-check.ts` (hoy `wperf check`; entonces se ejecutaba como script) (Chrome viewport móvil, recorre la página para disparar `lazy`, compara texto visible, imágenes cargadas, errores de consola, peticiones fallidas y el tamaño de `window.searchIndex`), la base frente a los 7 árboles finales: **7/7 "La página sigue íntegra"**. El 404 de `favicon.ico` está también en la base. La captura base y la del caso 1 están en [fix/capturas/](fix/capturas/); **la revisión visual humana de las capturas (cambios de layout, calidad del JPEG al 70 % en el hero) está pendiente** y la skill lo pide en el cierre.
 
 ### Comprobación de cifras
 
@@ -74,4 +74,4 @@ Estos cambios **no se han vuelto a medir** con subagentes.
 - **Casos independientes, no acumulativos.** No se evaluó aplicar los 7 arreglos en secuencia (lo más parecido es el seguimiento de 3 y 4 sobre 7).
 - Las variantes del hero las genera `sips` (solo macOS); la calidad visual no se ha revisado a mano.
 - Entorno controlado: Lighthouse con throttling simulado, latencia de 300 ms añadida a imágenes y fuentes en `demo/serve.ts`.
-- Reproducir: `node dist/experiments/page-check.js snapshot|diff` y `node dist/experiments/skill-eval.js figures` (ver `CLAUDE.md`).
+- Reproducir: `wperf check snapshot|diff` y `node dist/experiments/skill-eval.js figures` (ver `CLAUDE.md`).

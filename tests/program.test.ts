@@ -17,6 +17,11 @@ describe('buildProgram', () => {
     expect(help).toContain('Usage: wperf');
     expect(help).toContain('Audita el rendimiento');
   });
+
+  it('expone check snapshot y check diff', () => {
+    const check = buildProgram().commands.find((c) => c.name() === 'check');
+    expect(check?.commands.map((c) => c.name())).toEqual(['snapshot', 'diff']);
+  });
 });
 
 describe('wperf audit', () => {

@@ -44,7 +44,7 @@ Los rangos min–max del TBT no se solapan (309–610 ms antes, 38–39 ms despu
 
 ## Integridad de la página
 
-`page-check diff`: "La página sigue íntegra". Mismo texto y mismas imágenes, `window.searchIndex` con el mismo tamaño en ambos lados y los mismos errores de consola y peticiones fallidas que antes (el 404 del favicon, fuente: page-check). El proyecto no tiene `package.json`, build ni tests. **Falta mirar a mano** las capturas (`antes.png`, `despues.png`): este arreglo no toca HTML ni CSS, pero un salto de layout no lo ve el diff de texto. Riesgo conocido: `window.searchIndex` ahora se asigna de forma asíncrona; nada del repo lo lee hoy.
+`wperf check diff`: "La página sigue íntegra". Mismo texto y mismas imágenes, `window.searchIndex` con el mismo tamaño en ambos lados y los mismos errores de consola y peticiones fallidas que antes (el 404 del favicon, fuente: page-check). El proyecto no tiene `package.json`, build ni tests. **Falta mirar a mano** las capturas (`antes.png`, `despues.png`): este arreglo no toca HTML ni CSS, pero un salto de layout no lo ve el diff de texto. Riesgo conocido: `window.searchIndex` ahora se asigna de forma asíncrona; nada del repo lo lee hoy.
 
 ## Qué queda
 

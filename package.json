@@ -51,6 +51,7 @@
     "chrome-launcher": "^1.2.2",
     "commander": "^15.0.0",
     "lighthouse": "13.5.0",
+    "puppeteer-core": "25.15.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -59,7 +60,6 @@
     "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.10",
-    "puppeteer-core": "25.15.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.0",
     "vitest": "^5.0.5"
