@@ -16,10 +16,12 @@ Punto de partida para el paso 2 y 3 de `perf-fix`. Las causas son las de [perf-a
 
 ## Orden recomendado cuando hay varias causas
 
-1. **Tarea larga en el hilo principal** (TBT): primero. Mover el trabajo a un Web Worker bajó el TBT de la demo de 417 a 39 ms; quitar o diferir los scripts antes de esto empeoró el TBT (de 417 a 1363 ms con `defer`, a 1243 ms quitando `three.min.js`) porque la tarea larga entraba en la ventana de medición. Aun con la tarea larga arreglada, ambos cambios dejaron un `regressed` menor en TBT (39 → 269 ms y 39 → 163 ms): hay que medirlos otra vez, no darlos por seguros.
-2. Dimensiones de las imágenes y `font-display`: correcciones baratas y casi siempre seguras; el CLS mejora con las dimensiones, `font-display` no mueve las métricas en este perfil.
-3. Peso de las imágenes y carga diferida: mueven el LCP.
-4. Scripts y CSS bloqueantes, JS sin usar: al final, y midiendo el TBT.
+Es una **hipótesis de partida**, sacada de una sola web (la demo): úsala para proponer, no como regla, y mide cada paso.
+
+1. **Tarea larga en el hilo principal** (TBT): primero. Los arreglos que adelantan el primer pintado (`defer`/`async`, quitar un script o CSS bloqueante) pueden hacer que una tarea larga caiga dentro de la ventana que cuenta para el TBT y empeorarlo aunque mejore el FCP; con la tarea larga resuelta antes, el efecto es mucho menor, pero no siempre desaparece. Caso medido, con cifras: [ejemplo-revertido.md](ejemplo-revertido.md).
+2. **Dimensiones de las imágenes y `font-display`**: correcciones baratas y casi siempre seguras. Las dimensiones suelen mover el CLS; `font-display` puede resolver su oportunidad sin que ninguna métrica cambie, y eso es un resultado válido.
+3. **Peso de las imágenes y carga diferida**: suelen mover el LCP.
+4. **Scripts y CSS bloqueantes, JS sin usar**: al final, y vigilando el TBT (punto 1).
 
 ## Qué no es un arreglo de `perf-fix`
 

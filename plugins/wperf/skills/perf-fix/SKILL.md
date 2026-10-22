@@ -30,8 +30,8 @@ Ejecuta `npx --no-install wperf --version`.
 
 Entrada: un id de oportunidad (`image-delivery-insight`), una causa raíz de `perf-audit` ("la fila 2") o una descripción ("las imágenes no tienen dimensiones"). Si es ambigua, pregunta cuál.
 
-- Necesitas un reporte **anterior al cambio** del mismo dispositivo y perfil de red con el que vas a comparar. Mira `npx wperf history <url>`: sirve el último si su `git.commit` es el `HEAD` actual y `git.dirty` es `false` (o si el código no ha cambiado desde entonces). Si no existe, está desfasado o no sabes qué código midió, audita ahora (`npx wperf audit <url> --device <d> --network <n> --runs 3 --label antes-<causa> --format json > <fichero>`); el CLI ya comprobado en el paso 0.
-- Perfil de medición: el mismo en que el problema es relevante. Por defecto `mobile` + `default`, 3 ejecuciones. Si la causa es sensible a la red (`perf-audit` lo marca), mide también `3g`: con `--network default,3g` un solo comando mide los dos en serie y stdout pasa a ser un array de `Report`. Perfiles distintos no se comparan entre sí (código 2): el "antes" y el "después" de cada perfil van emparejados. Usa las mismas ejecuciones en ambos lados.
+- Necesitas un reporte **anterior al cambio** del mismo dispositivo y perfil de red con el que vas a comparar. Mira `npx wperf history <url>`: sirve el último si su `git.commit` es el `HEAD` actual, `git.dirty` es `false` (o el código no ha cambiado desde entonces) y tiene las ejecuciones que toca (ver el punto siguiente). Si no existe, está desfasado o no sabes qué código midió, audita ahora (`npx wperf audit <url> --device <d> --network <n> --runs <N> --label antes-<causa> --format json > <fichero>`); el CLI ya comprobado en el paso 0.
+- Perfil de medición: el mismo en que el problema es relevante. Por defecto `mobile` + `default`, 3 ejecuciones. **Si la métrica objetivo es el TBT, usa 5**: es la más ruidosa (en la demo, la base osciló entre 309 y 610 ms con 3 ejecuciones) y con 3 es fácil que los rangos se solapen y el CLI deje una mejora real en `unchanged`. Díselo al usuario: cada medición tarda más. Si la causa es sensible a la red (`perf-audit` lo marca), mide también `3g`: con `--network default,3g` un solo comando mide los dos en serie y stdout pasa a ser un array de `Report`. Perfiles distintos no se comparan entre sí (código 2): el "antes" y el "después" de cada perfil van emparejados. Usa las mismas ejecuciones en ambos lados.
 - Las mediciones se lanzan **una detrás de otra, nunca en paralelo**, y con la web servida de la misma forma antes y después (mismo puerto y comando). Si hay que arrancar un servidor (`npm run demo`, `npm run dev`, un `serve`), averigua el comando en `package.json`/README y pregúntalo si dudas.
 - Anota los valores de partida del reporte base: la métrica objetivo y su `rating`, la oportunidad y su ahorro (`opportunities[].items[]` dice qué recursos).
 - **Estado de git**: ejecuta `git status --short`. Si hay cambios sin commitear que no son tuyos, díselo al usuario: la re-auditoría los incluirá y revertir se hace por fichero, nunca con `git checkout .`/`git reset --hard`. Sin git, copia los ficheros que vayas a tocar a `.perf/backup/<fecha>/` antes de editar.
@@ -63,7 +63,7 @@ Pregunta si lo aplicas y **para**. Si el usuario pide ajustes, repropón. Si rec
 
 Tras la aprobación:
 
-1. **Instantánea previa (si procede).** Para una web servida, `npx wperf check snapshot <url> <antes.json> --screenshot <antes.png>` guarda texto, imágenes, errores de consola, peticiones fallidas y el estado del JS **antes de editar**. Es opcional pero recomendable: sin ella, "no se rompió" es solo una impresión.
+1. **Instantánea previa (obligatoria).** `npx wperf check snapshot <url> <antes.json> --screenshot <antes.png>` guarda texto, imágenes, errores de consola, peticiones fallidas y el estado del JS **antes de editar**. Hazla siempre: sin ella, "no se rompió" es solo una impresión, y después de editar ya no se puede recuperar. Si el comando falla (Chrome, servidor caído), arréglalo antes de editar; si no puedes, díselo al usuario y pregúntale si sigues solo con los tests y su revisión de la página.
 2. Aplica **solo** el diff aprobado (con `Edit`/`Write`). Si tienes que generar ficheros (imágenes redimensionadas), usa la herramienta que hayas dicho en la propuesta.
 3. Si el repo tiene `build`, `typecheck`, `lint` o tests, ejecútalos. Un fallo es un fallo del arreglo hasta que se demuestre lo contrario.
 4. Sirve la web como antes, repite la instantánea (`<después>.json`) y compara: `npx wperf check diff <antes.json> <después.json>` (código de salida 1 si algo se rompió). Lo que marque (texto distinto, imagen que no carga, error de consola nuevo, JS que dejó de ejecutarse) rompe el arreglo. Mira también la captura: el CLS o un cambio de layout no se ven en el diff de texto; si no puedes mirarla, pide al usuario que la revise.
@@ -73,7 +73,7 @@ Si algo está roto, **no sigas a medir**: arréglalo con un ajuste mínimo y, si
 ### 5. Re-auditar y comparar
 
 ```sh
-npx wperf audit <url> --device <d> --network <n> --runs 3 --label despues-<causa> --format json > <despues.json>
+npx wperf audit <url> --device <d> --network <n> --runs <N> --label despues-<causa> --format json > <despues.json>
 npx wperf compare <id-antes> <id-despues> --format json > <comparacion.json>
 ```
 
@@ -106,7 +106,7 @@ Responde con (formato en [references/ejemplo-salida.md](references/ejemplo-salid
 1. **Veredicto**: una línea (mejora medida / corrección sin efecto medible / revertido / compensación) con el id de la comparación y los ids antes/después.
 2. **Qué se cambió**: ficheros y resumen del diff aplicado (o "revertido; el árbol no tiene cambios tuyos").
 3. **Antes → después**: tabla de las métricas con `change` del CLI (clasificadas en mejora / empeora / ruido) y de la oportunidad (`status`, `deltaMs`, `deltaBytes`). Cifras copiadas, ms enteros, MiB con dos decimales (coma decimal).
-4. **Integridad de la página**: resultado de `wperf check diff` o de los tests, y qué falta por mirar a mano (captura).
+4. **Integridad de la página**: resultado de `wperf check diff` (y de los tests, si los hay), y qué falta por mirar a mano (captura).
 5. **Qué queda**: causas que viste pero no tocaste, y la pregunta de si abordas otra. Recuerda que los cambios no están commiteados.
 
 ## Antes de responder: comprobación de cifras
