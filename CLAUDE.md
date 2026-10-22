@@ -1,6 +1,6 @@
 # web-performance
 
-CLI `wperf` (Node + TypeScript) que audita el rendimiento de una web con Lighthouse, prioriza mejoras y compara auditorías. Va acompañado de skills de Claude Code que interpretan los resultados. Especificación en `docs/SPEC.md`, fases en `docs/PLAN.md`.
+CLI `wperf` (Node + TypeScript) que audita el rendimiento de una web con Lighthouse, prioriza mejoras y compara auditorías. Va acompañado de skills de Claude Code que interpretan los resultados. Especificación y plan de fases solo en local (`docs/SPEC.md`, `docs/PLAN.md`; no se versionan).
 
 ## Regla principal
 
@@ -15,7 +15,7 @@ CLI `wperf` (Node + TypeScript) que audita el rendimiento de una web con Lightho
 
 ## Arquitectura
 
-Módulos previstos (ver SPEC §3): `runner` → `normalizer` → `store` → `compare`, más `render` y `cli`. Cada módulo vive en `src/` y se puede probar por separado.
+Módulos previstos (ver `docs/SPEC.md` §3, solo en local): `runner` → `normalizer` → `store` → `compare`, más `render` y `cli`. Cada módulo vive en `src/` y se puede probar por separado.
 
 - Implementados (fase 1): `runner.ts` (Chrome + Lighthouse ×N, con costuras para tests), `normalizer.ts` (LHR → `Report`), `schema.ts` (zod, fuente de verdad del `Report`), `rules.ts` (rating, impacto, mediana), `store.ts`, `git.ts`, `render.ts` y `commands/audit.ts`. Errores: `UsageError` (salida 2) y `RuntimeError` (salida 3) en `errors.ts`.
 - `--network default|3g|4g` en `audit` (`src/network.ts`, `environment.network` en el `Report`; sin el campo = `default`): `compare`, `history` y el id distinguen el perfil de red igual que el `device`.

@@ -1,6 +1,6 @@
 # web-performance
 
-CLI `wperf` para auditar el rendimiento de una web, priorizar mejoras y comparar auditorías, con skills de Claude Code que interpretan los resultados. Ver [docs/SPEC.md](docs/SPEC.md) y [docs/PLAN.md](docs/PLAN.md).
+CLI `wperf` para auditar el rendimiento de una web, priorizar mejoras y comparar auditorías, con skills de Claude Code que interpretan los resultados.
 
 ## Desarrollo
 
