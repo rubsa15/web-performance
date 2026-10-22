@@ -84,6 +84,40 @@ describe('wperf audit', () => {
     await usageError(['https://example.com', ...flags]);
   });
 
+  it('acepta varios dispositivos y redes separados por comas, sin repetir', async () => {
+    const launched: string[] = [];
+    const deps = {
+      run: async (options: RunOptions) => {
+        launched.push(`${options.device}/${options.network}`);
+        throw new Error('stop');
+      },
+      log: () => {},
+      out: () => {},
+    } as unknown as AuditDeps;
+    const program = buildProgram(deps);
+    await expect(
+      program.parseAsync([
+        'node',
+        'wperf',
+        'audit',
+        'https://example.com',
+        '--device',
+        'mobile,desktop',
+        '--network',
+        'default, 3g,3g',
+      ]),
+    ).rejects.toThrow('Fallaron 4 de 4 perfiles');
+    expect(launched).toEqual(['mobile/default', 'mobile/3g', 'desktop/default', 'desktop/3g']);
+  });
+
+  it.each([
+    ['una red desconocida en la lista', ['--network', 'default,edge']],
+    ['una lista vacía', ['--network', '']],
+    ['un dispositivo desconocido en la lista', ['--device', 'mobile,tablet']],
+  ])('rechaza %s como error de uso', async (_name, flags) => {
+    await usageError(['https://example.com', ...flags]);
+  });
+
   it('exige la URL', async () => {
     await usageError([]);
   });

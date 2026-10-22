@@ -32,6 +32,20 @@ function parsePositiveInt(value: string): number {
   return Number(value);
 }
 
+/** Lista separada por comas de valores permitidos, sin repetir y en el orden dado. */
+function parseList<T extends string>(allowed: readonly T[]): (value: string) => T[] {
+  return (value) => {
+    const items = value.split(',').map((item) => item.trim());
+    const unknown = items.filter((item) => !(allowed as readonly string[]).includes(item));
+    if (unknown.length > 0 || items.length === 0) {
+      throw new InvalidArgumentError(
+        `Valores permitidos: ${allowed.join(', ')} (varios separados por comas).`,
+      );
+    }
+    return [...new Set(items as T[])];
+  };
+}
+
 const FORMATS = ['text', 'json', 'md'] as const;
 
 const formatOption = (): Option =>
@@ -54,15 +68,20 @@ export function buildProgram(
     .description('Audita una URL con Lighthouse, guarda el reporte y muestra resumen y mejoras.')
     .argument('<url>', 'URL pública (http o https) a auditar')
     .addOption(
-      new Option('--device <device>', 'perfil de emulación').choices(DEVICES).default('mobile'),
+      new Option(
+        '--device <devices>',
+        `perfil de emulación (${DEVICES.join(', ')}); admite varios: mobile,desktop`,
+      )
+        .argParser(parseList(DEVICES))
+        .default(['mobile'], 'mobile'),
     )
     .addOption(
       new Option(
-        '--network <network>',
-        'perfil de red: default (el del dispositivo), 3g (300 ms, 700 Kbps) o 4g (40 ms, 10 Mbps)',
+        '--network <networks>',
+        'perfil de red: default (el del dispositivo), 3g (300 ms, 700 Kbps) o 4g (40 ms, 10 Mbps); admite varios: default,3g,4g. Cada dispositivo × red se audita en serie',
       )
-        .choices(NETWORKS)
-        .default('default'),
+        .argParser(parseList(NETWORKS))
+        .default(['default'], 'default'),
     )
     .option('--runs <n>', 'ejecuciones de Lighthouse; se usa la mediana', parsePositiveInt, 3)
     .option('--label <txt>', 'etiqueta libre para identificar la auditoría')

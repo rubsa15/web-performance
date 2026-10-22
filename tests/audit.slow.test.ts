@@ -43,7 +43,14 @@ describe('wperf audit con Chrome real', () => {
     const out: string[] = [];
     await auditCommand(
       baseUrl,
-      { device, network: 'default', runs: 2, save: true, keepRaw: false, format: 'json' },
+      {
+        device: [device],
+        network: ['default'],
+        runs: 2,
+        save: true,
+        keepRaw: false,
+        format: 'json',
+      },
       { ...defaultAuditDeps(), baseDir: dir, out: (t) => out.push(t), log: () => {} },
     );
 

@@ -44,6 +44,7 @@ Dentro de este repo, compila antes con `npm run build`; instalado como paquete y
 npx wperf audit https://example.com --runs 3                # resumen en terminal
 npx wperf audit https://example.com --device desktop --format md
 npx wperf audit https://example.com --network 3g           # red lenta: default (la del dispositivo), 3g o 4g
+npx wperf audit https://example.com --device mobile,desktop --network default,3g,4g  # 6 perfiles, en serie
 npx wperf audit https://example.com --format json --no-save # solo el Report por stdout
 ```
 

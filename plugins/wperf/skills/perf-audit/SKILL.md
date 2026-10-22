@@ -49,35 +49,26 @@ Las mediciones se lanzan **una detrás de otra, nunca en paralelo**: dos Chrome 
 
 Si el usuario no contesta o dice "lo que quieras", usa `mobile`, los tres presets y 3 ejecuciones. Usa las mismas ejecuciones en todos los presets y dispositivos: con números distintos, los rangos `min`–`max` no son comparables entre perfiles.
 
-- Si el usuario da una URL: ejecuta la auditoría (con el CLI ya comprobado en el paso 0).
+- Si el usuario da una URL: ejecuta la auditoría (con el CLI ya comprobado en el paso 0). Un solo comando mide todos los perfiles: `--device` y `--network` admiten listas separadas por comas, y el CLI audita cada dispositivo × red **en serie**, en el orden dado.
   ```sh
   OUT=<carpeta temporal propia de esta auditoría>   # un nombre por sitio, para no pisar resultados
-  RUNS=<ejecuciones elegidas>
-  : > $OUT/progreso.log
-  for d in <dispositivos elegidos, p. ej. mobile desktop>; do
-    for n in <presets elegidos, p. ej. default 3g 4g>; do
-      echo "[$d/$n] empezando" >> $OUT/progreso.log
-      npx wperf audit <url> --device $d --network $n --runs $RUNS --format json > $OUT/$d-$n.json 2>> $OUT/progreso.log
-      code=$?
-      echo "[$d/$n] terminado (código $code)" >> $OUT/progreso.log
-    done
-  done
-  echo "FIN" >> $OUT/progreso.log
-  grep -h "Reporte guardado" $OUT/progreso.log    # rutas de los reportes en .perf/reports/
+  npx wperf audit <url> --device <p. ej. mobile o mobile,desktop> --network <p. ej. default,3g,4g> \
+    --runs <ejecuciones elegidas> --format json > $OUT/reportes.json 2> $OUT/progreso.log
+  grep "Reporte guardado" $OUT/progreso.log    # rutas de los reportes en .perf/reports/
   ```
-  `.perf/reports/<sitio>/` acumula reportes de auditorías anteriores: usa los de este bucle, no el último que encuentres. El JSON va por stdout (a `$OUT/<dispositivo>-<preset>.json`) y el progreso por stderr (a `$OUT/progreso.log`, con una línea `[dispositivo/preset] empezando`/`terminado` por medición y `FIN` al acabar); la ruta del reporte guardado sale en stderr.
+  Con varios perfiles, stdout es un **array** de `Report` (uno por perfil, en el orden en que se midieron) y cada línea de progreso en stderr lleva el perfil delante: `[mobile/3g] Auditando…`, `[mobile/3g] ejecución 2/3`, `[mobile/3g] Reporte guardado en …`, `[mobile/3g] Error: …`; la última línea es `Terminado: N de M perfiles medidos` (con `; fallaron …` si alguno falló). Con un solo perfil, stdout es un único `Report` y las líneas no llevan prefijo ni hay `Terminado`. `.perf/reports/<sitio>/` acumula reportes de auditorías anteriores: usa los de esta ejecución (las rutas de `Reporte guardado`), no el último que encuentres.
 
   **Avisa al usuario mientras corre.** Cada perfil tarda de medio minuto a varios y, en segundo plano, el usuario no ve nada salvo lo que le escribas. Por eso:
-  1. Lanza el bucle **entero en segundo plano** (`run_in_background`), no uno por medición.
-  2. Engancha `Monitor` al fichero de progreso, con un filtro que deje pasar solo los eventos útiles y termine en `FIN`, p. ej. `tail -n +1 -F $OUT/progreso.log | grep --line-buffered -E "empezando|ejecución|terminado|Reporte guardado|rror|FIN"`. Si `Monitor` aparece como herramienta diferida, cárgala antes con `ToolSearch`. Páralo con `TaskStop` cuando llegue `FIN`.
-  3. **Por cada evento que reciba el monitor, escribe al usuario una línea corta** ("`mobile/3g`: ejecución 2/3 en curso", "`mobile/default` terminado, empiezo `mobile/3g`"). `ejecución n/N` se emite al *empezar* esa ejecución, así que no digas que la anterior "ha terminado" salvo con la línea `terminado`. Son avisos de estado: sin cifras de métricas y sin interpretar nada hasta tener todos los reportes.
-  4. Al llegar `FIN`, o si un perfil termina con código distinto de 0, manda además una notificación con `PushNotification` (también diferida: cárgala con `ToolSearch`), de una línea: sitio, perfiles completados y fallidos. Sin cifras de rendimiento. Si falla un perfil, la notificación debe decirlo.
-  5. Si `Monitor` o `PushNotification` no están disponibles, avisa de ello y lanza cada perfil en segundo plano por separado, escribiendo al usuario cuando cada uno termine. Sigue siendo en serie: no arranques el siguiente antes de que acabe el anterior.
-- Redirige stdout a un fichero y léelo de ahí o de `.perf/reports/`: el JSON es largo y no hace falta volcarlo entero al contexto.
-- Si un perfil falla, cuéntalo y continúa con los demás; no rellenes el hueco. `warnings` puede avisar de que Lighthouse no aplicó el perfil pedido: en ese caso descarta ese reporte.
+  1. Lanza el comando **en segundo plano** (`run_in_background`). Es uno solo para todos los perfiles: no lances un comando por perfil ni dos a la vez.
+  2. Engancha `Monitor` al fichero de progreso con un filtro que deje pasar solo los eventos útiles, p. ej. `tail -n +1 -F $OUT/progreso.log | grep --line-buffered -E "Auditando|ejecución|Reporte guardado|rror|Terminado"`. Si `Monitor` aparece como herramienta diferida, cárgala antes con `ToolSearch`. Páralo con `TaskStop` cuando llegue `Terminado` o cuando te avisen de que el comando en segundo plano ha acabado (con un solo perfil no hay línea `Terminado`).
+  3. **Por cada evento que reciba el monitor, escribe al usuario una línea corta** ("`mobile/3g`: ejecución 2/3 en curso", "`mobile/default` guardado, empieza `mobile/3g`"). `ejecución n/N` se emite al *empezar* esa ejecución, así que no digas que la anterior "ha terminado" salvo con la línea `Reporte guardado`. Son avisos de estado: sin cifras de métricas y sin interpretar nada hasta tener todos los reportes.
+  4. Al terminar, manda además una notificación con `PushNotification` (también diferida: cárgala con `ToolSearch`), de una línea: sitio, perfiles medidos y fallidos (sale de `Terminado`). Sin cifras de rendimiento. Si falla un perfil, la notificación debe decirlo.
+  5. Si `Monitor` o `PushNotification` no están disponibles, avisa de ello, lanza igualmente el comando en segundo plano y escribe al usuario cuando termine.
+- Lee los reportes del fichero de stdout o de las rutas de `.perf/reports/`: el JSON es largo y no hace falta volcarlo entero al contexto.
+- Si un perfil falla, el CLI sigue con los demás, escribe en stdout los que sí midió y sale con código 3 (`Fallaron N de M perfiles: …`). Cuéntalo y trabaja con los medidos; no rellenes el hueco. `warnings` puede avisar de que Lighthouse no aplicó el perfil pedido: en ese caso descarta ese reporte.
 - Si la URL es la demo (`127.0.0.1:4173`) y no responde, arranca `npm run demo` en segundo plano antes de auditar.
 - Si el usuario indica un reporte ya guardado, léelo de `.perf/reports/` (o con `npx wperf history <url>` para localizarlo) en vez de auditar de nuevo. Si solo hay uno, trabaja con ese perfil (mira `environment.network`; ausente = `default`) y dilo.
-- Errores: código 2 = uso (corrige la invocación), código 3 = ejecución (Chrome, red, timeout; cuéntalo tal cual y sugiere `CHROME_PATH` o reintentar). No sigas con datos parciales.
+- Errores: código 2 = uso (corrige la invocación), código 3 = ejecución (Chrome, red, timeout; cuéntalo tal cual y sugiere `CHROME_PATH` o reintentar). Con un solo perfil, o si no se midió ninguno, no sigas. Con varios, un código 3 tras `Terminado: N de M` significa que alguno falló: sigue con los medidos y dilo.
 - Revisa `warnings` y `environment.runs`: si hay avisos o solo una ejecución, dilo, porque afecta a la fiabilidad. Mira también la dispersión: una métrica es inestable si su rango `max − min` supera el umbral de ruido que usa `wperf compare` (el mayor de: LCP/FCP/SI 150 ms o 10 % de la mediana, TBT 50 ms o 50 %, TTFB 100 ms o 20 %, CLS 0,02). Entonces la mediana es válida pero poco fiable (p. ej. LCP de 2 429 a 7 230 ms): avísalo junto a esa métrica. Un rango pequeño que no cruza ningún `rating` (CLS de 0 a 0,011) no hace falta comentarlo. `git` describe el repo desde el que se ejecutó `wperf`, no el sitio auditado: en una URL ajena ignóralo; en una web de este repo, si `git.dirty` es `true`, menciónalo como nota (el reporte incluye cambios sin commitear).
 
 ### 2. Leer los reportes
