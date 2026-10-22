@@ -12,7 +12,6 @@ import { DEVICES, METRIC_IDS, NETWORKS } from './schema.js';
 
 export const EXIT_CODES = {
   ok: 0,
-  budgetExceeded: 1,
   usage: 2,
   runtime: 3,
 } as const;
