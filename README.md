@@ -13,6 +13,17 @@ npx wperf --help
 
 Sin instalar nada: `npx @rubensa15/wperf audit https://example.com`. También se puede instalar en global (`npm install -g @rubensa15/wperf`) o directamente desde GitHub (`npm install -D github:rubsa15/web-performance`; el script `prepare` compila al instalar).
 
+### Skills de Claude Code
+
+Este repositorio es también un marketplace de Claude Code con el plugin `wperf`, que añade tres skills: `perf-audit` (audita y prioriza), `perf-compare` (compara auditorías y separa mejora real de ruido) y `perf-fix` (aplica un arreglo y lo verifica). Dentro de Claude Code:
+
+```
+/plugin marketplace add rubsa15/web-performance
+/plugin install wperf@web-performance
+```
+
+Las skills usan el CLI, que tiene que estar instalado en el proyecto de la web (arriba); si falta, se ofrecen a instalarlo. Una vez instaladas se activan solas ("audita la web", "¿mejoró el LCP?", "arregla las imágenes") y también se pueden invocar como `/wperf:perf-audit`. Con `claude plugin validate .` se comprueba el marketplace.
+
 ## Desarrollo
 
 ```sh

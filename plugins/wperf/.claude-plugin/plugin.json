@@ -1,0 +1,10 @@
+{
+  "name": "wperf",
+  "displayName": "wperf",
+  "description": "Skills para auditar el rendimiento de una web con Lighthouse (wperf), priorizar mejoras, compararlas y aplicarlas con verificación.",
+  "author": { "name": "rubsa15", "url": "https://github.com/rubsa15" },
+  "homepage": "https://github.com/rubsa15/web-performance#readme",
+  "repository": "https://github.com/rubsa15/web-performance",
+  "license": "ISC",
+  "keywords": ["performance", "lighthouse", "web-vitals", "lcp", "cls"]
+}

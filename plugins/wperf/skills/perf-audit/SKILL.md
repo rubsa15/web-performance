@@ -22,7 +22,7 @@ Convierte una auditoría de `wperf` en un plan de mejora priorizado. El CLI mide
 Ejecuta `npx --no-install wperf --version`.
 
 - Si responde con una versión, sigue. Si estás en el repo de `wperf` (tiene `bin/wperf` y `src/`), ejecuta además `npm run build` para no medir con un `dist/` viejo.
-- Si falla, `wperf` no está instalado en este proyecto: pide permiso y ejecuta `npm install -D @rubensa15/wperf`. **No uses `npx wperf` sin instalar**: npm descargaría otro paquete llamado `wperf` que no es este.
+- Si falla, `wperf` no está instalado en este proyecto: pide permiso y ejecuta `npm install -D @rubensa15/wperf` (o, desde el repositorio, `npm install -D github:rubsa15/web-performance`). **No uses `npx wperf` sin instalar**: npm descargaría otro paquete llamado `wperf` que no es este.
 - Necesita Chrome (o `CHROME_PATH`) y Node ≥ 22.19.
 
 ### 1. Obtener los reportes
@@ -82,7 +82,7 @@ Si el usuario no contesta o dice "lo que quieras", usa `mobile`, los tres preset
 
 ### 2. Leer los reportes
 
-Campos útiles del `Report` (esquema en `src/schema.ts`): `score`, `metrics.{lcp,fcp,tbt,cls,si,ttfb}` (`value`, `min`, `max`, `rating`), `opportunities[]` (`id`, `category`, `savingsMs`, `savingsBytes`, `impact`, `affectedMetrics`, `items[]`), `diagnostics[]`, `resources.byType` y `lcp` (`element`, `breakdown`, `discovery`).
+Campos útiles del `Report` (esquema `ReportSchema` en `src/schema.ts` del repo de `wperf`): `score`, `metrics.{lcp,fcp,tbt,cls,si,ttfb}` (`value`, `min`, `max`, `rating`), `opportunities[]` (`id`, `category`, `savingsMs`, `savingsBytes`, `impact`, `affectedMetrics`, `items[]`), `diagnostics[]`, `resources.byType` y `lcp` (`element`, `breakdown`, `discovery`).
 
 Trampas frecuentes, verificadas en la demo y en webs reales:
 

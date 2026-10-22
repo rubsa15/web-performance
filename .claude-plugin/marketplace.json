@@ -1,0 +1,12 @@
+{
+  "name": "web-performance",
+  "description": "Skills de Claude Code para auditar y mejorar el rendimiento de una web con wperf.",
+  "owner": { "name": "rubsa15", "url": "https://github.com/rubsa15" },
+  "plugins": [
+    {
+      "name": "wperf",
+      "source": "./plugins/wperf",
+      "description": "perf-audit, perf-compare y perf-fix: auditar con Lighthouse, comparar auditorías y aplicar mejoras verificadas. Necesita el CLI wperf en el proyecto."
+    }
+  ]
+}
