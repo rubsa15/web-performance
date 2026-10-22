@@ -24,7 +24,7 @@ describe('rate', () => {
   });
 });
 
-describe('impactOf (SPEC §6)', () => {
+describe('impactOf', () => {
   it.each([
     [500, 0, 'high'],
     [499, 0, 'medium'],
@@ -86,7 +86,7 @@ describe('exceeds', () => {
   });
 });
 
-describe('classifyMetric (SPEC §6)', () => {
+describe('classifyMetric', () => {
   const m = (value: number, min = value, max = value) => ({ value, min, max });
 
   it('salto grande y rangos separados: improved o regressed (todas las métricas mejoran al bajar)', () => {

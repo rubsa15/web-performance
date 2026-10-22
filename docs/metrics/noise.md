@@ -1,6 +1,6 @@
 # Experimento de ruido
 
-Calibración de los umbrales de `wperf compare` (SPEC §6, §9; PLAN fase 3). Se mide cuánto varía `wperf audit` al repetirlo sobre la **misma** página sin cambiarla: cualquier diferencia entre dos de esas auditorías es ruido, y `compare` no debería marcarla como cambio.
+Calibración de los umbrales de `wperf compare`. Se mide cuánto varía `wperf audit` al repetirlo sobre la **misma** página sin cambiarla: cualquier diferencia entre dos de esas auditorías es ruido, y `compare` no debería marcarla como cambio.
 
 ## Método
 
@@ -12,9 +12,9 @@ Calibración de los umbrales de `wperf compare` (SPEC §6, §9; PLAN fase 3). Se
 
 ## Hallazgos
 
-1. **Con la página arreglada el ruido es casi nulo.** Con `throttling: simulate` las métricas de red y de pintado salen casi idénticas: el LCP varía 1 ms, el FCP 6 ms y el TBT 11 ms entre las 10 medianas. Con los umbrales de la SPEC hay 0 falsos positivos de 45.
-2. **Con la página rota, el TBT es la métrica ruidosa.** Las medianas van de 439 a 1105 ms y una ejecución suelta llegó a 2173 ms. El ruido es de cola larga (la mayoría de auditorías dan 440–620 ms y tres dan 900–1100 ms), así que el rango min–max de solo 3 ejecuciones no lo captura bien: con los umbrales de la SPEC, 18 de 45 pares se marcaban como cambio de TBT y 12 de 45 como cambio de puntuación.
-3. **El criterio de rangos de la SPEC sí funciona donde el ruido es discreto.** El CLS de la rota es 0,291 en 9 auditorías y 0 en una (la carga de imágenes se adelantó al primer pintado en 2 de sus 3 ejecuciones): la mediana salta 0,291 puntos, unas 14 veces el umbral, pero ese reporte tiene rango 0–0,291 y la regla de rangos solapados lo deja en `unchanged` (0 de 45 pares marcados).
+1. **Con la página arreglada el ruido es casi nulo.** Con `throttling: simulate` las métricas de red y de pintado salen casi idénticas: el LCP varía 1 ms, el FCP 6 ms y el TBT 11 ms entre las 10 medianas. Con los umbrales iniciales hay 0 falsos positivos de 45.
+2. **Con la página rota, el TBT es la métrica ruidosa.** Las medianas van de 439 a 1105 ms y una ejecución suelta llegó a 2173 ms. El ruido es de cola larga (la mayoría de auditorías dan 440–620 ms y tres dan 900–1100 ms), así que el rango min–max de solo 3 ejecuciones no lo captura bien: con los umbrales iniciales, 18 de 45 pares se marcaban como cambio de TBT y 12 de 45 como cambio de puntuación.
+3. **El criterio de rangos sí funciona donde el ruido es discreto.** El CLS de la rota es 0,291 en 9 auditorías y 0 en una (la carga de imágenes se adelantó al primer pintado en 2 de sus 3 ejecuciones): la mediana salta 0,291 puntos, unas 14 veces el umbral, pero ese reporte tiene rango 0–0,291 y la regla de rangos solapados lo deja en `unchanged` (0 de 45 pares marcados).
 4. **El LCP de la demo rota (≈ 40 s) es un artefacto de la demo**, no de la herramienta: la imagen de 2,9 MiB sobre el 4G simulado. Su variación (hasta 2,8 s) es menor que el 10 % relativo y tampoco se marca.
 5. **La lista de oportunidades basadas en CPU no es estable.** `mainthread-work-breakdown` aparece en 5 de 10 auditorías de la rota, `cls-culprits-insight` en 9 de 10 y el ahorro de `bootup-time` va de 400 a 1150 ms. Que una de ellas sea `new` o `resolved` entre dos reportes, por sí solo, no es evidencia de cambio. Las oportunidades de red (imágenes, bloqueo de render, fuentes, JS sin usar) son idénticas en las 10 auditorías.
 
@@ -24,7 +24,7 @@ Con los 90 pares de arriba (45 por página) y los 100 cruces rota → arreglada 
 
 | Umbral TBT (abs, rel) | Falsos positivos / 90 | Detecta la mejora real rota → arreglada |
 | --------------------- | --------------------: | --------------------------------------: |
-| 50 ms, 15 % (SPEC)    |                    18 |                                 100/100 |
+| 50 ms, 15 % (inicial) |                    18 |                                 100/100 |
 | 100 ms, 15 %          |                    16 |                                 100/100 |
 | 50 ms, 30 %           |                    10 |                                 100/100 |
 | **50 ms, 50 %**       |                 **6** |                             **100/100** |
@@ -33,7 +33,7 @@ Con los 90 pares de arriba (45 por página) y los 100 cruces rota → arreglada 
 
 | Umbral de puntuación | Falsos positivos / 90 | Detecta la mejora real |
 | -------------------- | --------------------: | ---------------------: |
-| 3 puntos (SPEC)      |                    12 |                100/100 |
+| 3 puntos (inicial)   |                    12 |                100/100 |
 | **5 puntos**         |                 **4** |            **100/100** |
 | 7 puntos             |                     0 |                100/100 |
 
@@ -41,9 +41,9 @@ Ahorro en ms de una oportunidad (`bootup-time`, la única inestable): 50 ms/20 %
 
 ## Decisión
 
-Cambios respecto a los umbrales por defecto de la SPEC §6 (`DEFAULT_THRESHOLDS` en `src/rules.ts`):
+Cambios respecto a los umbrales iniciales (`DEFAULT_THRESHOLDS` en `src/rules.ts`):
 
-| Parámetro                     | SPEC              | Calibrado         | Motivo                                                                                                                                                            |
+| Parámetro                     | Inicial           | Calibrado         | Motivo                                                                                                                                                            |
 | ----------------------------- | ----------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | TBT                           | 50 ms o 15 %      | **50 ms o 50 %**  | El 15 % marcaba como cambio el 40 % de los pares de la rota. Se mantiene el mínimo de 50 ms para no perder sensibilidad con TBT bajos (la arreglada tiene 15 ms). |
 | Puntuación                    | 3 puntos          | **5 puntos**      | La puntuación arrastra el ruido del TBT (30 % del peso).                                                                                                          |

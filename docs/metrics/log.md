@@ -1,6 +1,6 @@
 # Registro de medición
 
-Datos medidos por fase (ver SPEC §10). Se rellena al cerrar cada fase.
+Datos medidos por fase. Se rellena al cerrar cada fase.
 
 | Fase | Horas reales | Coste de modelo | Capturas    |
 | ---- | ------------ | --------------- | ----------- |

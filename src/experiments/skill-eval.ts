@@ -1,4 +1,4 @@
-// Evaluación de las skills (SPEC §9, PLAN fase 4). Comprueba, sin LLM, la respuesta de una skill:
+// Evaluación de las skills. Comprueba, sin LLM, la respuesta de una skill:
 //
 //   node dist/experiments/skill-eval.js figures <respuesta.md> <reporte.json>...
 //       Cifras de la respuesta que no salen de los reportes (ni de su comparación, si son dos y

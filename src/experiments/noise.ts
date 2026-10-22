@@ -1,4 +1,4 @@
-// Experimento de ruido (SPEC §9, PLAN fase 3). Se ejecuta compilado, con la demo en marcha:
+// Experimento de ruido. Se ejecuta compilado, con la demo en marcha:
 //
 //   node dist/experiments/noise.js run <url> <carpeta> [--audits 10] [--runs 3]
 //       Audita N veces seguidas la URL (mobile, como `wperf audit`) y guarda cada Report en

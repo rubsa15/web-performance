@@ -17,7 +17,7 @@ export function rate(metric: MetricId, value: number): Rating {
   return 'poor';
 }
 
-// SPEC §6. Los KB son KiB, igual que los muestra Lighthouse.
+// Los KB son KiB, igual que los muestra Lighthouse.
 const KIB = 1024;
 const HIGH = { ms: 500, bytes: 250 * KIB };
 const MEDIUM = { ms: 150, bytes: 50 * KIB };
@@ -56,8 +56,8 @@ export interface Thresholds {
   opportunity: { ms: ChangeThreshold; bytes: ChangeThreshold };
 }
 
-// SPEC §6 calibrado con el experimento de ruido (docs/metrics/noise.md). Cambios respecto a la
-// SPEC: TBT relativo 15 % → 50 %, score 3 → 5 puntos; TTFB y `opportunity` no estaban definidos.
+// Umbrales calibrados con el experimento de ruido (docs/metrics/noise.md). Cambios respecto a los
+// iniciales: TBT relativo 15 % → 50 %, score 3 → 5 puntos; TTFB y `opportunity` no estaban definidos.
 export const DEFAULT_THRESHOLDS: Thresholds = {
   metrics: {
     lcp: { abs: 150, rel: 0.1 },
@@ -85,7 +85,7 @@ export function exceeds(before: number, after: number, threshold: ChangeThreshol
 }
 
 /**
- * SPEC §6: una métrica cambia si el salto supera el umbral **y** los rangos min–max de
+ * Una métrica cambia si el salto supera el umbral **y** los rangos min–max de
  * ambos reportes no se solapan. Todas las métricas mejoran al bajar.
  */
 export function classifyMetric(

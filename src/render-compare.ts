@@ -297,7 +297,7 @@ function historyHeader(metric: MetricId | undefined): string[] {
 }
 
 const LEGEND =
-  '↑/↓: cambio significativo respecto al reporte anterior del mismo perfil (SPEC §6); sin flecha = unchanged. * = árbol con cambios sin commitear.';
+  '↑/↓: cambio significativo respecto al reporte anterior del mismo perfil; sin flecha = unchanged. * = árbol con cambios sin commitear.';
 
 export function renderHistoryJson(history: History): string {
   return JSON.stringify(history, null, 2);

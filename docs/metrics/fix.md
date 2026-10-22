@@ -1,6 +1,6 @@
 # Evaluación de la skill `perf-fix`
 
-SPEC §9, PLAN fase 5. 2026-10-22 (macOS, Lighthouse 13.5.0, mobile, red `default`, 3 ejecuciones por auditoría).
+2026-10-22 (macOS, Lighthouse 13.5.0, mobile, red `default`, 3 ejecuciones por auditoría).
 
 ## Método
 

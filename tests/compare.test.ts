@@ -203,7 +203,7 @@ describe('compareReports — comparabilidad', () => {
   });
 });
 
-describe('compareReports — oportunidades (SPEC §6)', () => {
+describe('compareReports — oportunidades', () => {
   const status = (
     before: ReturnType<typeof makeOpportunity>[],
     after: ReturnType<typeof makeOpportunity>[],

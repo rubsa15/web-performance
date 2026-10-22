@@ -1,6 +1,6 @@
 # Evaluación de las skills `perf-audit` y `perf-compare`
 
-SPEC §9, PLAN fase 4. **Iteraciones 1 a 3**, 2026-10-21 (macOS, Lighthouse 13.5.0, Chrome 155, mobile, 3 ejecuciones por auditoría).
+**Iteraciones 1 a 3**, 2026-10-21 (macOS, Lighthouse 13.5.0, Chrome 155, mobile, 3 ejecuciones por auditoría).
 
 ## Método
 

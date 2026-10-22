@@ -1,6 +1,6 @@
 # Problemas catalogados de la demo
 
-Ground truth para evaluar `wperf` y las skills (SPEC §8, §9). Cada problema está puesto a propósito en
+Ground truth para evaluar `wperf` y las skills. Cada problema está puesto a propósito en
 `demo/site/`; `demo/site-fixed/` es la misma página con todos corregidos.
 
 Los ids de auditoría son los de Lighthouse 13.5.0 (`*-insight`), tal y como salen en el campo

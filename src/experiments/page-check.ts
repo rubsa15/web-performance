@@ -1,4 +1,4 @@
-// Evaluación de `perf-fix` (SPEC §9, PLAN fase 5): ¿la página sigue funcionando tras un arreglo?
+// Evaluación de `perf-fix`: ¿la página sigue funcionando tras un arreglo?
 //
 //   node dist/experiments/page-check.js snapshot <url> <salida.json> [captura.png]
 //       Abre la URL en Chrome (viewport móvil), recorre la página para disparar la carga diferida y

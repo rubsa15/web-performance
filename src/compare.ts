@@ -95,7 +95,7 @@ function refOf(report: Report): ReportRef {
   };
 }
 
-/** SPEC §6: no se comparan reportes con distinto `device`, `throttling` o perfil de red. */
+/** No se comparan reportes con distinto `device`, `throttling` o perfil de red. */
 function assertComparable(before: Report, after: Report): void {
   if (before.device !== after.device) {
     throw new UsageError(
