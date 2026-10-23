@@ -1,6 +1,6 @@
 {
   "name": "@rubensa15/wperf",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI para auditar el rendimiento de una web, priorizar mejoras y comparar auditorías.",
   "type": "module",
   "bin": {
